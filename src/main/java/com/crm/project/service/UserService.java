@@ -1,4 +1,30 @@
 package com.crm.project.service;
 
+import com.crm.project.dto.request.UserCreationRequest;
+import com.crm.project.dto.response.UserResponse;
+import com.crm.project.entity.User;
+import com.crm.project.exception.AppException;
+import com.crm.project.exception.ErrorCode;
+import com.crm.project.mapper.UserMapper;
+import com.crm.project.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@RequiredArgsConstructor
+@Service
 public class UserService {
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserResponse createUser(UserCreationRequest request) {
+        if(userRepository.existsByUsername(request.getUsername())) {
+            throw new AppException(ErrorCode.USERNAME_EXSITED);
+        }
+        User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
+        return userMapper.toUserResponse(user);
+    }
 }

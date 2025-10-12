@@ -14,3 +14,7 @@ spring:
     hibernate:
       ddl-auto: none
     show-sql: true
+
+jwt:
+  key: ${SECRET_KEY}
+  access_duration: ${ACCESS_TOKEN_DURATION}

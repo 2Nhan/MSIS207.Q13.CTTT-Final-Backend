@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -23,5 +24,14 @@ public class UserController {
                 .result(userResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse> getAllUsers() {
+        List<UserResponse> userResponseList = userService.getAllUsers();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(userResponseList)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

@@ -38,5 +38,5 @@ public class User {
     private String address;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private boolean deleted = false;
 }

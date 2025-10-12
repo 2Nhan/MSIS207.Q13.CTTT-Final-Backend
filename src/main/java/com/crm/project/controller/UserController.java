@@ -34,4 +34,13 @@ public class UserController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @DeleteMapping
+    public ResponseEntity<ApiResponse> deleteUser(@RequestParam String username) {
+        userService.deleteUser(username);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .message("DELETED USER")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

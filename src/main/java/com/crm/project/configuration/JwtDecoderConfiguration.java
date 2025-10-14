@@ -2,7 +2,6 @@ package com.crm.project.configuration;
 
 import com.crm.project.service.JwtService;
 import com.nimbusds.jose.JOSEException;
-import com.nimbusds.jose.jwk.JWKException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;

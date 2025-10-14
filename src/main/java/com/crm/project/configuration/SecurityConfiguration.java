@@ -1,5 +1,7 @@
 package com.crm.project.configuration;
 
+import com.crm.project.service.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -17,6 +20,9 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 public class SecurityConfiguration {
     private final String[] PUBLIC_ENDPOINTS = {"/users/registration", "/users"};
+
+    @Autowired
+    private JwtDecoderConfiguration jwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,6 +34,8 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.DELETE, PUBLIC_ENDPOINTS).permitAll()
                         .anyRequest().authenticated()
                 );
+        http.oauth2ResourceServer(resourceServer -> resourceServer
+                .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder)));
         return http.build();
     }
 

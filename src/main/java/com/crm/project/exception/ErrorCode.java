@@ -12,6 +12,7 @@ public enum ErrorCode {
         USERNAME_NOT_FOUND(1002, "Username not found", HttpStatus.NOT_FOUND),
         EMAIL_EXSITED(1003, "Email exsited, this email has been register", HttpStatus.BAD_REQUEST),
         PHONE_NUMBER_EXSITED(1004, " Phone number exsited, this phone has been register", HttpStatus.BAD_REQUEST),
+        UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
         ;
 
         ErrorCode(int code, String message, HttpStatusCode statusCode) {

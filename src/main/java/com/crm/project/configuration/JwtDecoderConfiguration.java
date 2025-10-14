@@ -34,7 +34,7 @@ public class JwtDecoderConfiguration implements JwtDecoder {
         try {
             boolean isValid = jwtService.verifyToken(token, secretKey);
             if (!isValid) {
-                throw new JwtException("Invalid token")
+                throw new JwtException("Invalid token");
             }
         } catch (JOSEException | ParseException e) {
             throw new JwtException("Invalid token");

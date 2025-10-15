@@ -1,6 +1,7 @@
 package com.crm.project.controller;
 
 import com.crm.project.dto.request.UserCreationRequest;
+import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
@@ -32,6 +33,13 @@ public class UserController {
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponseList)
                 .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PutMapping
+    public ResponseEntity<ApiResponse> updateUser(@RequestBody @Valid UserUpdateRequest request) {
+        UserResponse userResponse = userService.updateUser(request);
+        ApiResponse apiResponse = ApiResponse.builder().result(userResponse).build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 

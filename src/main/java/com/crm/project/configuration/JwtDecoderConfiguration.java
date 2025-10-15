@@ -13,8 +13,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Objects;
-
-import java.io.Serializable;
 import java.text.ParseException;
 
 @Component

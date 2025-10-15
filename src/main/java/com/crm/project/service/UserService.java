@@ -45,6 +45,10 @@ public class UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
         userMapper.updateUser(request, user);
+        if(request.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
 

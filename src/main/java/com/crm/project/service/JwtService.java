@@ -30,7 +30,7 @@ public class JwtService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .issuer("server")
-                .subject(user.getId())
+                .subject(user.getUsername())
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(ACCESS_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())

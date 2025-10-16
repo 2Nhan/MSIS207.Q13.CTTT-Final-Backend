@@ -18,3 +18,7 @@ spring:
 jwt:
   key: ${SECRET_KEY}
   access_duration: ${ACCESS_TOKEN_DURATION}
+cloudinary:
+  cloudinary-name: ${CLOUDINARY_NAME}
+  cloudinary-api-key: ${CLOUDINARY_API_KEY}
+  cloudinary-api-secret: ${CLOUDINARY_API_SECRET}

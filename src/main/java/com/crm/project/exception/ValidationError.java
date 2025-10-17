@@ -14,6 +14,7 @@ public enum ValidationError {
     BLANK_LASTNAME(2004, "PLease fill in last name", HttpStatus.BAD_REQUEST),
     BLANK_EMAIL(2005, "PLease fill in email", HttpStatus.BAD_REQUEST),
     BLANK_PHONE_NUMBER(2006, "PLease fill in phone number", HttpStatus.BAD_REQUEST),
+    BLANK_UPDATE_FIELD(2007, "This field can not be blank", HttpStatus.BAD_REQUEST),
 
     INVALID_USERNAME(3001, "Username must have {min}-{max} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(3002, "Password must have at least {min} characters", HttpStatus.BAD_REQUEST),

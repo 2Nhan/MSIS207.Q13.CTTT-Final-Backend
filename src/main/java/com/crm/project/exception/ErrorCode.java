@@ -13,6 +13,9 @@ public enum ErrorCode {
         EMAIL_EXSITED(1003, "Email exsited, this email has been register", HttpStatus.BAD_REQUEST),
         PHONE_NUMBER_EXSITED(1004, " Phone number exsited, this phone has been register", HttpStatus.BAD_REQUEST),
         UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
+
+        INVALID_FILE_EXTENSION(1100, "Invalid file extension", HttpStatus.BAD_REQUEST),
+        INVALID_FILE_SIZE(1101, "Invalid file size", HttpStatus.BAD_REQUEST),
         ;
 
         ErrorCode(int code, String message, HttpStatusCode statusCode) {

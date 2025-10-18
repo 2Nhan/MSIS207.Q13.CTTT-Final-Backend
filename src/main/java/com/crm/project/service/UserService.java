@@ -26,8 +26,9 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
 
-    public void uploadAvatar(String id, MultipartFile file) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+    public void uploadAvatar(MultipartFile file) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
         String fileName = UploadFileUtil.standardizeFileName(file.getOriginalFilename());
         UploadFileUtil.assertAllowed(file, UploadFileUtil.IMAGE_PATTERN);

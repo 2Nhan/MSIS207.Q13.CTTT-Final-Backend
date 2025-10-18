@@ -1,5 +1,7 @@
 package com.crm.project.configuration;
 
+import com.crm.project.exception.AppException;
+import com.crm.project.exception.ErrorCode;
 import com.crm.project.service.JwtService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +33,10 @@ public class JwtDecoderConfiguration implements JwtDecoder {
         try {
             boolean isValid = jwtService.verifyToken(token, secretKey);
             if (!isValid) {
-                throw new JwtException("Invalid token");
+                throw new AppException(ErrorCode.UNAUTHENTICATED);
             }
         } catch (JOSEException | ParseException e) {
-            throw new JwtException("Invalid token");
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 
         if(Objects.isNull(nimbusJwtDecoder)) {

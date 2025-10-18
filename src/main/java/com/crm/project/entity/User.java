@@ -28,14 +28,17 @@ public class User extends BaseEntity {
     @Column(name = "last_name", length = 50)
     private String lastName;
 
-    @Column(length = 100, unique = true)
+    @Column(name = "email", length = 100, unique = true)
     private String email;
 
     @Column(name = "phone_number", length = 15, unique = true)
     private String phoneNumber;
 
-    @Column(length = 20)
+    @Column(name = "address", length = 20)
     private String address;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
     @Column(nullable = false)
     private boolean deleted = false;

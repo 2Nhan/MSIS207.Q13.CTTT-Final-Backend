@@ -23,6 +23,9 @@ public class SecurityConfiguration {
     @Autowired
     private JwtDecoderConfiguration jwtDecoder;
 
+    @Autowired
+    private AuthenticationEntryPointConfiguration authenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -33,7 +36,7 @@ public class SecurityConfiguration {
                 );
         http.oauth2ResourceServer(resourceServer -> resourceServer
                 .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder))
-                .authenticationEntryPoint(new AuthenticationEntryPointConfiguration()));
+                .authenticationEntryPoint(authenticationEntryPoint));
 
         return http.build();
     }

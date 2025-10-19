@@ -6,6 +6,8 @@ import com.crm.project.service.JwtService;
 import com.nimbusds.jose.JOSEException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -28,15 +30,15 @@ public class JwtDecoderConfiguration implements JwtDecoder {
     private JwtService jwtService;
 
     @Override
-    public Jwt decode(String token) throws JwtException {
+    public Jwt decode(String token) {
 
         try {
             boolean isValid = jwtService.verifyToken(token, secretKey);
             if (!isValid) {
-                throw new AppException(ErrorCode.UNAUTHENTICATED);
+                throw new OAuth2AuthenticationException(new OAuth2Error("invalid_token"));
             }
         } catch (JOSEException | ParseException e) {
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new OAuth2AuthenticationException(new OAuth2Error("invalid_token"));
         }
 
         if(Objects.isNull(nimbusJwtDecoder)) {

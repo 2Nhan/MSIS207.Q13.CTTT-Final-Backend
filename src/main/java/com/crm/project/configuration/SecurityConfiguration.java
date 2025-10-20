@@ -18,7 +18,7 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private final String[] PUBLIC_ENDPOINTS = {"/users/registration", "/auth/login"};
+    private final String[] PUBLIC_ENDPOINTS = {"/crm/users/registration", "/crm/auth/login"};
 
     @Autowired
     private JwtDecoderConfiguration jwtDecoder;

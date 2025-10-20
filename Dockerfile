@@ -1,5 +1,5 @@
 # ===== STAGE 1: BUILD =====
-FROM maven:3.9-eclipse-temurin-21-alpine AS build
+FROM maven:3.9.11-eclipse-temurin-21 AS build
 WORKDIR /app
 
 COPY . .

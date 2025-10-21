@@ -1,4 +1,4 @@
-package com.crm.project.validator;
+package com.crm.project.validator.custom_validator;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

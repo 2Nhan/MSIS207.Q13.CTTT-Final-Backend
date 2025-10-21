@@ -1,6 +1,6 @@
 package com.crm.project.dto.request;
 
-import com.crm.project.validator.BlankUpdateConstraint;
+import com.crm.project.validator.custom_validator.BlankUpdateConstraint;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;

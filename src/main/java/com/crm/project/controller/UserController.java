@@ -5,10 +5,12 @@ import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
+import com.crm.project.validator.group_sequences.ValidationSequences;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping("/registration")
-    public ResponseEntity<ApiResponse> createUser(@RequestBody @Valid UserCreationRequest request) {
+    public ResponseEntity<ApiResponse> createUser(@RequestBody @Validated(ValidationSequences.class) UserCreationRequest request) {
         UserResponse userResponse = userService.createUser(request);
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponse)

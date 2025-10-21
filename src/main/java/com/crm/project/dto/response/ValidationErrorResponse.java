@@ -11,8 +11,8 @@ import lombok.*;
 public class ValidationErrorResponse {
     private int code;
 
-    @JsonProperty("field_error")
-    private String fieldError;
+    @JsonProperty("error_field")
+    private String errorField;
 
     private String message;
 }

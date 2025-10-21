@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.List;
 import java.util.Comparator;
+import java.util.ArrayList;
 
 @ControllerAdvice
 @Slf4j
@@ -44,7 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidation(MethodArgumentNotValidException exception) {
-        List<ValidationErrorResponse> errors = new java.util.ArrayList<>(exception.getBindingResult()
+        List<ValidationErrorResponse> errors = new ArrayList<>(exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(fieldError -> {
@@ -60,7 +61,7 @@ public class GlobalExceptionHandler {
 
                     return ValidationErrorResponse.builder()
                             .code(validationError.getCode())
-                            .fieldError(fieldError.getField())
+                            .errorField(fieldError.getField())
                             .message(message)
                             .build();
                 })

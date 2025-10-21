@@ -57,6 +57,12 @@ public class UserService {
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
 
+    public UserResponse getSelfInfo(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        return userMapper.toUserResponse(user);
+    }
+
     public UserResponse updateUser(UserUpdateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));

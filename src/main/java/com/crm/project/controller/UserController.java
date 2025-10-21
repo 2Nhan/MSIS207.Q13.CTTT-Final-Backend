@@ -45,6 +45,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<ApiResponse> getSelfInfo(){
+        UserResponse userResponse = userService.getSelfInfo();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(userResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @PutMapping
     public ResponseEntity<ApiResponse> updateUser(@RequestBody @Valid UserUpdateRequest request) {
         UserResponse userResponse = userService.updateUser(request);

@@ -42,7 +42,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<ApiResponse> getAllUsers(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        List<UserResponse> userResponseList = userService.getAllUsers(PageRequest.of(pageNumber-1, pageSize));
+        List<UserResponse> userResponseList = userService.getAllUsers(PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponseList)
                 .build();
@@ -50,15 +50,16 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse> searchUser(@RequestParam("keyword") String keyword ) {
+    public ResponseEntity<ApiResponse> searchUser(@RequestParam("query") String keyword) {
         List<UserResponse> userResponseList = userService.searchUsers(keyword);
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponseList)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
     @GetMapping("/info")
-    public ResponseEntity<ApiResponse> getSelfInfo(){
+    public ResponseEntity<ApiResponse> getSelfInfo() {
         UserResponse userResponse = userService.getSelfInfo();
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponse)

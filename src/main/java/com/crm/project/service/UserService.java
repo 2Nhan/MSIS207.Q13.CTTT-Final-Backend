@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -55,11 +55,18 @@ public class UserService {
 
     public List<UserResponse> searchUsers(String keyword) {
         List<User> usersList = userRepository.findBySearchName(keyword);
+        if(usersList.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
         return usersList.stream().map(userMapper::toUserResponse).toList();
     }
 
-    public List<UserResponse> getAllUsers() {
-        return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
+    public List<UserResponse> getAllUsers(Pageable pageable) {
+        List<User> usersList = userRepository.findAll(pageable).getContent();
+        if(usersList.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+        return usersList.stream().map(userMapper::toUserResponse).toList();
     }
 
     public UserResponse getSelfInfo(){

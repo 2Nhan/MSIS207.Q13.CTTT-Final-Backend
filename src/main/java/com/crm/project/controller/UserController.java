@@ -8,6 +8,7 @@ import com.crm.project.service.UserService;
 import com.crm.project.validator.group_sequences.ValidationSequences;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -39,8 +40,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllUsers() {
-        List<UserResponse> userResponseList = userService.getAllUsers();
+    public ResponseEntity<ApiResponse> getAllUsers(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
+                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        List<UserResponse> userResponseList = userService.getAllUsers(PageRequest.of(pageNumber-1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponseList)
                 .build();

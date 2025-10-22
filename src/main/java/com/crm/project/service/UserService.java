@@ -53,6 +53,11 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    public List<UserResponse> searchUsers(String keyword) {
+        List<User> usersList = userRepository.findBySearchName(keyword);
+        return usersList.stream().map(userMapper::toUserResponse).toList();
+    }
+
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }

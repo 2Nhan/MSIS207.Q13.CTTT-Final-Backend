@@ -47,6 +47,14 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse> searchUser(@RequestParam("keyword") String keyword ) {
+        List<UserResponse> userResponseList = userService.searchUsers(keyword);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(userResponseList)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
     @GetMapping("/info")
     public ResponseEntity<ApiResponse> getSelfInfo(){
         UserResponse userResponse = userService.getSelfInfo();

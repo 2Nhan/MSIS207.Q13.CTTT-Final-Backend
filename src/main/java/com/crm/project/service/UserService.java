@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -38,13 +39,13 @@ public class UserService {
     }
 
     public UserResponse createUser(UserCreationRequest request) {
-        if(userRepository.existsByUsername(request.getUsername())) {
+        if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXSITED);
         }
-        if(userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new AppException(ErrorCode.EMAIL_EXSITED);
         }
-        if(userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
             throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED);
         }
         User user = userMapper.toUser(request);
@@ -53,9 +54,9 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public List<UserResponse> searchUsers(String keyword) {
-        List<User> usersList = userRepository.findBySearchName(keyword);
-        if(usersList.isEmpty()) {
+    public List<UserResponse> searchUsers(String keyword, Pageable pageable) {
+        List<User> usersList = userRepository.findBySearch(keyword, pageable);
+        if (usersList.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);
         }
         return usersList.stream().map(userMapper::toUserResponse).toList();
@@ -63,13 +64,13 @@ public class UserService {
 
     public List<UserResponse> getAllUsers(Pageable pageable) {
         List<User> usersList = userRepository.findAll(pageable).getContent();
-        if(usersList.isEmpty()) {
+        if (usersList.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);
         }
         return usersList.stream().map(userMapper::toUserResponse).toList();
     }
 
-    public UserResponse getSelfInfo(){
+    public UserResponse getSelfInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
         return userMapper.toUserResponse(user);
@@ -79,7 +80,7 @@ public class UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
         userMapper.updateUser(request, user);
-        if(request.getPassword() != null) {
+        if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         userRepository.save(user);

@@ -4,12 +4,14 @@ import com.crm.project.entity.User;
 
 import java.util.Optional;
 
+import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
@@ -51,8 +53,7 @@ public interface UserRepository extends JpaRepository<User, String> {
             )
             HAVING relevance > 1
             ORDER BY relevance DESC
-            LIMIT 50
             """, nativeQuery = true)
-    List<User> findBySearchName(@Param("query") String search);
+    List<User> findBySearch(@Param("query") String search, Pageable pageable);
 
 }

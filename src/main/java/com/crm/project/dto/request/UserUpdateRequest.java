@@ -14,7 +14,7 @@ import lombok.*;
 @Builder
 public class UserUpdateRequest {
 
-    @Size(min = 8, message= "INVALID_PASSWORD")
+    @Size(min = 8, message = "INVALID_PASSWORD")
     private String password;
 
     @BlankUpdateConstraint(message = "BLANK_FIRSTNAME")
@@ -37,3 +37,5 @@ public class UserUpdateRequest {
     @Email(message = "INVALID_EMAIL")
     private String address;
 }
+
+

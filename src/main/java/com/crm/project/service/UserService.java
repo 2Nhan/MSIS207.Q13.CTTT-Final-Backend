@@ -11,6 +11,9 @@ import com.crm.project.mapper.UserMapper;
 import com.crm.project.repository.UserRepository;
 import com.crm.project.utils.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,20 +57,29 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public List<UserResponse> searchUsers(String keyword, Pageable pageable) {
-        List<User> usersList = userRepository.findBySearch(keyword, pageable);
+    public List<UserResponse> searchUsers(String query, Pageable pageable) {
+        List<User> usersList = userRepository.findBySearch(query, pageable);
         if (usersList.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);
         }
         return usersList.stream().map(userMapper::toUserResponse).toList();
     }
 
-    public List<UserResponse> getAllUsers(Pageable pageable) {
-        List<User> usersList = userRepository.findAll(pageable).getContent();
+    public Page<UserResponse> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        if (pageNumber < 1) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+
+        Sort sort = sortOrder.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+        Page<User> usersList = userRepository.findAll(pageable);
         if (usersList.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);
         }
-        return usersList.stream().map(userMapper::toUserResponse).toList();
+        return usersList.map(userMapper::toUserResponse);
     }
 
     public UserResponse getSelfInfo() {
@@ -76,7 +88,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public UserResponse updateUser(UserUpdateRequest request) {
+    public UserResponse updateSelfInfo(UserUpdateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
         userMapper.updateUser(request, user);

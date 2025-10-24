@@ -3,12 +3,15 @@ package com.crm.project.controller;
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.PageResponse;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
 import com.crm.project.validator.group_sequences.ValidationSequences;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,24 +48,20 @@ public class UserController {
                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize,
                                                    @RequestParam(required = false, defaultValue = "id") String sortBy,
                                                    @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
-        Sort sort = null;
-        if (sortOrder.equalsIgnoreCase("ASC")) {
-            sort = Sort.by(sortBy).ascending();
-        } else {
-            sort = Sort.by(sortBy).descending();
-        }
-        List<UserResponse> userResponseList = userService.getAllUsers(PageRequest.of(pageNumber - 1, pageSize, sort));
+
+        Page<UserResponse> userResponseList = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
+
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(userResponseList)
+                .result(new PageResponse<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse> searchUser(@RequestParam("query") String keyword,
+    public ResponseEntity<ApiResponse> searchUser(@RequestParam("query") String query,
                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        List<UserResponse> userResponseList = userService.searchUsers(keyword, PageRequest.of(pageNumber - 1, pageSize));
+        List<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(userResponseList)
                 .build();
@@ -78,9 +77,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PutMapping
-    public ResponseEntity<ApiResponse> updateUser(@RequestBody @Valid UserUpdateRequest request) {
-        UserResponse userResponse = userService.updateUser(request);
+    @PatchMapping
+    public ResponseEntity<ApiResponse> updateSelfInfo(@RequestBody @Valid UserUpdateRequest request) {
+        UserResponse userResponse = userService.updateSelfInfo(request);
         ApiResponse apiResponse = ApiResponse.builder().result(userResponse).build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

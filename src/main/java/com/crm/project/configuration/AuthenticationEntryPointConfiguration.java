@@ -1,6 +1,7 @@
 package com.crm.project.configuration;
 
 import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.AppErrorResponse;
 import com.crm.project.exception.ErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -23,9 +24,14 @@ public class AuthenticationEntryPointConfiguration implements AuthenticationEntr
         response.setStatus(errorCode.getStatusCode().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ApiResponse apiResponse = ApiResponse.builder()
+        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
+                .build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(errorCode.getStatusCode().value())
+                .error(appErrorResponse)
                 .build();
 
         ObjectMapper objectMapper = new ObjectMapper();

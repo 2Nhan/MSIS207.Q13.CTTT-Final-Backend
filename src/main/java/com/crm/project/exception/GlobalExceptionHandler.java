@@ -1,13 +1,15 @@
 package com.crm.project.exception;
 
 import com.crm.project.dto.response.ApiResponse;
-import com.crm.project.dto.response.ValidationErrorResponse;
+import com.crm.project.dto.response.AppErrorResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import java.util.Map;
 import java.util.Objects;
 import java.util.List;
@@ -34,18 +36,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        ApiResponse apiResponse = new ApiResponse();
-
-        apiResponse.setCode(errorCode.getCode());
-        apiResponse.setMessage(errorCode.getMessage());
-
+        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .errorField(exception.getErrorField())
+                .build();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(errorCode.getStatusCode().value())
+                .message("Process Failed")
+                .error(appErrorResponse)
+                .build();
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidation(MethodArgumentNotValidException exception) {
-        List<ValidationErrorResponse> errors = new ArrayList<>(exception.getBindingResult()
+        List<AppErrorResponse> errors = new ArrayList<>(exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(fieldError -> {
@@ -59,18 +66,18 @@ public class GlobalExceptionHandler {
                             ? mapAttribute(validationError.getMessage(), attributes)
                             : validationError.getMessage();
 
-                    return ValidationErrorResponse.builder()
+                    return AppErrorResponse.builder()
                             .code(validationError.getCode())
                             .errorField(fieldError.getField())
                             .message(message)
                             .build();
                 })
                 .toList());
-        errors.sort(Comparator.comparing(ValidationErrorResponse::getCode));
+        errors.sort(Comparator.comparing(AppErrorResponse::getCode));
 
 
         ApiResponse response = ApiResponse.builder()
-                .code(2000)
+                .code(HttpStatus.BAD_REQUEST.value())
                 .message("Validation Failed")
                 .error(errors)
                 .build();

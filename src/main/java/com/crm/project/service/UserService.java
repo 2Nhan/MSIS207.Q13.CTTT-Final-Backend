@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 
@@ -43,13 +44,13 @@ public class UserService {
 
     public UserResponse createUser(UserCreationRequest request) {
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new AppException(ErrorCode.USERNAME_EXSITED);
+            throw new AppException(ErrorCode.USERNAME_EXSITED, "username");
         }
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXSITED);
+            throw new AppException(ErrorCode.EMAIL_EXSITED, "email");
         }
         if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED);
+            throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED, "phone_number");
         }
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));

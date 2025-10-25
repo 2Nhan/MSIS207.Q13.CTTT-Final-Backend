@@ -58,14 +58,6 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public List<UserResponse> searchUsers(String query, Pageable pageable) {
-        List<User> usersList = userRepository.findBySearch(query, pageable);
-        if (usersList.isEmpty()) {
-            throw new AppException(ErrorCode.NO_RESULTS);
-        }
-        return usersList.stream().map(userMapper::toUserResponse).toList();
-    }
-
     public Page<UserResponse> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         if (pageNumber < 1) {
             throw new AppException(ErrorCode.NO_RESULTS);
@@ -77,6 +69,14 @@ public class UserService {
 
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
         Page<User> usersList = userRepository.findAll(pageable);
+        if (usersList.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+        return usersList.map(userMapper::toUserResponse);
+    }
+
+    public Page<UserResponse> searchUsers(String query, Pageable pageable) {
+        Page<User> usersList = userRepository.findBySearch(query, pageable);
         if (usersList.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);
         }

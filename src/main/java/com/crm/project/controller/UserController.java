@@ -11,15 +11,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -61,9 +58,9 @@ public class UserController {
     public ResponseEntity<ApiResponse> searchUser(@RequestParam("query") String query,
                                                   @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        List<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
+        Page<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(userResponseList)
+                .result(new PageResponse<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

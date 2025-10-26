@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -47,6 +48,9 @@ public class Order extends BaseEntity {
 
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

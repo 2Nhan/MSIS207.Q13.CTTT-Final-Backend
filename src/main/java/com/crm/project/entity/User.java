@@ -3,6 +3,8 @@ package com.crm.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -42,4 +44,7 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private boolean deleted = false;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 }

@@ -21,7 +21,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()) || user.isDeleted()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
 

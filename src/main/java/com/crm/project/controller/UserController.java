@@ -74,6 +74,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getUserById(@PathVariable("id") String id) {
+        UserResponse userResponse = userService.getUserById(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(userResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
     @PatchMapping
     public ResponseEntity<ApiResponse> updateSelfInfo(@RequestBody @Valid UserUpdateRequest request) {
         UserResponse userResponse = userService.updateSelfInfo(request);
@@ -81,9 +90,9 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @DeleteMapping
-    public ResponseEntity<ApiResponse> deleteUser(@RequestParam String username) {
-        userService.deleteUser(username);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> deleteUser(@PathVariable("id") String id) {
+        userService.deleteUser(id);
         ApiResponse apiResponse = ApiResponse.builder()
                 .message("DELETED USER")
                 .build();

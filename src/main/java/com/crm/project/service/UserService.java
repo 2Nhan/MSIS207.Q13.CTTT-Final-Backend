@@ -87,6 +87,11 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    public UserResponse getUserById(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        return userMapper.toUserResponse(user);
+    }
+
     public UserResponse updateSelfInfo(UserUpdateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
@@ -98,8 +103,8 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public void deleteUser(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+    public void deleteUser(String id) {
+        User user = userRepository.findByUsername(id).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
         user.setDeleted(true);
         userRepository.save(user);
     }

@@ -45,7 +45,7 @@ public class Order extends BaseEntity {
 
     @Column(name = "order_at")
     private LocalDateTime orderAt;
-
+    
     @Column(name = "delivered_at")
     private LocalDateTime deliveredAt;
 

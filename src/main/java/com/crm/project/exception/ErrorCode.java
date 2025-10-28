@@ -14,6 +14,7 @@ public enum ErrorCode {
     PHONE_NUMBER_EXSITED(1004, "Phone number exsited, this phone has been register", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     NO_RESULTS(1006, "No results", HttpStatus.NOT_FOUND),
+    PRODUCT_NOT_FOUND(1007, "Product not found", HttpStatus.NOT_FOUND),
 
     INVALID_FILE_EXTENSION(1100, "File extension must be .jpg or .png", HttpStatus.BAD_REQUEST),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),

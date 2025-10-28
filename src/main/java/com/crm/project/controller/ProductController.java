@@ -8,15 +8,14 @@ import com.crm.project.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -29,5 +28,24 @@ public class ProductController {
                 .result(productResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PostMapping("/list")
+    public ResponseEntity<ApiResponse> createListOfProducts(@RequestPart("products") List<ProductCreationRequest> requests) {
+        List<ProductResponse> productResponses = productService.createListOfProducts(requests);
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(productResponses)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getProduct(@PathVariable("id") String id) {
+        ProductResponse productResponse = productService.getProduct(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(productResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

@@ -23,4 +23,5 @@ public class ProductCreationRequest {
 
     private BigDecimal price;
 
+    private String unit;
 }

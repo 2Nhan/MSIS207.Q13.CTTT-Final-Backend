@@ -28,6 +28,8 @@ public class Product extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    private String unit;
+
     private int quantity;
 
     @Column(nullable = false)

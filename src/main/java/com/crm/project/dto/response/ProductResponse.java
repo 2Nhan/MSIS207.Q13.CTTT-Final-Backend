@@ -15,7 +15,7 @@ public class ProductResponse {
     private String id;
 
     private String sku;
-    
+
     private String name;
 
     private String description;
@@ -26,4 +26,6 @@ public class ProductResponse {
 
     @JsonProperty("image_url")
     private String imageUrl;
+
+    private String unit;
 }

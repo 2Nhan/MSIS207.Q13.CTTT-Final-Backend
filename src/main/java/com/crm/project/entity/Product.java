@@ -38,6 +38,9 @@ public class Product extends BaseEntity {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "deleted")
+    private boolean deleted;
+
     @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItems;
 }

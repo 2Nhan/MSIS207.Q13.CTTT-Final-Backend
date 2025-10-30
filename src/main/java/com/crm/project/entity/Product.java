@@ -2,6 +2,7 @@ package com.crm.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import java.math.BigDecimal;
 @Builder
 @Entity
 @Table(name = "products")
+@Where(clause = "deleted = false")
 public class Product extends BaseEntity {
 
     @Id

@@ -2,6 +2,7 @@ package com.crm.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Where;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "users")
+@Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id

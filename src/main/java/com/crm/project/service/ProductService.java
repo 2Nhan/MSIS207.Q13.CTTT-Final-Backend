@@ -11,6 +11,10 @@ import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,6 +48,20 @@ public class ProductService {
     public ProductResponse getProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         return productMapper.toProductResponse(product);
+    }
+
+    public Page<ProductResponse> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+        Page<Product> products = productRepository.findAll(pageable);
+
+        if (products.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+        return products.map(productMapper::toProductResponse);
     }
 
     public ImageResponse uploadProductImage(String id, MultipartFile file) {

@@ -59,10 +59,6 @@ public class UserService {
     }
 
     public Page<UserResponse> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortOrder) {
-        if (pageNumber < 1) {
-            throw new AppException(ErrorCode.NO_RESULTS);
-        }
-
         Sort sort = sortOrder.equalsIgnoreCase("ASC")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();

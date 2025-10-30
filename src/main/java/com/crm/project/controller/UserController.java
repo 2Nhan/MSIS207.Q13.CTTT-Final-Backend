@@ -3,6 +3,7 @@ package com.crm.project.controller;
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.PageResponse;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
@@ -26,8 +27,8 @@ public class UserController {
 
     @PostMapping("/avatar")
     public ResponseEntity<ApiResponse> uploadAvatar(@RequestParam("image") MultipartFile file) {
-        userService.uploadAvatar(file);
-        ApiResponse apiResponse = ApiResponse.builder().message("Avatar uploaded").build();
+        ImageResponse imageResponse = userService.uploadAvatar(file);
+        ApiResponse apiResponse = ApiResponse.builder().result(imageResponse).build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 

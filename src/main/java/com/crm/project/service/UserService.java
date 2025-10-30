@@ -3,6 +3,7 @@ package com.crm.project.service;
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.CloudinaryResponse;
+import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.entity.User;
 import com.crm.project.exception.AppException;
@@ -29,7 +30,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
 
-    public void uploadAvatar(MultipartFile file) {
+    public ImageResponse uploadAvatar(MultipartFile file) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
@@ -38,6 +39,7 @@ public class UserService {
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, fileName);
         user.setAvatarUrl(cloudinaryResponse.getUrl());
         userRepository.save(user);
+        return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
     }
 
     public UserResponse createUser(UserCreationRequest request) {

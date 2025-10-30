@@ -1,6 +1,5 @@
 package com.crm.project.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 @Getter
@@ -8,8 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CloudinaryResponse {
-    private String publicId;
-
+public class ImageResponse {
     private String url;
 }

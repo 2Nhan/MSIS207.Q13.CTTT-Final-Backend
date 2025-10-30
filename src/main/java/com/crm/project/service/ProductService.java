@@ -2,6 +2,7 @@ package com.crm.project.service;
 
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.response.CloudinaryResponse;
+import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.entity.Product;
 import com.crm.project.exception.AppException;
@@ -45,6 +46,15 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
+    public ImageResponse uploadProductImage(String id, MultipartFile file) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        UploadFileUtil.assertAllowed(file, UploadFileUtil.IMAGE_PATTERN);
+        String filename = UploadFileUtil.standardizeFileName(file.getOriginalFilename());
+        CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, filename);
+        product.setImageUrl(cloudinaryResponse.getUrl());
+        productRepository.save(product);
+        return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
+    }
 
     public void deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));

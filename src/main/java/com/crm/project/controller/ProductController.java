@@ -3,6 +3,7 @@ package com.crm.project.controller;
 import com.cloudinary.Api;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,15 @@ public class ProductController {
         ProductResponse productResponse = productService.getProduct(id);
         ApiResponse apiResponse = ApiResponse.builder()
                 .result(productResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<ApiResponse> uploadProductImage(@PathVariable("id") String id, @RequestPart("image") MultipartFile file) {
+        ImageResponse imageResponse = productService.uploadProductImage(id, file);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(imageResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -74,11 +74,16 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
+//    @PutMapping("/{id}")
+//    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("id") String id, @RequestBody ProductCreationRequest request) {
+//
+//    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("id") String id) {
         productService.deleteProduct(id);
         ApiResponse apiResponse = ApiResponse.builder()
-                .message("Product deleted")
+                .message("PRODUCT DELETED")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

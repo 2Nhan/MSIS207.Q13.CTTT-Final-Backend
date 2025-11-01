@@ -61,22 +61,20 @@ public final class UploadFileUtil {
         long countRow = 0;
         if (extension.equalsIgnoreCase("csv")) {
             countRow = countCsvRows(file);
-        }
-        else if (extension.equalsIgnoreCase("xls") || extension.equalsIgnoreCase("xlsx")) {
+        } else if (extension.equalsIgnoreCase("xls") || extension.equalsIgnoreCase("xlsx")) {
             countRow = countExcelRows(file);
         }
 
         if (countRow == 0) {
             throw new AppException(ErrorCode.EMPTY_FILE);
-        }
-        else if (countRow > MAX_TOTAL_ROWS + 1){
+        } else if (countRow > MAX_TOTAL_ROWS + 1) {
             throw new AppException(ErrorCode.LIMIT_ROWS_EXCEEDED);
         }
     }
 
     private long countCsvRows(final MultipartFile file) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()))
-            return bufferedReader.lines().count();
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        return bufferedReader.lines().count();
     }
 
     private long countExcelRows(final MultipartFile file) throws IOException {

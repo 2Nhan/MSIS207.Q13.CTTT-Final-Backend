@@ -31,7 +31,7 @@ public class ProductService {
         Product product = productMapper.toProduct(request);
 
         String filename = UploadFileUtil.standardizeFileName(image.getOriginalFilename());
-        UploadFileUtil.assertAllowed(image, UploadFileUtil.IMAGE_PATTERN);
+        UploadFileUtil.checkImage(image, UploadFileUtil.IMAGE_PATTERN);
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
 
         product.setImageUrl(cloudinaryResponse.getUrl());
@@ -40,6 +40,8 @@ public class ProductService {
     }
 
     public List<ProductResponse> createListOfProducts(List<ProductCreationRequest> requests) {
+        List<String> skus = requests.stream().map(ProductCreationRequest::getSku).toList();
+
         List<Product> products = requests.stream().map(productMapper::toProduct).toList();
         productRepository.saveAll(products);
         return products.stream().map(productMapper::toProductResponse).toList();
@@ -66,7 +68,7 @@ public class ProductService {
 
     public ImageResponse uploadProductImage(String id, MultipartFile file) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        UploadFileUtil.assertAllowed(file, UploadFileUtil.IMAGE_PATTERN);
+        UploadFileUtil.checkImage(file, UploadFileUtil.IMAGE_PATTERN);
         String filename = UploadFileUtil.standardizeFileName(file.getOriginalFilename());
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, filename);
         product.setImageUrl(cloudinaryResponse.getUrl());

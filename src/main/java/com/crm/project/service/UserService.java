@@ -35,7 +35,7 @@ public class UserService {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
         String fileName = UploadFileUtil.standardizeFileName(file.getOriginalFilename());
-        UploadFileUtil.assertAllowed(file, UploadFileUtil.IMAGE_PATTERN);
+        UploadFileUtil.checkImage(file, UploadFileUtil.IMAGE_PATTERN);
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, fileName);
         user.setAvatarUrl(cloudinaryResponse.getUrl());
         userRepository.save(user);

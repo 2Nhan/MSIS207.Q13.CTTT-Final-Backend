@@ -21,7 +21,7 @@ public class Product extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String sku;
 
     @Column(nullable = false)
@@ -32,7 +32,7 @@ public class Product extends BaseEntity {
 
     private String unit;
 
-    private int quantity;
+    private Integer quantity;
 
     @Column(nullable = false)
     private BigDecimal price;

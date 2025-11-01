@@ -19,7 +19,7 @@ public class ProductCreationRequest {
 
     private String description;
 
-    private int quantity;
+    private Integer quantity;
 
     private BigDecimal price;
 

@@ -74,6 +74,13 @@ public class ProductService {
         return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
     }
 
+    public ProductResponse updateProduct(String id, ProductCreationRequest request) {
+        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        productMapper.updateProduct(request, product);
+        productRepository.save(product);
+        return productMapper.toProductResponse(product);
+    }
+
     public void deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         product.setDeleted(true);

@@ -20,7 +20,7 @@ public class ProductResponse {
 
     private String description;
 
-    private int quantity;
+    private Integer quantity;
 
     private BigDecimal price;
 

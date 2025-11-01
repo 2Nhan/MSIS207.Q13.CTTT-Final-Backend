@@ -7,6 +7,7 @@ import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.PageResponse;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.service.ProductService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createProduct(@RequestPart(value = "product") ProductCreationRequest request,
+    public ResponseEntity<ApiResponse> createProduct(@RequestPart(value = "product") @Valid ProductCreationRequest request,
                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
         ProductResponse productResponse = productService.createProduct(request, image);
 
@@ -34,7 +35,7 @@ public class ProductController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<ApiResponse> createListOfProducts(@RequestPart("products") List<ProductCreationRequest> requests) {
+    public ResponseEntity<ApiResponse> createListOfProducts(@RequestBody @Valid List<ProductCreationRequest> requests) {
         List<ProductResponse> productResponses = productService.createListOfProducts(requests);
 
         ApiResponse apiResponse = ApiResponse.builder()
@@ -74,10 +75,14 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-//    @PutMapping("/{id}")
-//    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("id") String id, @RequestBody ProductCreationRequest request) {
-//
-//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("id") String id, @RequestBody @Valid ProductCreationRequest request) {
+        ProductResponse productResponse = productService.updateProduct(id, request);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(productResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable("id") String id) {

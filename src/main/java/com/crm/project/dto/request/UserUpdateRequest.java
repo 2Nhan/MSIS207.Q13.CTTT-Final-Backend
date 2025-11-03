@@ -18,11 +18,9 @@ public class UserUpdateRequest {
     private String password;
 
     @BlankUpdateConstraint(message = "BLANK_FIRSTNAME")
-    @JsonProperty("first_name")
     private String firstName;
 
     @BlankUpdateConstraint(message = "BLANK_LASTNAME")
-    @JsonProperty("last_name")
     private String lastName;
 
     @BlankUpdateConstraint(message = "BLANK_EMAIL")
@@ -31,7 +29,6 @@ public class UserUpdateRequest {
 
     @BlankUpdateConstraint(message = "BLANK_PHONE_NUMBER")
     @Pattern(regexp = "^[0-9]{10}$", message = "INVALID_PHONE_NUMBER")
-    @JsonProperty("phone_number")
     private String phoneNumber;
 
     @Email(message = "INVALID_EMAIL")

@@ -19,9 +19,11 @@ public class ProductCreationRequest {
 
     private String description;
 
+    private String unit;
+
     private Integer quantity;
 
     private BigDecimal price;
 
-    private String unit;
+    private String imageUrl;
 }

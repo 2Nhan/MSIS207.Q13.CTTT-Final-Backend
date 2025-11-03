@@ -24,7 +24,6 @@ public class ProductResponse {
 
     private BigDecimal price;
 
-    @JsonProperty("image_url")
     private String imageUrl;
 
     private String unit;

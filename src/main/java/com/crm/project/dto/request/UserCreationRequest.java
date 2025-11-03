@@ -1,4 +1,5 @@
 package com.crm.project.dto.request;
+
 import com.crm.project.validator.group_sequences.BlankCheck;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
@@ -18,15 +19,13 @@ public class UserCreationRequest {
     private String username;
 
     @NotBlank(message = "BLANK_PASSWORD", groups = BlankCheck.class)
-    @Size(min = 8, message= "INVALID_PASSWORD")
+    @Size(min = 8, message = "INVALID_PASSWORD")
     private String password;
 
     @NotBlank(message = "BLANK_FIRSTNAME", groups = BlankCheck.class)
-    @JsonProperty("first_name")
     private String firstName;
 
     @NotBlank(message = "BLANK_LASTNAME", groups = BlankCheck.class)
-    @JsonProperty("last_name")
     private String lastName;
 
     @NotBlank(message = "BLANK_EMAIL", groups = BlankCheck.class)
@@ -35,7 +34,6 @@ public class UserCreationRequest {
 
     @NotBlank(message = "BLANK_PHONE_NUMBER", groups = BlankCheck.class)
     @Pattern(regexp = "^[0-9]{10}$", message = "INVALID_PHONE_NUMBER")
-    @JsonProperty("phone_number")
     private String phoneNumber;
 
     private String address;

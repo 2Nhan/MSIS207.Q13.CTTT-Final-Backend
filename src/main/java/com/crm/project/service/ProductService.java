@@ -1,9 +1,9 @@
 package com.crm.project.service;
 
-import com.crm.project.dto.representation.ProductCsvRepresentation;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.response.CloudinaryResponse;
 import com.crm.project.dto.response.ImageResponse;
+import com.crm.project.dto.response.ImportPreviewResponse;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.entity.Product;
 import com.crm.project.exception.AppException;
@@ -11,6 +11,7 @@ import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.FileUploadUtil;
+import com.crm.project.utils.SystemHeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -42,9 +43,10 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
-    public List<ProductResponse> importProductsFromCsv(MultipartFile file) throws IOException {
-        List<ProductCsvRepresentation> representations = csvService.parseCsvFile(file, ProductCsvRepresentation.class);
-        return representations.stream().map(productMapper::csvToResponse).toList();
+    public ImportPreviewResponse importProductsFromCsv(MultipartFile file) throws IOException {
+        ImportPreviewResponse importPreviewResponse = csvService.parseCsvFile(file);
+        importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
+        return importPreviewResponse;
     }
 
     public List<ProductResponse> createListOfProducts(List<ProductCreationRequest> requests) {

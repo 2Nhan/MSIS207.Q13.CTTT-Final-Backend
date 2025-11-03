@@ -2,10 +2,7 @@ package com.crm.project.controller;
 
 import com.cloudinary.Api;
 import com.crm.project.dto.request.ProductCreationRequest;
-import com.crm.project.dto.response.ApiResponse;
-import com.crm.project.dto.response.ImageResponse;
-import com.crm.project.dto.response.PageResponse;
-import com.crm.project.dto.response.ProductResponse;
+import com.crm.project.dto.response.*;
 import com.crm.project.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,9 +34,9 @@ public class ProductController {
 
     @PostMapping("/csv")
     public ResponseEntity<ApiResponse> importProductsFromCsv(@RequestParam(value = "csv") MultipartFile file) throws IOException {
-        List<ProductResponse> productResponses = productService.importProductsFromCsv(file);
+        ImportPreviewResponse previewResponse = productService.importProductsFromCsv(file);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(productResponses)
+                .result(previewResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

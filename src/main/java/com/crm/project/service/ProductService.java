@@ -1,5 +1,6 @@
 package com.crm.project.service;
 
+import com.crm.project.dto.representation.ProductCsvRepresentation;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.response.CloudinaryResponse;
 import com.crm.project.dto.response.ImageResponse;
@@ -9,7 +10,7 @@ import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
-import com.crm.project.utils.UploadFileUtil;
+import com.crm.project.utils.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -26,17 +28,23 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final CloudinaryService cloudinaryService;
+    private final CsvService csvService;
 
     public ProductResponse createProduct(ProductCreationRequest request, MultipartFile image) {
         Product product = productMapper.toProduct(request);
 
-        String filename = UploadFileUtil.standardizeFileName(image.getOriginalFilename());
-        UploadFileUtil.checkImage(image, UploadFileUtil.IMAGE_PATTERN);
+        String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
+        FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
 
         product.setImageUrl(cloudinaryResponse.getUrl());
         productRepository.save(product);
         return productMapper.toProductResponse(product);
+    }
+
+    public List<ProductResponse> importProductsFromCsv(MultipartFile file) throws IOException {
+        List<ProductCsvRepresentation> representations = csvService.parseCsvFile(file, ProductCsvRepresentation.class);
+        return representations.stream().map(productMapper::csvToResponse).toList();
     }
 
     public List<ProductResponse> createListOfProducts(List<ProductCreationRequest> requests) {
@@ -68,8 +76,8 @@ public class ProductService {
 
     public ImageResponse uploadProductImage(String id, MultipartFile file) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        UploadFileUtil.checkImage(file, UploadFileUtil.IMAGE_PATTERN);
-        String filename = UploadFileUtil.standardizeFileName(file.getOriginalFilename());
+        FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
+        String filename = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, filename);
         product.setImageUrl(cloudinaryResponse.getUrl());
         productRepository.save(product);

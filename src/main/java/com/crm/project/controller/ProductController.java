@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -32,6 +33,15 @@ public class ProductController {
                 .result(productResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PostMapping("/csv")
+    public ResponseEntity<ApiResponse> importProductsFromCsv(@RequestParam(value = "csv") MultipartFile file) throws IOException {
+        List<ProductResponse> productResponses = productService.importProductsFromCsv(file);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .result(productResponses)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @PostMapping("/list")

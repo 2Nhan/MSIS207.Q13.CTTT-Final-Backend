@@ -10,7 +10,7 @@ import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.UserMapper;
 import com.crm.project.repository.UserRepository;
-import com.crm.project.utils.UploadFileUtil;
+import com.crm.project.utils.FileUploadUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -34,8 +34,8 @@ public class UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
 
-        String fileName = UploadFileUtil.standardizeFileName(file.getOriginalFilename());
-        UploadFileUtil.checkImage(file, UploadFileUtil.IMAGE_PATTERN);
+        String fileName = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
+        FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, fileName);
         user.setAvatarUrl(cloudinaryResponse.getUrl());
         userRepository.save(user);

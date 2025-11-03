@@ -1,11 +1,12 @@
 package com.crm.project.service;
 
-import com.crm.project.exception.AppException;
-import com.crm.project.exception.ErrorCode;
+
+import com.crm.project.dto.response.ImportPreviewResponse;
 import com.crm.project.utils.FileUploadUtil;
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
-import com.opencsv.bean.HeaderColumnNameMappingStrategy;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,27 +14,44 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 @Service
 public class CsvService {
-    public <T> List<T> parseCsvFile(MultipartFile file, Class<T> csvClass) throws IOException {
+    public ImportPreviewResponse parseCsvFile(MultipartFile file) throws IOException {
         FileUploadUtil.checkContentType(file);
 
-        Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream()));
+        List<Map<String, String>> rows = new ArrayList<>();
 
-        HeaderColumnNameMappingStrategy<T> strategy = new HeaderColumnNameMappingStrategy<>();
-        strategy.setType(csvClass);
+        Reader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8));
 
-        CsvToBean<T> csvToBean = new CsvToBeanBuilder<T>(reader)
-                .withMappingStrategy(strategy)
-                .withIgnoreEmptyLine(true)
-                .withIgnoreLeadingWhiteSpace(true)
+        CSVFormat format = CSVFormat.DEFAULT.builder()
+                .setHeader()
+                .setSkipHeaderRecord(true)
+                .setIgnoreEmptyLines(true)
+                .setTrim(true)
                 .build();
 
-        List<T> list = csvToBean.parse();
+        CSVParser parser = format.parse(reader);
 
-        FileUploadUtil.checkImportRows(list.size());
-        return list;
+        Set<String> headers = parser.getHeaderMap().keySet();
+
+        for (CSVRecord record : parser) {
+            Map<String, String> row = new LinkedHashMap<>();
+            for (String header : headers) {
+                row.put(header, record.get(header));
+            }
+            rows.add(row);
+        }
+
+        return ImportPreviewResponse.builder()
+                .userHeader(headers)
+                .data(rows)
+                .build();
     }
 }

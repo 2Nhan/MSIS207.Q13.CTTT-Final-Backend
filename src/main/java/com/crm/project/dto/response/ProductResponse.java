@@ -1,6 +1,7 @@
 package com.crm.project.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -20,11 +21,21 @@ public class ProductResponse {
 
     private String description;
 
+    private String subtitle;
+
+    private String brand;
+
+    private String category;
+
     private Integer quantity;
+
+    private String status;
 
     private BigDecimal price;
 
-    private String imageUrl;
+    private BigDecimal discount;
 
-    private String unit;
+    private String discountType;
+
+    private String imageUrl;
 }

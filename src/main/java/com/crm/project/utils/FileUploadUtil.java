@@ -22,7 +22,7 @@ public final class FileUploadUtil {
     public static final String DATE_FORMAT = "yyyyMMddHHmmss";
 
     public static final String IMPORT_PATTERN = "([^\\s]+(\\.(?i)(csv|xls|xlsx))$)";
-    public static final int MAX_TOTAL_ROWS = 500;
+    public static final int MAX_TOTAL_ROWS = 100;
     public static final List TYPE = List.of("text/csv", "xls", "xlsx");
 
     public static void checkContentType(MultipartFile file) {

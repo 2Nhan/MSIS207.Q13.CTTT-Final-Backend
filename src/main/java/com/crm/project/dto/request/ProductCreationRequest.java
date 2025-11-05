@@ -19,11 +19,19 @@ public class ProductCreationRequest {
 
     private String description;
 
-    private String unit;
+    private String subtitle;
+
+    private String brand;
+
+    private String category;
 
     private Integer quantity;
 
+    private String status;
+
     private BigDecimal price;
 
-    private String imageUrl;
+    private BigDecimal discount;
+
+    private String discountType;
 }

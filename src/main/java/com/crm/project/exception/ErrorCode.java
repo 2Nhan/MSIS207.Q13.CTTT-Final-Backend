@@ -15,6 +15,7 @@ public enum ErrorCode {
     UNAUTHENTICATED(1005, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     NO_RESULTS(1006, "No results", HttpStatus.NOT_FOUND),
     PRODUCT_NOT_FOUND(1007, "Product not found", HttpStatus.NOT_FOUND),
+    PRODUCT_SKU_EXISTED(1008, "Product sku already exists", HttpStatus.BAD_REQUEST),
 
     INVALID_FILE_EXTENSION(1100, "File type is not supported", HttpStatus.BAD_REQUEST),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),

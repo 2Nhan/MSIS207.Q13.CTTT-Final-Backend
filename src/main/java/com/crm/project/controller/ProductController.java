@@ -1,6 +1,5 @@
 package com.crm.project.controller;
 
-import com.cloudinary.Api;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.response.*;
 import com.crm.project.service.ProductService;
@@ -27,7 +26,7 @@ public class ProductController {
         ProductResponse productResponse = productService.createProduct(request, image);
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(productResponse)
+                .data(productResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
@@ -36,7 +35,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> importProductsFromCsv(@RequestParam(value = "csv") MultipartFile file) throws IOException {
         ImportPreviewResponse previewResponse = productService.importProductsFromCsv(file);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(previewResponse)
+                .data(previewResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -46,7 +45,7 @@ public class ProductController {
         List<ProductResponse> productResponses = productService.createListOfProducts(requests);
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(productResponses)
+                .data(productResponses)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
@@ -55,7 +54,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getProduct(@PathVariable("id") String id) {
         ProductResponse productResponse = productService.getProduct(id);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(productResponse)
+                .data(productResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -68,7 +67,7 @@ public class ProductController {
         Page<ProductResponse> productResponseList = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(new PageResponse<>(productResponseList))
+                .data(new PageResponse<>(productResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -77,7 +76,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> uploadProductImage(@PathVariable("id") String id, @RequestPart("image") MultipartFile file) {
         ImageResponse imageResponse = productService.uploadProductImage(id, file);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(imageResponse)
+                .data(imageResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -86,7 +85,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> updateProduct(@PathVariable("id") String id, @RequestBody @Valid ProductCreationRequest request) {
         ProductResponse productResponse = productService.updateProduct(id, request);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(productResponse)
+                .data(productResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

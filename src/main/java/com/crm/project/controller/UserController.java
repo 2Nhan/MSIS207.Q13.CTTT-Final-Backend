@@ -28,7 +28,7 @@ public class UserController {
     @PostMapping("/avatar")
     public ResponseEntity<ApiResponse> uploadAvatar(@RequestParam("image") MultipartFile file) {
         ImageResponse imageResponse = userService.uploadAvatar(file);
-        ApiResponse apiResponse = ApiResponse.builder().result(imageResponse).build();
+        ApiResponse apiResponse = ApiResponse.builder().data(imageResponse).build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
@@ -36,7 +36,7 @@ public class UserController {
     public ResponseEntity<ApiResponse> createUser(@RequestBody @Validated(ValidationSequences.class) UserCreationRequest request) {
         UserResponse userResponse = userService.createUser(request);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(userResponse)
+                .data(userResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
@@ -50,7 +50,7 @@ public class UserController {
         Page<UserResponse> userResponseList = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(new PageResponse<>(userResponseList))
+                .data(new PageResponse<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -61,7 +61,7 @@ public class UserController {
                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         Page<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(new PageResponse<>(userResponseList))
+                .data(new PageResponse<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -70,7 +70,7 @@ public class UserController {
     public ResponseEntity<ApiResponse> getSelfInfo() {
         UserResponse userResponse = userService.getSelfInfo();
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(userResponse)
+                .data(userResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -79,7 +79,7 @@ public class UserController {
     public ResponseEntity<ApiResponse> getUserById(@PathVariable("id") String id) {
         UserResponse userResponse = userService.getUserById(id);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(userResponse)
+                .data(userResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -87,7 +87,7 @@ public class UserController {
     @PatchMapping
     public ResponseEntity<ApiResponse> updateSelfInfo(@RequestBody @Valid UserUpdateRequest request) {
         UserResponse userResponse = userService.updateSelfInfo(request);
-        ApiResponse apiResponse = ApiResponse.builder().result(userResponse).build();
+        ApiResponse apiResponse = ApiResponse.builder().data(userResponse).build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 

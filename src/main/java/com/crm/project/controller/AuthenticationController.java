@@ -22,7 +22,7 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         AuthenticationResponse authenticationResponse = authenticationService.login(loginRequest);
         ApiResponse apiResponse = ApiResponse.builder()
-                .result(authenticationResponse)
+                .data(authenticationResponse)
                 .build();
         return ResponseEntity.ok(apiResponse);
     }

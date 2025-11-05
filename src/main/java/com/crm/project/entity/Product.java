@@ -30,12 +30,24 @@ public class Product extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    private String unit;
+    @Column(columnDefinition = "TEXT")
+    private String subtitle;
+
+    private String brand;
+
+    private String category;
 
     private Integer quantity;
 
+    private String status;
+
     @Column(nullable = false)
     private BigDecimal price;
+
+    private BigDecimal discount;
+
+    @Column(name = "discount_type")
+    private String discountType;
 
     @Column(name = "image_url")
     private String imageUrl;

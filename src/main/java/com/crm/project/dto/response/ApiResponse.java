@@ -11,11 +11,11 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse {
     @Builder.Default
-    private int code = 1000;
+    private int code = 200;
 
     private String message;
 
-    private Object result;
+    private Object data;
 
     private Object error;
 }

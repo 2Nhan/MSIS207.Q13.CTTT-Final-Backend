@@ -51,6 +51,9 @@ public class ProductService {
 
     public List<ProductResponse> createListOfProducts(List<ProductCreationRequest> requests) {
         List<String> skus = requests.stream().map(ProductCreationRequest::getSku).toList();
+        if (productRepository.existsBySkuIn(skus)) {
+            throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED);
+        }
 
         List<Product> products = requests.stream().map(productMapper::toProduct).toList();
         productRepository.saveAll(products);

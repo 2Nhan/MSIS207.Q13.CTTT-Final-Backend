@@ -13,7 +13,8 @@ public class ApiResponse {
     @Builder.Default
     private int code = 200;
 
-    private String message;
+    @Builder.Default
+    private String message = "Process succeed";
 
     private Object data;
 

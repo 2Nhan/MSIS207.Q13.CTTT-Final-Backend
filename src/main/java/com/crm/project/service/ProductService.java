@@ -30,6 +30,7 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final CloudinaryService cloudinaryService;
     private final CsvService csvService;
+    private final ExcelService excelService;
 
     public ProductResponse createProduct(ProductCreationRequest request, MultipartFile image) {
         Product product = productMapper.toProduct(request);
@@ -45,6 +46,12 @@ public class ProductService {
 
     public ImportPreviewResponse importProductsFromCsv(MultipartFile file) throws IOException {
         ImportPreviewResponse importPreviewResponse = csvService.parseCsvFile(file);
+        importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
+        return importPreviewResponse;
+    }
+
+    public ImportPreviewResponse importProductsFromExcel(MultipartFile file) throws IOException {
+        ImportPreviewResponse importPreviewResponse = excelService.parseExcelFile(file);
         importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
         return importPreviewResponse;
     }

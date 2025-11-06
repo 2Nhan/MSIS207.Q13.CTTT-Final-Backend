@@ -34,4 +34,7 @@ public class ProductCreationRequest {
     private BigDecimal discount;
 
     private String discountType;
+
+    private String imageUrl;
+
 }

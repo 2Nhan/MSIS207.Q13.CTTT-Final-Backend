@@ -19,8 +19,6 @@ public class PageResponse<T> {
 
     private int pageNumber;
 
-    private int pageSize;
-
     private int totalPages;
 
     public PageResponse(Page<T> page) {
@@ -28,7 +26,6 @@ public class PageResponse<T> {
         this.hasPre = page.hasPrevious();
         this.hasNext = page.hasNext();
         this.pageNumber = page.getNumber() + 1;
-        this.pageSize = page.getSize();
         this.totalPages = page.getTotalPages();
     }
 }

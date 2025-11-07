@@ -84,7 +84,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping
+    @PutMapping
     public ResponseEntity<ApiResponse> updateSelfInfo(@RequestBody @Valid UserUpdateRequest request) {
         UserResponse userResponse = userService.updateSelfInfo(request);
         ApiResponse apiResponse = ApiResponse.builder().data(userResponse).build();

@@ -12,7 +12,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: false
+    show-sql: true
 jwt:
   key: ${SECRET_KEY}
   access_duration: ${ACCESS_TOKEN_DURATION}

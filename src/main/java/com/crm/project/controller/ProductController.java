@@ -21,7 +21,7 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse> createProduct(@RequestPart(value = "product") @Valid ProductCreationRequest request,
+    public ResponseEntity<ApiResponse> createProduct(@RequestPart(value = "data") @Valid ProductCreationRequest request,
                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
         ProductResponse productResponse = productService.createProduct(request, image);
 

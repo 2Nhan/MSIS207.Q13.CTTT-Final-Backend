@@ -49,6 +49,8 @@ public class CsvService {
             rows.add(row);
         }
 
+        FileUploadUtil.checkImportRows(rows.size());
+
         return ImportPreviewResponse.builder()
                 .userHeader(headers)
                 .data(rows)

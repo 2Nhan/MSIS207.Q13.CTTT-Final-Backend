@@ -35,7 +35,7 @@ public class ExcelService {
                 Cell cell = row.getCell(i, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
                 String value = (cell == null) ? "" : formatCell(cell);
-                
+
                 if (!value.isEmpty()) {
                     rowMap.put(headerList.get(i), value);
                 }
@@ -43,6 +43,8 @@ public class ExcelService {
 
             dataRows.add(rowMap);
         }
+
+        FileUploadUtil.checkImportRows(dataRows.size());
 
         return ImportPreviewResponse.builder()
                 .userHeader(new LinkedHashSet<>(headerList)) // Set nhưng vẫn giữ thứ tự

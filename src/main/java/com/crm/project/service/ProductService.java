@@ -33,6 +33,9 @@ public class ProductService {
     private final ExcelService excelService;
 
     public ProductResponse createProduct(ProductCreationRequest request, MultipartFile image) {
+        if (productRepository.existsBySku(request.getSku())) {
+            throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED, "sku");
+        }
         Product product = productMapper.toProduct(request);
 
         String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());

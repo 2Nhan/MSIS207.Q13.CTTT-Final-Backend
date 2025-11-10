@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, String> {
     boolean existsBySkuIn(List<String> skus);
+
+    boolean existsBySku(String sku);
 }

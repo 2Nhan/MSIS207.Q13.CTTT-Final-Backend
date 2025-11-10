@@ -1,6 +1,7 @@
 package com.crm.project.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class ProductCreationRequest {
-
+    @NotBlank(message = "BLANK_SKU")
     private String sku;
 
     @NotBlank(message = "BLANK_PRODUCT_NAME")
@@ -23,12 +24,15 @@ public class ProductCreationRequest {
 
     private String brand;
 
+    @NotBlank(message = "BLANK_CATEGORY")
     private String category;
 
     private Integer quantity;
 
+    @NotBlank(message = "BLANK_STATUS")
     private String status;
 
+    @NotNull(message = "BLANK_DISCOUNT")
     private BigDecimal price;
 
     private BigDecimal discount;

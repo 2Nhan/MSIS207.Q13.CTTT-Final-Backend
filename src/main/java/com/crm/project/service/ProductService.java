@@ -37,12 +37,14 @@ public class ProductService {
             throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED, "sku");
         }
         Product product = productMapper.toProduct(request);
+        if (image != null || !image.isEmpty()) {
+            String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
+            FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
+            CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
 
-        String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
-        FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
-        CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
+            product.setImageUrl(cloudinaryResponse.getUrl());
+        }
 
-        product.setImageUrl(cloudinaryResponse.getUrl());
         productRepository.save(product);
         return productMapper.toProductResponse(product);
     }

@@ -31,6 +31,7 @@ public class AuthenticationEntryPointConfiguration implements AuthenticationEntr
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .code(errorCode.getStatusCode().value())
+                .message("Process Failed")
                 .error(appErrorResponse)
                 .build();
 

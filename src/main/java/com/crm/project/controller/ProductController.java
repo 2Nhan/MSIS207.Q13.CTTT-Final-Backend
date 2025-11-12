@@ -1,6 +1,7 @@
 package com.crm.project.controller;
 
 import com.crm.project.dto.request.ProductCreationRequest;
+import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.*;
 import com.crm.project.service.ProductService;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public ResponseEntity<ApiResponse> createProduct(@RequestPart(value = "data") @Valid ProductCreationRequest request,
                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
         ProductResponse productResponse = productService.createProduct(request, image);
@@ -77,7 +78,8 @@ public class ProductController {
         Page<ProductResponse> productResponseList = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .data(new PageResponse<>(productResponseList))
+                .data(productResponseList.getContent())
+                .pagination(new PageResponse<>(productResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -92,7 +94,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("id") String id, @RequestBody @Valid ProductCreationRequest request) {
+    public ResponseEntity<ApiResponse> updateProduct(@PathVariable("id") String id, @RequestBody @Valid ProductUpdateRequest request) {
         ProductResponse productResponse = productService.updateProduct(id, request);
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(productResponse)

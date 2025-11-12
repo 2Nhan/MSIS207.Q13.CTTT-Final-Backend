@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class PageResponse<T> {
-    private List<T> content;
 
     private boolean hasPre;
 
@@ -22,7 +21,6 @@ public class PageResponse<T> {
     private int totalPages;
 
     public PageResponse(Page<T> page) {
-        this.content = page.getContent();
         this.hasPre = page.hasPrevious();
         this.hasNext = page.hasNext();
         this.pageNumber = page.getNumber() + 1;

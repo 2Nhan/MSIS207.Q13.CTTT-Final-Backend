@@ -32,7 +32,7 @@ public class ProductCreationRequest {
     @NotBlank(message = "BLANK_STATUS")
     private String status;
 
-    @NotNull(message = "BLANK_DISCOUNT")
+    @NotNull(message = "BLANK_PRICE")
     private BigDecimal price;
 
     private BigDecimal discount;

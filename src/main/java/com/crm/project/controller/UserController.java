@@ -50,7 +50,8 @@ public class UserController {
         Page<UserResponse> userResponseList = userService.getAllUsers(pageNumber, pageSize, sortBy, sortOrder);
 
         ApiResponse apiResponse = ApiResponse.builder()
-                .data(new PageResponse<>(userResponseList))
+                .data(userResponseList.getContent())
+                .pagination(new PageResponse<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -61,7 +62,8 @@ public class UserController {
                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         Page<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
-                .data(new PageResponse<>(userResponseList))
+                .data(userResponseList.getContent())
+                .pagination(new PageResponse<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

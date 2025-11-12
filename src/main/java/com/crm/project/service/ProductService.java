@@ -1,6 +1,7 @@
 package com.crm.project.service;
 
 import com.crm.project.dto.request.ProductCreationRequest;
+import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.CloudinaryResponse;
 import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.ImportPreviewResponse;
@@ -101,8 +102,11 @@ public class ProductService {
         return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
     }
 
-    public ProductResponse updateProduct(String id, ProductCreationRequest request) {
+    public ProductResponse updateProduct(String id, ProductUpdateRequest request) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        if (productRepository.existsBySku(request.getSku())) {
+            throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED);
+        }
         productMapper.updateProduct(request, product);
         productRepository.save(product);
         return productMapper.toProductResponse(product);

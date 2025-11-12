@@ -19,4 +19,6 @@ public class ApiResponse {
     private Object data;
 
     private Object error;
+
+    private Object pagination;
 }

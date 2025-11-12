@@ -19,6 +19,7 @@ public enum ValidationError {
     BLANK_SKU(2009, "PLease fill in sku", HttpStatus.BAD_REQUEST),
     BLANK_CATEGORY(2010, "PLease fill in category", HttpStatus.BAD_REQUEST),
     BLANK_PRICE(2011, "PLease fill in price", HttpStatus.BAD_REQUEST),
+    BLANK_STATUS(2012, "PLease fill in status", HttpStatus.BAD_REQUEST),
 
     INVALID_USERNAME(3001, "Username must have {min}-{max} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(3002, "Password must have at least {min} characters", HttpStatus.BAD_REQUEST),

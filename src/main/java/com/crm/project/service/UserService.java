@@ -93,6 +93,12 @@ public class UserService {
     public UserResponse updateSelfInfo(UserUpdateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
+            throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED, "phone_number");
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new AppException(ErrorCode.EMAIL_EXSITED, "email");
+        }
         userMapper.updateUser(request, user);
         if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));

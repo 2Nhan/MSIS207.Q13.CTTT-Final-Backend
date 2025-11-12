@@ -1,6 +1,7 @@
 package com.crm.project.mapper;
 
 import com.crm.project.dto.request.ProductCreationRequest;
+import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.entity.Product;
 import org.mapstruct.*;
@@ -13,5 +14,5 @@ public interface ProductMapper {
 
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateProduct(ProductCreationRequest request, @MappingTarget Product product);
+    void updateProduct(ProductUpdateRequest request, @MappingTarget Product product);
 }

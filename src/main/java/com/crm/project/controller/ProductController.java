@@ -34,21 +34,15 @@ public class ProductController {
     }
 
     @PostMapping("/csv")
-    public ResponseEntity<ApiResponse> importProductsFromCsv(@RequestParam(value = "file") MultipartFile file) throws IOException {
+    public ResponseEntity<ImportPreviewResponse> importProductsFromCsv(@RequestParam(value = "file") MultipartFile file) throws IOException {
         ImportPreviewResponse previewResponse = productService.importProductsFromCsv(file);
-        ApiResponse apiResponse = ApiResponse.builder()
-                .data(previewResponse)
-                .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(previewResponse);
     }
 
     @PostMapping("/excel")
-    public ResponseEntity<ApiResponse> importProductsFromExcel(@RequestParam(value = "file") MultipartFile file) throws IOException {
+    public ResponseEntity<ImportPreviewResponse> importProductsFromExcel(@RequestParam(value = "file") MultipartFile file) throws IOException {
         ImportPreviewResponse previewResponse = productService.importProductsFromExcel(file);
-        ApiResponse apiResponse = ApiResponse.builder()
-                .data(previewResponse)
-                .build();
-        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+        return ResponseEntity.status(HttpStatus.OK).body(previewResponse);
     }
 
     @PostMapping("/list")

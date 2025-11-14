@@ -7,8 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -19,8 +21,6 @@ import java.util.ArrayList;
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    private static final String MIN_ATTRIBUTE = "min";
-    private static final String MAX_ATTRIBUTE = "max";
 
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingException(Exception exception) {
@@ -49,6 +49,34 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public ResponseEntity<ApiResponse> handlingMissingServletRequestPartException(
+            MissingServletRequestPartException exception) {
+
+        String part = exception.getRequestPartName();
+        ErrorCode errorCode = ErrorCode.INVALID_REQUEST_PART;
+
+        Map<String, Object> attributes = Map.of(
+                "part", part
+        );
+
+        // build dynamic message
+        String finalMessage = mapAttributes(errorCode.getMessage(), attributes);
+
+        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
+                .code(errorCode.getCode())
+                .message(finalMessage)
+                .build();
+
+        ApiResponse apiResponse = ApiResponse.builder()
+                .code(errorCode.getStatusCode().value())
+                .message("Missing request part")
+                .error(appErrorResponse)
+                .build();
+
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+    
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidation(MethodArgumentNotValidException exception) {
@@ -63,7 +91,7 @@ public class GlobalExceptionHandler {
                     Map attributes = violationConstraint.getConstraintDescriptor().getAttributes();
 
                     String message = Objects.nonNull(attributes)
-                            ? mapAttribute(validationError.getMessage(), attributes)
+                            ? mapAttributes(validationError.getMessage(), attributes)
                             : validationError.getMessage();
 
                     return AppErrorResponse.builder()
@@ -94,12 +122,16 @@ public class GlobalExceptionHandler {
     }
 
 
-    private String mapAttribute(String message, Map<String, Object> attributes) {
-        String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));
+    private String mapAttributes(String template, Map<String, Object> attributes) {
+        if (attributes == null || attributes.isEmpty()) {
+            return template;
+        }
 
-        String maxValue = String.valueOf(attributes.get(MAX_ATTRIBUTE));
-
-        return message.replace("{" + MIN_ATTRIBUTE + "}", minValue)
-                .replace("{" + MAX_ATTRIBUTE + "}", maxValue);
+        String result = template;
+        for (var entry : attributes.entrySet()) {
+            String placeholder = "{" + entry.getKey() + "}";
+            result = result.replace(placeholder, String.valueOf(entry.getValue()));
+        }
+        return result;
     }
 }

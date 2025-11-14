@@ -1,10 +1,11 @@
 package com.crm.project.service;
 
+import com.crm.project.dto.request.MatchingRequest;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.CloudinaryResponse;
 import com.crm.project.dto.response.ImageResponse;
-import com.crm.project.dto.response.ImportPreviewResponse;
+import com.crm.project.dto.response.ImportResponse;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.entity.Product;
 import com.crm.project.exception.AppException;
@@ -12,7 +13,6 @@ import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.FileUploadUtil;
-import com.crm.project.utils.SystemHeaderUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,17 +50,18 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
-    public ImportPreviewResponse importProductsFromCsv(MultipartFile file) throws IOException {
-        ImportPreviewResponse importPreviewResponse = csvService.parseCsvFile(file);
-        importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
-        return importPreviewResponse;
+    public List<ProductResponse> importProductsFromCsv(MatchingRequest matching, MultipartFile file) throws IOException {
+        ImportResponse importResponse = csvService.parseCsvFile(matching.getMatching(), file);
+        List<Product> products = importResponse.getData().stream().map(productMapper::importToProduct).toList();
+//        productRepository.saveAll(products);
+        return products.stream().map(productMapper::toProductResponse).toList();
     }
 
-    public ImportPreviewResponse importProductsFromExcel(MultipartFile file) throws IOException {
-        ImportPreviewResponse importPreviewResponse = excelService.parseExcelFile(file);
-        importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
-        return importPreviewResponse;
-    }
+//    public ImportPreviewResponse importProductsFromExcel(MultipartFile file) throws IOException {
+//        ImportPreviewResponse importPreviewResponse = excelService.parseExcelFile(file);
+//        importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
+//        return importPreviewResponse;
+//    }
 
     public List<ProductResponse> createListOfProducts(List<ProductCreationRequest> requests) {
         List<String> skus = requests.stream().map(ProductCreationRequest::getSku).toList();

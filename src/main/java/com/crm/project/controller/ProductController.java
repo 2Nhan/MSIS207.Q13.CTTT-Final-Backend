@@ -1,5 +1,6 @@
 package com.crm.project.controller;
 
+import com.crm.project.dto.request.MatchingRequest;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.*;
@@ -34,16 +35,19 @@ public class ProductController {
     }
 
     @PostMapping("/csv")
-    public ResponseEntity<ImportPreviewResponse> importProductsFromCsv(@RequestParam(value = "file") MultipartFile file) throws IOException {
-        ImportPreviewResponse previewResponse = productService.importProductsFromCsv(file);
-        return ResponseEntity.status(HttpStatus.OK).body(previewResponse);
+    public ResponseEntity<ApiResponse> importProductsFromCsv(@RequestPart(value = "matching") MatchingRequest matching, @RequestPart(value = "file") MultipartFile file) throws IOException {
+        List<ProductResponse> productResponses = productService.importProductsFromCsv(matching, file);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(productResponses)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PostMapping("/excel")
-    public ResponseEntity<ImportPreviewResponse> importProductsFromExcel(@RequestParam(value = "file") MultipartFile file) throws IOException {
-        ImportPreviewResponse previewResponse = productService.importProductsFromExcel(file);
-        return ResponseEntity.status(HttpStatus.OK).body(previewResponse);
-    }
+//    @PostMapping("/excel")
+//    public ResponseEntity<ImportPreviewResponse> importProductsFromExcel(@RequestParam(value = "file") MultipartFile file) throws IOException {
+//        ImportPreviewResponse previewResponse = productService.importProductsFromExcel(file);
+//        return ResponseEntity.status(HttpStatus.OK).body(previewResponse);
+//    }
 
     @PostMapping("/list")
     public ResponseEntity<ApiResponse> createListOfProducts(@RequestBody @Valid List<ProductCreationRequest> requests) {

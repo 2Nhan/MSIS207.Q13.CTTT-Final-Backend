@@ -1,7 +1,9 @@
 package com.crm.project.service;
 
 
-import com.crm.project.dto.response.ImportPreviewResponse;
+import com.crm.project.dto.response.ImportResponse;
+import com.crm.project.exception.AppException;
+import com.crm.project.exception.ErrorCode;
 import com.crm.project.utils.FileUploadUtil;
 
 import org.apache.commons.csv.CSVFormat;
@@ -17,13 +19,12 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 @Service
 public class CsvService {
-    public ImportPreviewResponse parseCsvFile(MultipartFile file) throws IOException {
+    public ImportResponse parseCsvFile(Map<String, String> matching, MultipartFile file) throws IOException {
         FileUploadUtil.checkContentType(file);
 
         List<Map<String, String>> rows = new ArrayList<>();
@@ -39,20 +40,22 @@ public class CsvService {
 
         CSVParser parser = format.parse(reader);
 
-        Set<String> headers = parser.getHeaderMap().keySet();
+        List<String> headers = parser.getHeaderNames();
 
         for (CSVRecord record : parser) {
             Map<String, String> row = new LinkedHashMap<>();
-            for (String header : headers) {
-                row.put(header, record.get(header));
+            for (String key : matching.keySet()) {
+                if (!headers.contains(key)) {
+                    throw new AppException(ErrorCode.WRONG_MATCHING);
+                }
+                row.put(matching.get(key), record.get(key));
             }
             rows.add(row);
         }
 
         FileUploadUtil.checkImportRows(rows.size());
 
-        return ImportPreviewResponse.builder()
-                .userHeader(headers)
+        return ImportResponse.builder()
                 .data(rows)
                 .build();
     }

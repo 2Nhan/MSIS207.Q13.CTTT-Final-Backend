@@ -31,7 +31,7 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final CloudinaryService cloudinaryService;
     private final CsvService csvService;
-    private final ExcelService excelService;
+
 
     public ProductResponse createProduct(ProductCreationRequest request, MultipartFile image) {
         if (productRepository.existsBySku(request.getSku())) {
@@ -53,23 +53,10 @@ public class ProductService {
     public List<ProductResponse> importProductsFromCsv(MatchingRequest matching, MultipartFile file) throws IOException {
         ImportResponse importResponse = csvService.parseCsvFile(matching.getMatching(), file);
         List<Product> products = importResponse.getData().stream().map(productMapper::importToProduct).toList();
-//        productRepository.saveAll(products);
-        return products.stream().map(productMapper::toProductResponse).toList();
-    }
-
-//    public ImportPreviewResponse importProductsFromExcel(MultipartFile file) throws IOException {
-//        ImportPreviewResponse importPreviewResponse = excelService.parseExcelFile(file);
-//        importPreviewResponse.setSystemHeader(SystemHeaderUtil.getSystemHeaders(ProductCreationRequest.class));
-//        return importPreviewResponse;
-//    }
-
-    public List<ProductResponse> createListOfProducts(List<ProductCreationRequest> requests) {
-        List<String> skus = requests.stream().map(ProductCreationRequest::getSku).toList();
+        List<String> skus = products.stream().map(Product::getSku).toList();
         if (productRepository.existsBySkuIn(skus)) {
             throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED);
         }
-
-        List<Product> products = requests.stream().map(productMapper::toProduct).toList();
         productRepository.saveAll(products);
         return products.stream().map(productMapper::toProductResponse).toList();
     }

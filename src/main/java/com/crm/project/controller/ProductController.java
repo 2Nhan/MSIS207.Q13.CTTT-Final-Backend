@@ -43,22 +43,6 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-//    @PostMapping("/excel")
-//    public ResponseEntity<ImportPreviewResponse> importProductsFromExcel(@RequestParam(value = "file") MultipartFile file) throws IOException {
-//        ImportPreviewResponse previewResponse = productService.importProductsFromExcel(file);
-//        return ResponseEntity.status(HttpStatus.OK).body(previewResponse);
-//    }
-
-    @PostMapping("/list")
-    public ResponseEntity<ApiResponse> createListOfProducts(@RequestBody @Valid List<ProductCreationRequest> requests) {
-        List<ProductResponse> productResponses = productService.createListOfProducts(requests);
-
-        ApiResponse apiResponse = ApiResponse.builder()
-                .data(productResponses)
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getProduct(@PathVariable("id") String id) {
         ProductResponse productResponse = productService.getProduct(id);

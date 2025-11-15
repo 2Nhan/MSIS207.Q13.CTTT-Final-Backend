@@ -119,6 +119,9 @@ public class ProductService {
 
     public ImageResponse uploadProductImage(String id, MultipartFile file) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+        if (file == null || file.isEmpty()) {
+            throw new AppException(ErrorCode.MISSING_FILE);
+        }
         FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
         String filename = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
         CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, filename);

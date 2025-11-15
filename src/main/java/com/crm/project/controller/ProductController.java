@@ -84,8 +84,8 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<ApiResponse> uploadProductImage(@PathVariable("id") String id, @RequestPart("image") MultipartFile file) {
+    @PutMapping("/image/{id}")
+    public ResponseEntity<ApiResponse> uploadProductImage(@PathVariable("id") String id, @RequestPart(value = "image", required = false) MultipartFile file) {
         ImageResponse imageResponse = productService.uploadProductImage(id, file);
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(imageResponse)

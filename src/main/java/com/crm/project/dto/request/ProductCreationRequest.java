@@ -39,6 +39,8 @@ public class ProductCreationRequest {
 
     private String discountType;
 
+    private String tag;
+
     private String imageUrl;
 
 }

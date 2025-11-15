@@ -109,6 +109,14 @@ public class ProductService {
         return products.map(productMapper::toProductResponse);
     }
 
+    public Page<ProductResponse> searchProducts(String query, Pageable pageable) {
+        Page<Product> products = productRepository.findBySearch(query, pageable);
+        if (products.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+        return products.map(productMapper::toProductResponse);
+    }
+
     public ImageResponse uploadProductImage(String id, MultipartFile file) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);

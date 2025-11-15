@@ -8,6 +8,7 @@ import com.crm.project.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +65,18 @@ public class ProductController {
                                                       @RequestParam(required = false) BigDecimal maxPrice) {
         Page<ProductResponse> productResponseList = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder, category, status, minPrice, maxPrice);
 
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(productResponseList.getContent())
+                .pagination(new PageResponse<>(productResponseList))
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse> searchProducts(@RequestParam(name = "query") String query,
+                                                      @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
+                                                      @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        Page<ProductResponse> productResponseList = productService.searchProducts(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(productResponseList.getContent())
                 .pagination(new PageResponse<>(productResponseList))

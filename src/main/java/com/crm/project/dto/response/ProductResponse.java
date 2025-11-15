@@ -57,5 +57,7 @@ public class ProductResponse {
 
     private String discountType;
 
+    private String tag;
+
     private String imageUrl;
 }

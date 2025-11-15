@@ -24,15 +24,20 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByUsername(String username);
 
     @Query(value = """
-            SELECT * FROM users
-            WHERE 
-                (MATCH(first_name, last_name, username, email, address, phone_number)
-                AGAINST (:query IN NATURAL LANGUAGE MODE)
-                OR
-                LOWER(CONCAT(first_name, ' ', last_name))
-                LIKE LOWER(CONCAT('%', :query, '%')))
-                AND deleted = false
-            """, nativeQuery = true)
+            SELECT *
+            FROM users
+            WHERE deleted = false
+            AND (
+                  LOWER(first_name) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(last_name) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(username) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(email) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(address) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(phone_number) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(CONCAT(first_name, ' ', last_name)) LIKE LOWER(CONCAT('%', :query, '%'))
+            )
+            """,
+            nativeQuery = true)
     Page<User> findBySearch(@Param("query") String search, Pageable pageable);
 
 }

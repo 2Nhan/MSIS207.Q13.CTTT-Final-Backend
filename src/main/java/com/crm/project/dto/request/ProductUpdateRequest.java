@@ -1,8 +1,6 @@
 package com.crm.project.dto.request;
 
 import com.crm.project.validator.custom_validator.BlankUpdateConstraint;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -39,4 +37,6 @@ public class ProductUpdateRequest {
     private BigDecimal discount;
 
     private String discountType;
+
+    private String tag;
 }

@@ -49,6 +49,8 @@ public class Product extends BaseEntity {
     @Column(name = "discount_type")
     private String discountType;
 
+    private String tag;
+
     @Column(name = "image_url")
     private String imageUrl;
 

@@ -13,15 +13,22 @@ import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.FileUploadUtil;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -66,13 +73,35 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
-    public Page<ProductResponse> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+    public Page<ProductResponse> getAllProducts(int pageNumber, int pageSize, String sortBy, String sortOrder,
+                                                String category, String status, BigDecimal minPrice, BigDecimal maxPrice) {
         Sort sort = sortOrder.equalsIgnoreCase("ASC")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
-        Page<Product> products = productRepository.findAll(pageable);
+
+        Specification<Product> spec = Specification.allOf();
+
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(cb.lower(root.get("category")), category.toLowerCase()));
+        }
+
+        if (status != null && !status.isEmpty()) {
+            spec = spec.and((root, query, cb) ->
+                    cb.equal(cb.lower(root.get("status")), status.toLowerCase()));
+        }
+
+        if (minPrice != null) {
+            spec = spec.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("price"), minPrice));
+        }
+
+        if (maxPrice != null) {
+            spec = spec.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+
+        Page<Product> products = productRepository.findAll(spec, pageable);
 
         if (products.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);

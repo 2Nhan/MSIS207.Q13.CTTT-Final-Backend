@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -56,8 +57,12 @@ public class ProductController {
     public ResponseEntity<ApiResponse> getAllProducts(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
                                                       @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
                                                       @RequestParam(required = false, defaultValue = "sku") String sortBy,
-                                                      @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
-        Page<ProductResponse> productResponseList = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder);
+                                                      @RequestParam(required = false, defaultValue = "asc") String sortOrder,
+                                                      @RequestParam(required = false) String category,
+                                                      @RequestParam(required = false) String status,
+                                                      @RequestParam(required = false) BigDecimal minPrice,
+                                                      @RequestParam(required = false) BigDecimal maxPrice) {
+        Page<ProductResponse> productResponseList = productService.getAllProducts(pageNumber, pageSize, sortBy, sortOrder, category, status, minPrice, maxPrice);
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(productResponseList.getContent())

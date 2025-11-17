@@ -43,6 +43,9 @@ public class CsvService {
         List<String> headers = parser.getHeaderNames();
 
         for (CSVRecord record : parser) {
+            if (record.size() != headers.size()) {
+                throw new AppException(ErrorCode.INVALID_FILE_FORMAT);
+            }
             Map<String, String> row = new LinkedHashMap<>();
             for (String key : matching.keySet()) {
                 if (!headers.contains(key)) {

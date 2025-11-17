@@ -24,6 +24,7 @@ public enum ErrorCode {
     LIMIT_ROWS_EXCEEDED(1103, "Number of rows limit is 100", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST_PART(1104, "Required part '{part}' is not presented", HttpStatus.BAD_REQUEST),
     MISSING_FILE(1105, "Required file does not exist", HttpStatus.BAD_REQUEST),
+    INVALID_FILE_FORMAT(1106, "Required file format is invalid", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

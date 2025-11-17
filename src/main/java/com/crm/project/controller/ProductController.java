@@ -38,9 +38,10 @@ public class ProductController {
 
     @PostMapping("/csv")
     public ResponseEntity<ApiResponse> importProductsFromCsv(@RequestPart(value = "matching") MatchingRequest matching, @RequestPart(value = "file") MultipartFile file) throws IOException {
-        List<ProductResponse> productResponses = productService.importProductsFromCsv(matching, file);
+        ImportResultResponse<ProductResponse> productResponses = productService.importProductsFromCsv(matching, file);
         ApiResponse apiResponse = ApiResponse.builder()
-                .data(productResponses)
+                .data(productResponses.getValidList())
+                .error(productResponses.getInvalidList())
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -3,30 +3,24 @@ package com.crm.project.service;
 import com.crm.project.dto.request.MatchingRequest;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.request.ProductUpdateRequest;
-import com.crm.project.dto.response.CloudinaryResponse;
-import com.crm.project.dto.response.ImageResponse;
-import com.crm.project.dto.response.ImportResponse;
-import com.crm.project.dto.response.ProductResponse;
+import com.crm.project.dto.response.*;
 import com.crm.project.entity.Product;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.FileUploadUtil;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Set;
+import java.util.ArrayList;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
@@ -57,16 +51,70 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
-    public List<ProductResponse> importProductsFromCsv(MatchingRequest matching, MultipartFile file) throws IOException {
+    public ImportResultResponse<ProductResponse> importProductsFromCsv(
+            MatchingRequest matching,
+            MultipartFile file) throws IOException {
+
         ImportResponse importResponse = csvService.parseCsvFile(matching.getMatching(), file);
-        List<Product> products = importResponse.getData().stream().map(productMapper::importToProduct).toList();
-        List<String> skus = products.stream().map(Product::getSku).toList();
-        if (productRepository.existsBySkuIn(skus)) {
-            throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED);
+
+        List<Product> products = importResponse.getData()
+                .stream()
+                .map(productMapper::importToProduct)
+                .toList();
+
+        List<Product> invalidList = new ArrayList<>();
+        List<Product> tempList = new ArrayList<>();
+        List<Product> validList = new ArrayList<>();
+
+        for (Product p : products) {
+            boolean invalid =
+                    isBlank(p.getSku()) ||
+                            isBlank(p.getName()) ||
+                            isBlank(p.getCategory()) ||
+                            isBlank(p.getStatus()) ||
+                            p.getPrice() == null;
+
+            if (invalid) {
+                invalidList.add(p);
+            } else {
+                tempList.add(p);
+            }
         }
-        productRepository.saveAll(products);
-        return products.stream().map(productMapper::toProductResponse).toList();
+
+        if (tempList.isEmpty()) {
+            return ImportResultResponse.<ProductResponse>builder()
+                    .validList(List.of())
+                    .invalidList(invalidList.stream().map(productMapper::toProductResponse).toList())
+                    .build();
+        }
+
+
+        List<String> tempSkus = tempList.stream()
+                .map(Product::getSku)
+                .filter(s -> s != null && !s.trim().isEmpty())
+                .toList();
+
+        Set<String> duplicatedSkus = productRepository.findBySkuIn(tempSkus);
+        for (Product p : tempList) {
+            if (duplicatedSkus.contains(p.getSku())) {
+                invalidList.add(p);
+            } else {
+                validList.add(p);
+                duplicatedSkus.add(p.getSku());
+            }
+        }
+
+
+        if (!validList.isEmpty()) {
+            productRepository.saveAll(validList);
+        }
+
+        return ImportResultResponse.<ProductResponse>builder()
+                .validList(validList.stream().map(productMapper::toProductResponse).toList())
+                .invalidList(invalidList.stream().map(productMapper::toProductResponse).toList())
+                .build();
     }
+
 
     public ProductResponse getProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
@@ -144,5 +192,9 @@ public class ProductService {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         product.setDeleted(true);
         productRepository.save(product);
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
     }
 }

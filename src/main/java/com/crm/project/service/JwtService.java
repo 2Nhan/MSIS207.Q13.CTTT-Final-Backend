@@ -8,6 +8,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.text.ParseException;
 import java.util.UUID;
 import java.time.Instant;
@@ -58,4 +59,6 @@ public class JwtService {
 
         return verified && expiration.after(new Date());
     }
+
+
 }

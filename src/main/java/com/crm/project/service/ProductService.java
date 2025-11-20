@@ -106,7 +106,7 @@ public class ProductService {
 
 
         if (!validList.isEmpty()) {
-            productRepository.saveAll(validList);
+//            productRepository.saveAll(validList);
         }
 
         return ImportResultResponse.<ProductResponse>builder()

@@ -49,4 +49,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
+
+    @OneToMany(mappedBy = "user")
+    private List<Lead> leads;
 }

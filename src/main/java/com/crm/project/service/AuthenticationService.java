@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Date;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Service
@@ -58,5 +60,11 @@ public class AuthenticationService {
                     .build();
             blackListRepository.save(logoutToken);
         }
+    }
+
+    public List<LogoutToken> getAllBlacklistTokens() {
+        List<LogoutToken> result = new ArrayList<>();
+        blackListRepository.findAll().forEach(result::add);
+        return result;
     }
 }

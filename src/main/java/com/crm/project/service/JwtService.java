@@ -1,11 +1,14 @@
 package com.crm.project.service;
 
 import com.crm.project.entity.User;
+import com.crm.project.redis.repository.BlackListRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +18,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-
+@RequiredArgsConstructor
 @Service
 public class JwtService {
     @Value("${jwt.key}")
@@ -23,6 +26,8 @@ public class JwtService {
 
     @Value("${jwt.access_duration}")
     private int ACCESS_DURATION;
+
+    private final BlackListRepository blackListRepository;
 
     public String generateToken(User user) {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS256);
@@ -57,7 +62,7 @@ public class JwtService {
 
         boolean verified = signedJWT.verify(verifier);
 
-        return verified && expiration.after(new Date());
+        return verified && expiration.after(new Date()) && !blackListRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID());
     }
 
 

@@ -40,8 +40,8 @@ public class ProductService {
         }
         Product product = productMapper.toProduct(request);
         if (image != null && !image.isEmpty()) {
-            String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
             FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
+            String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
             CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
 
             product.setImageUrl(cloudinaryResponse.getUrl());
@@ -106,7 +106,7 @@ public class ProductService {
 
 
         if (!validList.isEmpty()) {
-//            productRepository.saveAll(validList);
+            productRepository.saveAll(validList);
         }
 
         return ImportResultResponse.<ProductResponse>builder()

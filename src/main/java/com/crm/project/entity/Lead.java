@@ -3,6 +3,7 @@ package com.crm.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -18,7 +19,7 @@ public class Lead extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "fule_name")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name = "date_of_birth")
@@ -26,10 +27,20 @@ public class Lead extends BaseEntity {
 
     private String gender;
 
+    @Column(name = "email", unique = true)
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Column(name = "rating")
+    private Integer rating;
+
+    @Column(name = "expected_revenue")
+    private BigDecimal expectedRevenue;
 
     @ManyToOne
     @JoinColumn(name = "stage", nullable = false)

@@ -4,12 +4,15 @@ import com.crm.project.dto.request.StageCreationRequest;
 import com.crm.project.dto.request.StageRenameRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.StageResponse;
+import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.service.StageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -31,6 +34,15 @@ public class StageController {
         StageResponse stageResponse = stageService.renameStage(id, request);
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(stageResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/getLeads")
+    public ResponseEntity<ApiResponse> getStagesWithLeads() {
+        List<StagesWithLeadsResponse> responses = stageService.getStagesWithLeads();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(responses)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -3,6 +3,7 @@ package com.crm.project.service;
 import com.crm.project.dto.request.StageCreationRequest;
 import com.crm.project.dto.request.StageRenameRequest;
 import com.crm.project.dto.response.StageResponse;
+import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.entity.Stage;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
@@ -10,6 +11,8 @@ import com.crm.project.mapper.StageMapper;
 import com.crm.project.repository.StageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -32,5 +35,10 @@ public class StageService {
         stage.setName(request.getName());
         stageRepository.save(stage);
         return stageMapper.toStageResponse(stage);
+    }
+
+    public List<StagesWithLeadsResponse> getStagesWithLeads() {
+        List<Stage> stages = stageRepository.findAllWithLeads();
+        return stages.stream().map(stageMapper::toStagesWithLeadsResponse).toList();
     }
 }

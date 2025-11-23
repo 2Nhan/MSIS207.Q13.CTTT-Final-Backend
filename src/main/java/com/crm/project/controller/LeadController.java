@@ -5,6 +5,7 @@ import com.crm.project.dto.request.LeadUpdateStageRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.LeadResponse;
 
+import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.service.LeadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -42,6 +45,24 @@ public class LeadController {
     public ResponseEntity<ApiResponse> updateLeadStage(@PathVariable("id") String id, @RequestBody @Valid LeadUpdateStageRequest request) {
         leadService.updateLeadStage(id, request);
         ApiResponse apiResponse = ApiResponse.builder()
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping()
+    public ResponseEntity<ApiResponse> getStagesWithLeads() {
+        List<StagesWithLeadsResponse> responses = leadService.getStagesWithLeads();
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(responses)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse> searchLeads(@RequestParam("query") String query) {
+        List<StagesWithLeadsResponse> result = leadService.searchLeads(query);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(result)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

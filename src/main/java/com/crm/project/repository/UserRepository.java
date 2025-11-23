@@ -24,8 +24,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = """
             SELECT *
-            FROM users
-            AND (
+            FROM users u
+            WHERE (
                   LOWER(first_name) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(last_name) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(username) LIKE LOWER(CONCAT('%', :query, '%'))
@@ -33,6 +33,7 @@ public interface UserRepository extends JpaRepository<User, String> {
                OR LOWER(address) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(phone_number) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(CONCAT(first_name, ' ', last_name)) LIKE LOWER(CONCAT('%', :query, '%'))
+               OR LOWER(CONCAT(last_name, ' ', first_name)) LIKE LOWER(CONCAT('%', :query, '%'))
             )
             """,
             nativeQuery = true)

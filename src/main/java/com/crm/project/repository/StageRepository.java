@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -17,4 +18,14 @@ public interface StageRepository extends JpaRepository<Stage, String> {
 
     @Query("SELECT DISTINCT s FROM Stage s LEFT JOIN FETCH s.leads")
     List<Stage> findAllWithLeads();
+
+    @Query("""
+            SELECT DISTINCT s FROM Stage s
+            LEFT JOIN FETCH s.leads l
+            WHERE (:query IS NULL 
+                   OR LOWER(l.fullName) LIKE LOWER(CONCAT('%', :query, '%'))
+                   OR LOWER(l.email) LIKE LOWER(CONCAT('%', :query, '%'))
+                   OR LOWER(l.phoneNumber) LIKE LOWER(CONCAT('%', :query, '%')))
+            """)
+    List<Stage> searchLeadsGroupedByStage(@Param("query") String search);
 }

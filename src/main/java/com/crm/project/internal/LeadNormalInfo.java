@@ -15,6 +15,8 @@ public class LeadNormalInfo {
     private String fullName;
     private BigDecimal expectedRevenue;
     private Integer rating;
+    private String phoneNumber;
+    private String email;
     @JsonProperty("responsibleBy")
     private UserNormalInfo user;
 }

@@ -42,11 +42,6 @@ public class StageService {
         return stageMapper.toStageResponse(stage);
     }
 
-    public List<StagesWithLeadsResponse> getStagesWithLeads() {
-        List<Stage> stages = stageRepository.findAllWithLeads();
-        return stages.stream().map(stageMapper::toStagesWithLeadsResponse).toList();
-    }
-
     @Transactional
     public void deleteStage(String id) {
         if (!stageRepository.existsById(id)) {

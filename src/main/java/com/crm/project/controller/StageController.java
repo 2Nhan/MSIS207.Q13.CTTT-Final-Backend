@@ -46,4 +46,11 @@ public class StageController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> deleteStage(@PathVariable String id) {
+        stageService.deleteStage(id);
+        ApiResponse apiResponse = ApiResponse.builder().build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

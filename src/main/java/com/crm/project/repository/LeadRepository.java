@@ -23,6 +23,8 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
             """)
     Optional<Lead> findByIdWithRelations(@Param("id") String id);
 
+    boolean existsByStageId(String stageId);
+
     @Modifying
     @Query("UPDATE Lead l SET l.stage.id = :stageId WHERE l.id = :leadId")
     int updateStage(@Param("leadId") String leadId, @Param("stageId") String stageId);

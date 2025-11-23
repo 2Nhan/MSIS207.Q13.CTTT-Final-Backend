@@ -8,6 +8,7 @@ import com.crm.project.entity.Stage;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.StageMapper;
+import com.crm.project.repository.LeadRepository;
 import com.crm.project.repository.StageRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.List;
 public class StageService {
     private final StageRepository stageRepository;
     private final StageMapper stageMapper;
+    private final LeadRepository leadRepository;
 
     @Transactional
     public StageResponse createStage(StageCreationRequest request) {
@@ -43,5 +45,16 @@ public class StageService {
     public List<StagesWithLeadsResponse> getStagesWithLeads() {
         List<Stage> stages = stageRepository.findAllWithLeads();
         return stages.stream().map(stageMapper::toStagesWithLeadsResponse).toList();
+    }
+
+    @Transactional
+    public void deleteStage(String id) {
+        if (!stageRepository.existsById(id)) {
+            throw new AppException(ErrorCode.STAGE_NOT_FOUND);
+        }
+        if (leadRepository.existsByStageId(id)) {
+            throw new AppException(ErrorCode.STAGE_IN_USE);
+        }
+        stageRepository.deleteById(id);
     }
 }

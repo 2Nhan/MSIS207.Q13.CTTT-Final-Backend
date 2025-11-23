@@ -2,6 +2,8 @@ package com.crm.project.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -24,4 +26,7 @@ public class UserResponse {
 
     private String avatarUrl;
 
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 }

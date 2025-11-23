@@ -13,7 +13,6 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "users")
-@Where(clause = "deleted = false")
 public class User extends BaseEntity {
 
     @Id

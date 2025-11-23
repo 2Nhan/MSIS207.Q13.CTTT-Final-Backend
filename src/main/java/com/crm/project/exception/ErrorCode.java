@@ -17,7 +17,8 @@ public enum ErrorCode {
     PRODUCT_NOT_FOUND(1007, "Product not found", HttpStatus.NOT_FOUND),
     PRODUCT_SKU_EXISTED(1008, "Product sku already exists", HttpStatus.BAD_REQUEST),
     WRONG_MATCHING(1009, "Wrong matching, matching request is not suitable to the given file", HttpStatus.BAD_REQUEST),
-    STAGE_NOT_FOUND(10010, "Stage not found", HttpStatus.NOT_FOUND),
+    STAGE_NOT_FOUND(1010, "Stage not found", HttpStatus.NOT_FOUND),
+    LEAD_NOT_FOUND(1011, "Lead not found", HttpStatus.NOT_FOUND),
 
     INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),

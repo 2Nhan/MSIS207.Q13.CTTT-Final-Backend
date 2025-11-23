@@ -14,4 +14,12 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
     @Query("SELECT l FROM Lead l WHERE l.email = :email OR l.phoneNumber = :phone")
     Optional<Lead> findByEmailOrPhone(@Param("email") String email, @Param("phone") String phone);
 
+    @Query("""
+                SELECT l FROM Lead l
+                LEFT JOIN FETCH l.stage
+                LEFT JOIN FETCH l.user
+                WHERE l.id = :id
+            """)
+    Optional<Lead> findByIdWithRelations(@Param("id") String id);
+
 }

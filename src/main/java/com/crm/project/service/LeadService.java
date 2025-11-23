@@ -56,6 +56,11 @@ public class LeadService {
         return leadMapper.toLeadResponse(lead);
     }
 
+    public LeadResponse getLead(String id) {
+        Lead lead = leadRepository.findByIdWithRelations(id).orElseThrow(() -> new AppException(ErrorCode.LEAD_NOT_FOUND));
+        return leadMapper.toLeadResponse(lead);
+    }
+
     private void validateLeadUniqueness(String email, String phoneNumber) {
         leadRepository.findByEmailOrPhone(email, phoneNumber).ifPresent(lead -> {
             if (email.equals(lead.getEmail())) {

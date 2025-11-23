@@ -25,7 +25,6 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = """
             SELECT *
             FROM users
-            WHERE deleted = false
             AND (
                   LOWER(first_name) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(last_name) LIKE LOWER(CONCAT('%', :query, '%'))

@@ -1,5 +1,6 @@
 package com.crm.project.controller;
 
+
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.LeadResponse;
@@ -9,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -29,5 +27,14 @@ public class LeadController {
                 .data(leadResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse> getLead(@PathVariable String id) {
+        LeadResponse leadResponse = leadService.getLead(id);
+        ApiResponse apiResponse = ApiResponse.builder()
+                .data(leadResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

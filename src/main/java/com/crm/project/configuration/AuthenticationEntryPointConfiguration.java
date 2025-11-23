@@ -1,8 +1,8 @@
 package com.crm.project.configuration;
 
 import com.crm.project.dto.response.ApiResponse;
-import com.crm.project.dto.response.AppErrorResponse;
 import com.crm.project.exception.ErrorCode;
+import com.crm.project.internal.AppErrorInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class AuthenticationEntryPointConfiguration implements AuthenticationEntr
         response.setStatus(errorCode.getStatusCode().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
+        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();

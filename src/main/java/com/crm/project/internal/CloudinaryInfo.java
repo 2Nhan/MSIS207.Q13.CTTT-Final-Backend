@@ -1,4 +1,4 @@
-package com.crm.project.dto.response;
+package com.crm.project.internal;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CloudinaryResponse {
+public class CloudinaryInfo {
     private String publicId;
 
     private String url;

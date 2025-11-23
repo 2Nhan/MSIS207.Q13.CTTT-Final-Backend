@@ -1,14 +1,13 @@
 package com.crm.project.exception;
 
 import com.crm.project.dto.response.ApiResponse;
-import com.crm.project.dto.response.AppErrorResponse;
+import com.crm.project.internal.AppErrorInfo;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
@@ -37,7 +36,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
+        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .errorField(exception.getErrorField())
@@ -64,7 +63,7 @@ public class GlobalExceptionHandler {
         // build dynamic message
         String finalMessage = mapAttributes(errorCode.getMessage(), attributes);
 
-        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
+        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(finalMessage)
                 .build();
@@ -80,8 +79,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<ApiResponse> handlingHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception) {
-        ErrorCode errorCode = ErrorCode.INVALID_FILE_EXTENSION;
-        AppErrorResponse appErrorResponse = AppErrorResponse.builder()
+        ErrorCode errorCode = ErrorCode.INVALID_FILE_TYPE;
+        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
@@ -95,7 +94,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidation(MethodArgumentNotValidException exception) {
-        List<AppErrorResponse> errors = new ArrayList<>(exception.getBindingResult()
+        List<AppErrorInfo> errors = new ArrayList<>(exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(fieldError -> {
@@ -109,19 +108,19 @@ public class GlobalExceptionHandler {
                             ? mapAttributes(validationError.getMessage(), attributes)
                             : validationError.getMessage();
 
-                    return AppErrorResponse.builder()
+                    return com.crm.project.internal.AppErrorInfo.builder()
                             .code(validationError.getCode())
                             .errorField(fieldError.getField())
                             .message(message)
                             .build();
                 })
                 .toList());
-        errors.sort(Comparator.comparing(AppErrorResponse::getCode));
+        errors.sort(Comparator.comparing(com.crm.project.internal.AppErrorInfo::getCode));
 
 
         ApiResponse response = ApiResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
-                .message("Validation Failed")
+                .message("Processed Failed")
                 .error(errors)
                 .build();
 

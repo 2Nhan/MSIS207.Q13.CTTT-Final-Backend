@@ -1,7 +1,7 @@
 package com.crm.project.service;
 
 
-import com.crm.project.dto.response.ImportResponse;
+import com.crm.project.internal.ImportInfo;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.utils.FileUploadUtil;
@@ -24,7 +24,7 @@ import java.util.LinkedHashMap;
 
 @Service
 public class CsvService {
-    public ImportResponse parseCsvFile(Map<String, String> matching, MultipartFile file) throws IOException {
+    public ImportInfo parseCsvFile(Map<String, String> matching, MultipartFile file) throws IOException {
         FileUploadUtil.checkContentType(file);
 
         List<Map<String, String>> rows = new ArrayList<>();
@@ -44,7 +44,7 @@ public class CsvService {
 
         for (CSVRecord record : parser) {
             if (record.size() != headers.size()) {
-                throw new AppException(ErrorCode.INVALID_FILE_FORMAT);
+                throw new AppException(ErrorCode.INVALID_FILE_TYPE);
             }
             Map<String, String> row = new LinkedHashMap<>();
             for (String key : matching.keySet()) {
@@ -58,7 +58,7 @@ public class CsvService {
 
         FileUploadUtil.checkImportRows(rows.size());
 
-        return ImportResponse.builder()
+        return ImportInfo.builder()
                 .data(rows)
                 .build();
     }

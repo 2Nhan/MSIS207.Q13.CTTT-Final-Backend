@@ -1,4 +1,4 @@
-package com.crm.project.dto.response;
+package com.crm.project.internal;
 
 import lombok.*;
 
@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ImportResponse {
+public class ImportInfo {
     List<Map<String, String>> data;
 }

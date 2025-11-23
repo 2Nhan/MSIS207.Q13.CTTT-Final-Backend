@@ -4,20 +4,19 @@ import com.crm.project.dto.request.MatchingRequest;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.*;
+import com.crm.project.internal.PageInfo;
 import com.crm.project.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -68,7 +67,7 @@ public class ProductController {
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(productResponseList.getContent())
-                .pagination(new PageResponse<>(productResponseList))
+                .pagination(new PageInfo<>(productResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -80,7 +79,7 @@ public class ProductController {
         Page<ProductResponse> productResponseList = productService.searchProducts(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(productResponseList.getContent())
-                .pagination(new PageResponse<>(productResponseList))
+                .pagination(new PageInfo<>(productResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

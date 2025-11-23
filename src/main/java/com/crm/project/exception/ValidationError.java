@@ -21,11 +21,13 @@ public enum ValidationError {
     BLANK_PRICE(2011, "PLease fill in price", HttpStatus.BAD_REQUEST),
     BLANK_STATUS(2012, "PLease fill in status", HttpStatus.BAD_REQUEST),
     BLANK_FULLNAME(2013, "PLease fill in full name", HttpStatus.BAD_REQUEST),
+    BLANK_NAME(2014, "PLease fill in name", HttpStatus.BAD_REQUEST),
 
     INVALID_USERNAME(3001, "Username must have {min}-{max} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(3002, "Password must have at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(3003, "Please fill in valid email", HttpStatus.BAD_REQUEST),
     INVALID_PHONE_NUMBER(3004, "Please fill in valid phone number", HttpStatus.BAD_REQUEST),
+    INVALID_RATING(3005, "Rating must not be greater than 3", HttpStatus.BAD_REQUEST),
     ;
 
     ValidationError(int code, String message, HttpStatusCode statusCode) {

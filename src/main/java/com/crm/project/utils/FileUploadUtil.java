@@ -1,6 +1,5 @@
 package com.crm.project.utils;
 
-import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.regex.Matcher;
@@ -30,7 +29,7 @@ public final class FileUploadUtil {
 
     public static void checkContentType(MultipartFile file) {
         if (!TYPE.contains(file.getContentType())) {
-            throw new AppException(ErrorCode.INVALID_FILE_EXTENSION);
+            throw new AppException(ErrorCode.INVALID_FILE_TYPE);
         }
     }
 
@@ -41,7 +40,7 @@ public final class FileUploadUtil {
 
     public static void checkImage(final MultipartFile file, final String pattern) {
         if (!isAllowedExtension(file.getOriginalFilename(), pattern)) {
-            throw new AppException(ErrorCode.INVALID_FILE_EXTENSION);
+            throw new AppException(ErrorCode.INVALID_FILE_TYPE);
         }
 
         final long fileSize = file.getSize();

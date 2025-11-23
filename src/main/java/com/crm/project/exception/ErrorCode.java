@@ -19,13 +19,12 @@ public enum ErrorCode {
     WRONG_MATCHING(1009, "Wrong matching, matching request is not suitable to the given file", HttpStatus.BAD_REQUEST),
     STAGE_NOT_FOUND(10010, "Stage not found", HttpStatus.NOT_FOUND),
 
-    INVALID_FILE_EXTENSION(1100, "File type is not supported", HttpStatus.BAD_REQUEST),
+    INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),
     EMPTY_FILE(1102, "Empty file", HttpStatus.BAD_REQUEST),
     LIMIT_ROWS_EXCEEDED(1103, "Number of rows limit is 100", HttpStatus.BAD_REQUEST),
     INVALID_REQUEST_PART(1104, "Required part '{part}' is not presented", HttpStatus.BAD_REQUEST),
     MISSING_FILE(1105, "Required file does not exist", HttpStatus.BAD_REQUEST),
-    INVALID_FILE_FORMAT(1106, "Required file format is invalid", HttpStatus.BAD_REQUEST),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

@@ -7,6 +7,8 @@ import com.crm.project.dto.response.*;
 import com.crm.project.entity.Product;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
+import com.crm.project.internal.CloudinaryInfo;
+import com.crm.project.internal.ImportInfo;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.FileUploadUtil;
@@ -42,7 +44,7 @@ public class ProductService {
         if (image != null && !image.isEmpty()) {
             FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
             String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
-            CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
+            CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
 
             product.setImageUrl(cloudinaryResponse.getUrl());
         }
@@ -55,7 +57,7 @@ public class ProductService {
             MatchingRequest matching,
             MultipartFile file) throws IOException {
 
-        ImportResponse importResponse = csvService.parseCsvFile(matching.getMatching(), file);
+        ImportInfo importResponse = csvService.parseCsvFile(matching.getMatching(), file);
 
         List<Product> products = importResponse.getData()
                 .stream()
@@ -91,7 +93,6 @@ public class ProductService {
 
         List<String> tempSkus = tempList.stream()
                 .map(Product::getSku)
-                .filter(s -> s != null && !s.trim().isEmpty())
                 .toList();
 
         Set<String> duplicatedSkus = productRepository.findBySkuIn(tempSkus);
@@ -172,7 +173,7 @@ public class ProductService {
         }
         FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
         String filename = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
-        CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, filename);
+        CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(file, filename);
         product.setImageUrl(cloudinaryResponse.getUrl());
         productRepository.save(product);
         return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();

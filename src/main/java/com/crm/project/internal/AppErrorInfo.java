@@ -1,4 +1,4 @@
-package com.crm.project.dto.response;
+package com.crm.project.internal;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AppErrorResponse {
+public class AppErrorInfo {
     private int code;
 
     private String errorField;

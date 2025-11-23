@@ -1,16 +1,14 @@
-package com.crm.project.dto.response;
+package com.crm.project.internal;
 
 import lombok.*;
 import org.springframework.data.domain.Page;
-
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PageResponse<T> {
+public class PageInfo<T> {
 
     private boolean hasPre;
 
@@ -20,7 +18,7 @@ public class PageResponse<T> {
 
     private int totalPages;
 
-    public PageResponse(Page<T> page) {
+    public PageInfo(Page<T> page) {
         this.hasPre = page.hasPrevious();
         this.hasNext = page.hasNext();
         this.pageNumber = page.getNumber() + 1;

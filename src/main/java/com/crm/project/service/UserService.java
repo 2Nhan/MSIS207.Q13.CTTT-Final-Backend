@@ -2,7 +2,7 @@ package com.crm.project.service;
 
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
-import com.crm.project.dto.response.CloudinaryResponse;
+import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.entity.User;
@@ -36,7 +36,7 @@ public class UserService {
 
         String fileName = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
         FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
-        CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(file, fileName);
+        CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(file, fileName);
         user.setAvatarUrl(cloudinaryResponse.getUrl());
         userRepository.save(user);
         return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
@@ -46,17 +46,13 @@ public class UserService {
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new AppException(ErrorCode.USERNAME_EXSITED, "username");
         }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXSITED, "email");
-        }
-        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED, "phone_number");
-        }
+        validateUserUniqueness(request.getEmail(), request.getPhoneNumber());
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }
+
 
     public Page<UserResponse> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase("ASC")
@@ -93,12 +89,7 @@ public class UserService {
     public UserResponse updateSelfInfo(UserUpdateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
-        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED, "phone_number");
-        }
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXSITED, "email");
-        }
+        validateUserUniqueness(request.getEmail(), request.getPhoneNumber());
         userMapper.updateUser(request, user);
         if (request.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -111,5 +102,16 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
         user.setDeleted(true);
         userRepository.save(user);
+    }
+
+    private void validateUserUniqueness(String email, String phoneNumber) {
+        userRepository.findByEmailOrPhoneNumber(email, phoneNumber).ifPresent(user -> {
+            if (email.equals(user.getEmail())) {
+                throw new AppException(ErrorCode.EMAIL_EXSITED, "email");
+            }
+            if (phoneNumber.equals(user.getPhoneNumber())) {
+                throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED, "phone_number");
+            }
+        });
     }
 }

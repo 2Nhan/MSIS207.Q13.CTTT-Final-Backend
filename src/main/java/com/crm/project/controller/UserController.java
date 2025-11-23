@@ -4,7 +4,7 @@ import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.ImageResponse;
-import com.crm.project.dto.response.PageResponse;
+import com.crm.project.internal.PageInfo;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
 import com.crm.project.validator.group_sequences.ValidationSequences;
@@ -51,7 +51,7 @@ public class UserController {
 
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(userResponseList.getContent())
-                .pagination(new PageResponse<>(userResponseList))
+                .pagination(new PageInfo<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -63,7 +63,7 @@ public class UserController {
         Page<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(userResponseList.getContent())
-                .pagination(new PageResponse<>(userResponseList))
+                .pagination(new PageInfo<>(userResponseList))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -1,8 +1,6 @@
 package com.crm.project.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -30,7 +28,8 @@ public class LeadCreationRequest {
     @Pattern(regexp = "^[0-9]{10}$", message = "INVALID_PHONE_NUMBER")
     private String phoneNumber;
 
-    private BigDecimal expectedRevenue;
+    @Max(value = 3, message = "INVALID_RATING")
+    private Integer rating;
 
-    private String stageId;
+    private BigDecimal expectedRevenue;
 }

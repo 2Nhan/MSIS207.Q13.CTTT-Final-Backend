@@ -1,7 +1,7 @@
 package com.crm.project.service;
 
 import com.crm.project.dto.request.LeadCreationRequest;
-import com.crm.project.dto.response.CloudinaryResponse;
+import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.LeadResponse;
 import com.crm.project.entity.Lead;
 import com.crm.project.entity.Stage;
@@ -13,6 +13,7 @@ import com.crm.project.repository.LeadRepository;
 import com.crm.project.repository.StageRepository;
 import com.crm.project.repository.UserRepository;
 import com.crm.project.utils.FileUploadUtil;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,24 +28,25 @@ public class LeadService {
     private final UserRepository userRepository;
     private final StageRepository stageRepository;
 
+    private Stage defaultStage;
+
+    @PostConstruct
+    public void init() {
+        this.defaultStage = stageRepository.findByName("New").orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
+    }
+
     public LeadResponse createLead(LeadCreationRequest request, MultipartFile image) {
-        if (leadRepository.existsByEmail(request.getEmail())) {
-            throw new AppException(ErrorCode.EMAIL_EXSITED);
-        }
-        if (leadRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED);
-        }
+        validateLeadUniqueness(request.getEmail(), request.getPhoneNumber());
         Lead lead = leadMapper.toLead(request);
+
         if (image != null && !image.isEmpty()) {
             FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
             String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
-            CloudinaryResponse cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
+            CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
 
             lead.setAvatarUrl(cloudinaryResponse.getUrl());
         }
-
-        Stage stage = stageRepository.findById(request.getStageId()).orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
-        lead.setStage(stage);
+        lead.setStage(defaultStage);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
@@ -52,5 +54,15 @@ public class LeadService {
 
         leadRepository.save(lead);
         return leadMapper.toLeadResponse(lead);
+    }
+
+    private void validateLeadUniqueness(String email, String phoneNumber) {
+        leadRepository.findByEmailOrPhone(email, phoneNumber).ifPresent(lead -> {
+            if (email.equals(lead.getEmail())) {
+                throw new AppException(ErrorCode.EMAIL_EXSITED);
+            } else if (phoneNumber.equals(lead.getPhoneNumber())) {
+                throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED);
+            }
+        });
     }
 }

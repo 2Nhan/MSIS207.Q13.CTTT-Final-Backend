@@ -1,7 +1,7 @@
 package com.crm.project.dto.response;
 
-import com.crm.project.entity.Stage;
-import com.crm.project.entity.User;
+import com.crm.project.internal.UserNormalInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -26,13 +26,14 @@ public class LeadResponse {
 
     private String phoneNumber;
 
-    private String avatarUrl;
-
     private Integer rating;
 
     private BigDecimal expectedRevenue;
 
+    private String avatarUrl;
+
     private StageResponse stage;
 
-    private UserResponse user;
+    @JsonProperty("responsibleBy")
+    private UserNormalInfo user;
 }

@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StageRenameRequest {
+public class StageUpdateRequest {
     @NotBlank(message = "BLANK_NAME")
     private String name;
 }

@@ -12,6 +12,7 @@ import com.crm.project.internal.ImportInfo;
 import com.crm.project.mapper.ProductMapper;
 import com.crm.project.repository.ProductRepository;
 import com.crm.project.utils.FileUploadUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,7 +36,7 @@ public class ProductService {
     private final CloudinaryService cloudinaryService;
     private final CsvService csvService;
 
-
+    @Transactional
     public ProductResponse createProduct(ProductCreationRequest request, MultipartFile image) {
         if (productRepository.existsBySku(request.getSku())) {
             throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED, "sku");
@@ -53,6 +54,7 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
+    @Transactional
     public ImportResultResponse<ProductResponse> importProductsFromCsv(
             MatchingRequest matching,
             MultipartFile file) throws IOException {
@@ -166,6 +168,7 @@ public class ProductService {
         return products.map(productMapper::toProductResponse);
     }
 
+    @Transactional
     public ImageResponse uploadProductImage(String id, MultipartFile file) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if (file == null || file.isEmpty()) {
@@ -179,6 +182,7 @@ public class ProductService {
         return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
     }
 
+    @Transactional
     public ProductResponse updateProduct(String id, ProductUpdateRequest request) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if (productRepository.existsBySku(request.getSku())) {
@@ -189,6 +193,7 @@ public class ProductService {
         return productMapper.toProductResponse(product);
     }
 
+    @Transactional
     public void deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         product.setDeleted(true);

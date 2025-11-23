@@ -22,6 +22,7 @@ public enum ValidationError {
     BLANK_STATUS(2012, "PLease fill in status", HttpStatus.BAD_REQUEST),
     BLANK_FULLNAME(2013, "PLease fill in full name", HttpStatus.BAD_REQUEST),
     BLANK_NAME(2014, "PLease fill in name", HttpStatus.BAD_REQUEST),
+    BLANK_STAGE_ID(2015, "PLease fill in stage id", HttpStatus.BAD_REQUEST),
 
     INVALID_USERNAME(3001, "Username must have {min}-{max} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(3002, "Password must have at least {min} characters", HttpStatus.BAD_REQUEST),

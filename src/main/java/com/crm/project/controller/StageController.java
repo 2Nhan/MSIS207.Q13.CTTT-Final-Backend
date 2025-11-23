@@ -1,7 +1,7 @@
 package com.crm.project.controller;
 
 import com.crm.project.dto.request.StageCreationRequest;
-import com.crm.project.dto.request.StageRenameRequest;
+import com.crm.project.dto.request.StageUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.StageResponse;
 import com.crm.project.dto.response.StagesWithLeadsResponse;
@@ -30,7 +30,7 @@ public class StageController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<ApiResponse> renameStage(@PathVariable String id, @RequestBody @Valid StageRenameRequest request) {
+    public ResponseEntity<ApiResponse> renameStage(@PathVariable String id, @RequestBody @Valid StageUpdateRequest request) {
         StageResponse stageResponse = stageService.renameStage(id, request);
         ApiResponse apiResponse = ApiResponse.builder()
                 .data(stageResponse)
@@ -38,7 +38,7 @@ public class StageController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/getLeads")
+    @GetMapping("/get_leads")
     public ResponseEntity<ApiResponse> getStagesWithLeads() {
         List<StagesWithLeadsResponse> responses = stageService.getStagesWithLeads();
         ApiResponse apiResponse = ApiResponse.builder()

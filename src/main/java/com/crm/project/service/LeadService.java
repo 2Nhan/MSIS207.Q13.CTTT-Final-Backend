@@ -1,6 +1,8 @@
 package com.crm.project.service;
 
 import com.crm.project.dto.request.LeadCreationRequest;
+import com.crm.project.dto.request.LeadUpdateStageRequest;
+import com.crm.project.dto.request.StageUpdateRequest;
 import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.LeadResponse;
 import com.crm.project.entity.Lead;
@@ -14,6 +16,7 @@ import com.crm.project.repository.StageRepository;
 import com.crm.project.repository.UserRepository;
 import com.crm.project.utils.FileUploadUtil;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,6 +38,7 @@ public class LeadService {
         this.defaultStage = stageRepository.findByName("New").orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
     }
 
+    @Transactional
     public LeadResponse createLead(LeadCreationRequest request, MultipartFile image) {
         validateLeadUniqueness(request.getEmail(), request.getPhoneNumber());
         Lead lead = leadMapper.toLead(request);
@@ -59,6 +63,18 @@ public class LeadService {
     public LeadResponse getLead(String id) {
         Lead lead = leadRepository.findByIdWithRelations(id).orElseThrow(() -> new AppException(ErrorCode.LEAD_NOT_FOUND));
         return leadMapper.toLeadResponse(lead);
+    }
+
+    @Transactional
+    public void updateLeadStage(String id, LeadUpdateStageRequest request) {
+        if (!stageRepository.existsById(request.getStageId())) {
+            throw new AppException(ErrorCode.STAGE_NOT_FOUND);
+        }
+
+        if (!leadRepository.existsById(id)) {
+            throw new AppException(ErrorCode.LEAD_NOT_FOUND);
+        }
+        leadRepository.updateStage(id, request.getStageId());
     }
 
     private void validateLeadUniqueness(String email, String phoneNumber) {

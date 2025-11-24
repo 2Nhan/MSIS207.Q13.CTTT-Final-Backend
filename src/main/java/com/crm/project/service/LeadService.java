@@ -2,7 +2,6 @@ package com.crm.project.service;
 
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateStageRequest;
-import com.crm.project.dto.request.StageUpdateRequest;
 import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.LeadResponse;

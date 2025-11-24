@@ -4,15 +4,12 @@ import com.crm.project.dto.request.StageCreationRequest;
 import com.crm.project.dto.request.StageUpdateRequest;
 import com.crm.project.dto.response.ApiResponse;
 import com.crm.project.dto.response.StageResponse;
-import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.service.StageService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController

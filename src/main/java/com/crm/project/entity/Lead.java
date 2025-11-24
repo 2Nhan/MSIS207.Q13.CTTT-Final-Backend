@@ -3,6 +3,7 @@ package com.crm.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -49,4 +50,8 @@ public class Lead extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL)
+    private List<Quotation> quotations;
+
 }

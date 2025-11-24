@@ -12,6 +12,7 @@ import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
+    @Mapping(target = "quotations", ignore = true)
     Product toProduct(ProductCreationRequest request);
 
     ProductResponse toProductResponse(Product product);
@@ -21,6 +22,7 @@ public interface ProductMapper {
     @Mapping(target = "discount", expression = "java(toBigDecimal(data.get(\"discount\")))")
     @Mapping(target = "id", ignore = true) // nếu bạn không import id từ CSV
     @Mapping(target = "orderItems", ignore = true)
+    @Mapping(target = "quotations", ignore = true)
     Product importToProduct(Map<String, String> data);
 
     default Integer toInteger(String value) {

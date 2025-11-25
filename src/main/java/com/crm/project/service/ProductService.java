@@ -97,7 +97,11 @@ public class ProductService {
                 .map(Product::getSku)
                 .toList();
 
-        Set<String> duplicatedSkus = productRepository.findBySkuIn(tempSkus);
+
+        Set<String> duplicatedSkus = productRepository.findByExistingSkus(tempSkus);
+
+        System.out.println(duplicatedSkus);
+
         for (Product p : tempList) {
             if (duplicatedSkus.contains(p.getSku())) {
                 invalidList.add(p);
@@ -196,8 +200,7 @@ public class ProductService {
     @Transactional
     public void deleteProduct(String id) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        product.setDeleted(true);
-        productRepository.save(product);
+        productRepository.deleteById(id);
     }
 
     private boolean isBlank(String s) {

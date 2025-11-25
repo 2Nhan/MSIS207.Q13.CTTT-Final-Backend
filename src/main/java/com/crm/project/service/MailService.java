@@ -1,5 +1,7 @@
 package com.crm.project.service;
 
+import com.crm.project.exception.AppException;
+import com.crm.project.exception.ErrorCode;
 import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
@@ -32,9 +34,8 @@ public class MailService {
 
         try {
             CreateEmailResponse response = resend.emails().send(email);
-            System.out.println("✅ Email sent successfully! ID: " + response.getId());
         } catch (ResendException e) {
-            System.err.println(e.getMessage());
+            throw new AppException(ErrorCode.MAILING_FAILED);
         }
     }
 }

@@ -5,10 +5,14 @@ import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.ProductResponse;
 import com.crm.project.entity.Product;
 
+import java.util.List;
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Set;
 
 import org.mapstruct.*;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
@@ -42,6 +46,9 @@ public interface ProductMapper {
             return null;
         }
     }
+
+    @Query("SELECT p.sku FROM Product p WHERE p.sku IN :skus")
+    Set<String> findExistingSkus(@Param("skus") List<String> skus);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateProduct(ProductUpdateRequest request, @MappingTarget Product product);

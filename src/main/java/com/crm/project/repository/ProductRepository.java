@@ -17,15 +17,14 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, String>, JpaSpecificationExecutor<Product> {
     boolean existsBySkuIn(List<String> skus);
 
-    @Query("SELECT p.sku FROM Product p WHERE p.sku IN :skus")
-    Set<String> findBySkuIn(List<String> skus);
+    @Query("SELECT p.sku FROM Product p WHERE p.sku IN :skus ")
+    Set<String> findByExistingSkus(List<String> skus);
 
     boolean existsBySku(String sku);
 
     @Query(value = """
             SELECT *
             FROM products
-            WHERE deleted = false
             AND (
                   LOWER(name) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(tag) LIKE LOWER(CONCAT('%', :query, '%'))

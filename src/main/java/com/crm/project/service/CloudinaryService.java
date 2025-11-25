@@ -18,7 +18,7 @@ public class CloudinaryService {
     public CloudinaryInfo uploadFile(MultipartFile file, String fileName) {
         try {
             String fileBaseName = FilenameUtils.getBaseName(fileName);
-            Map result = cloudinary.uploader().upload(file.getInputStream(), Map.of("public_id", "project/images/" + fileBaseName));
+            Map result = cloudinary.uploader().upload(file.getBytes(), Map.of("public_id", "project/images/" + fileBaseName));
             String url = result.get("secure_url").toString();
             String publicId = result.get("public_id").toString();
             return CloudinaryInfo.builder()

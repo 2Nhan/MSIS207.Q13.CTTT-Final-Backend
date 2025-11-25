@@ -17,17 +17,6 @@ spring:
     redis:
       url: ${REDIS_URL}
       password: ${REDIS_PASSWORD}
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: "letunhan137@gmail.com"
-    password: "gjdb qmbk gtut czne"
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
 jwt:
   key: ${SECRET_KEY}
   access_duration: ${ACCESS_TOKEN_DURATION}
@@ -35,5 +24,6 @@ cloudinary:
   cloudinary-name: ${CLOUDINARY_NAME}
   cloudinary-api-key: ${CLOUDINARY_API_KEY}
   cloudinary-api-secret: ${CLOUDINARY_API_SECRET}
-mailtrap:
-  mailtrap-token: ${MAILTRAP_TOKEN}
+resend:
+  api-key: "re_8EhrEJn4_2Liw3KDsL8bjwXbcxRJUFD7k"
+  sender: "admin@crmsoft.site"

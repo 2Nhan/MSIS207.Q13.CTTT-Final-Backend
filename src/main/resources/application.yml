@@ -18,8 +18,6 @@ spring:
       url: ${REDIS_URL}
       password: ${REDIS_PASSWORD}
 springdoc:
-  api-docs:
-    path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
 jwt:

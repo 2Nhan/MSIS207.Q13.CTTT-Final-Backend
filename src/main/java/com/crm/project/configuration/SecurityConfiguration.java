@@ -15,6 +15,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
@@ -32,6 +34,7 @@ public class SecurityConfiguration {
         http.httpBasic(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                 .anyRequest().authenticated());
         http.oauth2ResourceServer(resourceServer -> resourceServer
                 .jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder))
@@ -52,7 +55,10 @@ public class SecurityConfiguration {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
 
+        config.addAllowedOrigin("https://vero-3mfn.onrender.com");
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("http://localhost:8088");
+
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);

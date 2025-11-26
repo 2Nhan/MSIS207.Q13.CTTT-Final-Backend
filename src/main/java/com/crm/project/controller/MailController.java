@@ -19,7 +19,7 @@ public class MailController {
 
     @PostMapping()
     public ResponseEntity<ApiResponse> sendMail(@RequestParam("to") String to) {
-        mailService.sendTestMail(to);
+        mailService.sendMail(to);
         ApiResponse apiResponse = ApiResponse.builder().build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -26,12 +26,10 @@ public class Lead extends BaseEntity {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    private String gender;
-
-    @Column(name = "email", unique = true)
+    @Column(name = "email", unique = false)
     private String email;
 
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number", unique = false)
     private String phoneNumber;
 
     @Column(name = "avatar_url")

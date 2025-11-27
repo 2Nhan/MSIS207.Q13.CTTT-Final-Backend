@@ -1,6 +1,6 @@
 package com.crm.project.configuration;
 
-import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.internal.AppErrorInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ public class AuthenticationEntryPointConfiguration implements AuthenticationEntr
                 .message(errorCode.getMessage())
                 .build();
 
-        ApiResponse apiResponse = ApiResponse.builder()
+        MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(errorCode.getStatusCode().value())
                 .message("Process Failed")
                 .error(appErrorResponse)

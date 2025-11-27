@@ -25,7 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
     @Query(value = """
             SELECT *
             FROM products
-            AND (
+            WHERE (
                   LOWER(name) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(tag) LIKE LOWER(CONCAT('%', :query, '%'))
                OR LOWER(sku) LIKE LOWER(CONCAT('%', :query, '%'))

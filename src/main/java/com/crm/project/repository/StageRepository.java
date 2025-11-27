@@ -13,6 +13,7 @@ import java.util.List;
 
 @Repository
 public interface StageRepository extends JpaRepository<Stage, String> {
+    boolean existsStageByName(String name);
 
     Optional<Stage> findByName(String name);
 

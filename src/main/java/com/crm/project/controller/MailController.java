@@ -1,6 +1,6 @@
 package com.crm.project.controller;
 
-import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,9 +18,9 @@ public class MailController {
 
 
     @PostMapping()
-    public ResponseEntity<ApiResponse> sendMail(@RequestParam("to") String to) {
+    public ResponseEntity<MyApiResponse> sendMail(@RequestParam("to") String to) {
         mailService.sendMail(to);
-        ApiResponse apiResponse = ApiResponse.builder().build();
+        MyApiResponse apiResponse = MyApiResponse.builder().build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

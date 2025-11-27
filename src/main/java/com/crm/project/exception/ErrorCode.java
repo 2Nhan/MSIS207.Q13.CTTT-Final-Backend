@@ -20,6 +20,8 @@ public enum ErrorCode {
     STAGE_NOT_FOUND(1010, "Stage not found", HttpStatus.NOT_FOUND),
     LEAD_NOT_FOUND(1011, "Lead not found", HttpStatus.NOT_FOUND),
     STAGE_IN_USE(1012, "Stage has constraint with some leads", HttpStatus.BAD_REQUEST),
+    STAGE_EXISTED(1013, "Stage already exists", HttpStatus.BAD_REQUEST),
+    DEFAULT_STAGE_IMMUTABLE(1014, "Default stage is immutable", HttpStatus.BAD_REQUEST),
 
     INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),
@@ -28,6 +30,7 @@ public enum ErrorCode {
     INVALID_REQUEST_PART(1104, "Required part '{part}' is not presented", HttpStatus.BAD_REQUEST),
     MISSING_FILE(1105, "Required file does not exist", HttpStatus.BAD_REQUEST),
     MAILING_FAILED(1106, "Mailing failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_API_ENDPOINT(1107, "Invalid API endpoint", HttpStatus.INTERNAL_SERVER_ERROR),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

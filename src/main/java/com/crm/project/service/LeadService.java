@@ -39,7 +39,7 @@ public class LeadService {
 
     @PostConstruct
     public void init() {
-        this.defaultStage = stageRepository.findByName("New").orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
+        this.defaultStage = stageRepository.findById("immutable_default_stage").orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
     }
 
     @Transactional
@@ -89,6 +89,14 @@ public class LeadService {
     public List<StagesWithLeadsResponse> searchLeads(String query) {
         List<Stage> result = stageRepository.searchLeadsGroupedByStage(query);
         return result.stream().map(stageMapper::toStagesWithLeadsResponse).toList();
+    }
+
+    @Transactional
+    public void deleteLead(String id) {
+        if (!leadRepository.existsById(id)) {
+            throw new AppException(ErrorCode.LEAD_NOT_FOUND);
+        }
+        leadRepository.deleteById(id);
     }
 
     private void validateLeadUniqueness(String email, String phoneNumber) {

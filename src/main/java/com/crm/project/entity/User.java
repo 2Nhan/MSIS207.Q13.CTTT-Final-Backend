@@ -37,7 +37,7 @@ public class User extends BaseEntity {
     @Column(name = "phone_number", length = 15, unique = true)
     private String phoneNumber;
 
-    @Column(name = "address", length = 20)
+    @Column(name = "address", columnDefinition = "TEXT")
     private String address;
 
     @Column(name = "avatar_url")

@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @UtilityClass
 public final class FileUploadUtil {
     public static final long MAX_FILE_SIZE = 1024 * 1024;
-    public static final String IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png))$)";
+    public static final String IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|webp))$)";
     public static final String DATE_FORMAT = "yyyyMMddHHmmss";
 
     public static final String IMPORT_PATTERN = "([^\\s]+(\\.(?i)(csv|xls|xlsx))$)";

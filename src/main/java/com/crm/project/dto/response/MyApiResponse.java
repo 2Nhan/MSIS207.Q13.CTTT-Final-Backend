@@ -9,7 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ApiResponse {
+public class MyApiResponse {
     @Builder.Default
     private int code = 200;
 

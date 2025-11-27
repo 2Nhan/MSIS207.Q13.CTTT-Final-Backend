@@ -34,6 +34,6 @@ public class OpenApiConfiguration {
                         .version("v1.0.0")
                         .description("This is the API Documentation for MSIS207.Q13.CTTT final project.")
                         .license(new License().name("Apache 2.0").url("https://www.apache.org/licenses/LICENSE-2.0.html")))
-                .servers(List.of(new Server().url("https://vero-3mfn.onrender.com/crm")));
+                .servers(List.of(new Server().url("https://vero-3mfn.onrender.com/crm"), new Server().url("http://localhost:8088/crm")));
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private final String[] PUBLIC_ENDPOINTS = {"/users/registration", "/auth/login"};
+    private final String[] PUBLIC_ENDPOINTS = {"/api/v1/authentication/registration", "/api/v1/authentication/login"};
 
     @Autowired
     private JwtDecoderConfiguration jwtDecoder;

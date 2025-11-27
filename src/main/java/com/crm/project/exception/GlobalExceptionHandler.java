@@ -1,6 +1,6 @@
 package com.crm.project.exception;
 
-import com.crm.project.dto.response.ApiResponse;
+import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.internal.AppErrorInfo;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -23,9 +24,9 @@ import java.util.ArrayList;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingException(Exception exception) {
+    ResponseEntity<MyApiResponse> handlingException(Exception exception) {
         log.error("Exception: ", exception);
-        ApiResponse apiResponse = new ApiResponse();
+        MyApiResponse apiResponse = new MyApiResponse();
 
         apiResponse.setCode(ErrorCode.UNCATEGORIZED_EXCEPTION.getCode());
         apiResponse.setMessage(ErrorCode.UNCATEGORIZED_EXCEPTION.getMessage());
@@ -34,14 +35,14 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
+    ResponseEntity<MyApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
         AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .errorField(exception.getErrorField())
                 .build();
-        ApiResponse apiResponse = ApiResponse.builder()
+        MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(errorCode.getStatusCode().value())
                 .message("Process Failed")
                 .error(appErrorResponse)
@@ -50,7 +51,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MissingServletRequestPartException.class)
-    public ResponseEntity<ApiResponse> handlingMissingServletRequestPartException(
+    public ResponseEntity<MyApiResponse> handlingMissingServletRequestPartException(
             MissingServletRequestPartException exception) {
 
         String part = exception.getRequestPartName();
@@ -68,7 +69,7 @@ public class GlobalExceptionHandler {
                 .message(finalMessage)
                 .build();
 
-        ApiResponse apiResponse = ApiResponse.builder()
+        MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(errorCode.getStatusCode().value())
                 .message("Missing request part")
                 .error(appErrorResponse)
@@ -78,13 +79,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ApiResponse> handlingHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception) {
+    public ResponseEntity<MyApiResponse> handlingHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception) {
         ErrorCode errorCode = ErrorCode.INVALID_FILE_TYPE;
         AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
-        ApiResponse apiResponse = ApiResponse.builder()
+        MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
                 .message("Process Failed")
                 .error(appErrorResponse)
@@ -92,8 +93,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(apiResponse);
     }
 
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<MyApiResponse> handlingNoResourceFoundException(NoResourceFoundException exception) {
+        ErrorCode errorCode = ErrorCode.INVALID_API_ENDPOINT;
+        AppErrorInfo appErrorInfo = AppErrorInfo.builder()
+                .code(errorCode.getCode())
+                .build();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .code(errorCode.getStatusCode().value())
+                .message(errorCode.getMessage())
+                .build();
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse> handleValidation(MethodArgumentNotValidException exception) {
+    public ResponseEntity<MyApiResponse> handleValidation(MethodArgumentNotValidException exception) {
         List<AppErrorInfo> errors = new ArrayList<>(exception.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -118,7 +132,7 @@ public class GlobalExceptionHandler {
         errors.sort(Comparator.comparing(com.crm.project.internal.AppErrorInfo::getCode));
 
 
-        ApiResponse response = ApiResponse.builder()
+        MyApiResponse response = MyApiResponse.builder()
                 .code(HttpStatus.BAD_REQUEST.value())
                 .message("Processed Failed")
                 .error(errors)

@@ -25,6 +25,9 @@ public class StageService {
 
     @Transactional
     public StageResponse createStage(StageCreationRequest request) {
+        if (stageRepository.existsStageByName(request.getName())) {
+            throw new AppException(ErrorCode.STAGE_EXISTED);
+        }
         Stage stage = new Stage();
         stage.setName(request.getName());
         stageRepository.save(stage);
@@ -36,6 +39,9 @@ public class StageService {
 
     @Transactional
     public StageResponse renameStage(String id, StageUpdateRequest request) {
+        if (id.equals("immutable_default_stage")) {
+            throw new AppException(ErrorCode.DEFAULT_STAGE_IMMUTABLE);
+        }
         Stage stage = stageRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
         stage.setName(request.getName());
         stageRepository.save(stage);
@@ -44,6 +50,9 @@ public class StageService {
 
     @Transactional
     public void deleteStage(String id) {
+        if (id.equals("immutable_default_stage")) {
+            throw new AppException(ErrorCode.DEFAULT_STAGE_IMMUTABLE);
+        }
         if (!stageRepository.existsById(id)) {
             throw new AppException(ErrorCode.STAGE_NOT_FOUND);
         }

@@ -28,7 +28,7 @@ public enum ValidationError {
     INVALID_PASSWORD(3002, "Password must have at least {min} characters", HttpStatus.BAD_REQUEST),
     INVALID_EMAIL(3003, "Please fill in valid email", HttpStatus.BAD_REQUEST),
     INVALID_PHONE_NUMBER(3004, "Please fill in valid phone number", HttpStatus.BAD_REQUEST),
-    INVALID_RATING(3005, "Rating must not be greater than 3", HttpStatus.BAD_REQUEST),
+    INVALID_RATING(3005, "Rating must not be greater than 5", HttpStatus.BAD_REQUEST),
     ;
 
     ValidationError(int code, String message, HttpStatusCode statusCode) {

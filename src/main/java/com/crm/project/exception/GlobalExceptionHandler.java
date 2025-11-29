@@ -6,6 +6,7 @@ import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -120,6 +121,38 @@ public class GlobalExceptionHandler {
                 .message(errorCode.getMessage())
                 .build();
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<MyApiResponse> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
+
+        String fieldName = null;
+        String expectedType = null;
+
+        Throwable cause = ex.getCause();
+        if (cause instanceof com.fasterxml.jackson.databind.exc.InvalidFormatException ife) {
+            // Lấy tên field bị lỗi
+            if (!ife.getPath().isEmpty()) {
+                fieldName = ife.getPath().get(0).getFieldName();
+            }
+            // Lấy kiểu dữ liệu mong đợi
+            expectedType = ife.getTargetType() != null ? ife.getTargetType().getSimpleName() : "unknown";
+        }
+
+        String errorMessage;
+        if (fieldName != null && expectedType != null) {
+            errorMessage = String.format("Field '%s' must be of type %s", fieldName, expectedType);
+        } else {
+            errorMessage = "Invalid request body format";
+        }
+
+        MyApiResponse response = MyApiResponse.builder()
+                .code(400)
+                .message("Invalid input type")
+                .error(errorMessage)
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

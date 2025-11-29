@@ -31,7 +31,7 @@ public class AuthenticationService {
     private final BlackListRepository blackListRepository;
 
     public AuthenticationResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()) || user.isDeleted()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }

@@ -31,7 +31,7 @@ public class ProductUpdateRequest {
     @BlankUpdateConstraint(message = "BLANK_STATUS")
     private String status;
 
-    //    @BlankUpdateConstraint(message = "BLANK_PRICE")
+    //        @BlankUpdateConstraint(message = "BLANK_PRICE")
     private BigDecimal price;
 
     private BigDecimal discount;

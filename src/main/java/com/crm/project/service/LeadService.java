@@ -1,6 +1,7 @@
 package com.crm.project.service;
 
 import com.crm.project.dto.request.LeadCreationRequest;
+import com.crm.project.dto.request.LeadUpdateRequest;
 import com.crm.project.dto.request.LeadUpdateStageRequest;
 import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.internal.CloudinaryInfo;
@@ -57,7 +58,7 @@ public class LeadService {
         lead.setStage(defaultStage);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         lead.setUser(user);
 
         leadRepository.save(lead);
@@ -72,6 +73,18 @@ public class LeadService {
     public List<StagesWithLeadsResponse> getStagesWithLeads() {
         List<Stage> stages = stageRepository.findAllWithLeads();
         return stages.stream().map(stageMapper::toStagesWithLeadsResponse).toList();
+    }
+
+    @Transactional
+    public LeadResponse updateLead(String id, LeadUpdateRequest request) {
+        Lead lead = leadRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAD_NOT_FOUND));
+        leadMapper.updateLead(request, lead);
+        if (request.getUserId() != null) {
+            User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+            lead.setUser(user);
+        }
+        leadRepository.save(lead);
+        return leadMapper.toLeadResponse(lead);
     }
 
     @Transactional

@@ -1,11 +1,10 @@
 package com.crm.project.mapper;
 
 import com.crm.project.dto.request.LeadCreationRequest;
+import com.crm.project.dto.request.LeadUpdateRequest;
 import com.crm.project.dto.response.LeadResponse;
 import com.crm.project.entity.Lead;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface LeadMapper {
@@ -13,4 +12,9 @@ public interface LeadMapper {
     Lead toLead(LeadCreationRequest request);
 
     LeadResponse toLeadResponse(Lead lead);
+
+    @Mapping(target = "stage", ignore = true)
+    @Mapping(target = "quotations", ignore = true)
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateLead(LeadUpdateRequest request, @MappingTarget Lead lead);
 }

@@ -1,6 +1,7 @@
 package com.crm.project.controller;
 
 import com.crm.project.dto.request.LeadCreationRequest;
+import com.crm.project.dto.request.LeadUpdateRequest;
 import com.crm.project.dto.request.LeadUpdateStageRequest;
 import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.dto.response.LeadResponse;
@@ -87,6 +88,15 @@ public class LeadController {
         List<StagesWithLeadsResponse> result = leadService.searchLeads(query);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(result)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<MyApiResponse> updateLead(@PathVariable String id, @RequestBody @Valid LeadUpdateRequest request) {
+        LeadResponse leadResponse = leadService.updateLead(id, request);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(leadResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

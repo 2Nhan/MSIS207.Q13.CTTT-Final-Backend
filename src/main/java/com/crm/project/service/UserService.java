@@ -34,7 +34,7 @@ public class UserService {
     @Transactional
     public ImageResponse uploadAvatar(MultipartFile file) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         String fileName = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
         FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
@@ -80,19 +80,19 @@ public class UserService {
 
     public UserResponse getSelfInfo() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
     }
 
     public UserResponse getUserById(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
     }
 
     @Transactional
     public UserResponse updateSelfInfo(UserUpdateRequest request) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         validateUserUniqueness(request.getEmail(), request.getPhoneNumber());
         userMapper.updateUser(request, user);
         if (request.getPassword() != null) {
@@ -104,7 +104,7 @@ public class UserService {
 
     @Transactional
     public void deleteUser(String id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USERNAME_NOT_FOUND));
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         user.setDeleted(true);
         userRepository.save(user);
     }

@@ -26,8 +26,8 @@ public class MailService {
         CreateEmailOptions email = CreateEmailOptions.builder()
                 .from(sender)
                 .to(to)
-                .subject("Hello from spring boot sender")
-                .text("Xin chào từ Spring Boot! Đây là email test qua Resend API.")
+                .subject("Bao gia")
+                .text("Day la bao gia cho")
                 .build();
 
         try {
@@ -36,4 +36,5 @@ public class MailService {
             throw new AppException(ErrorCode.MAILING_FAILED);
         }
     }
+    
 }

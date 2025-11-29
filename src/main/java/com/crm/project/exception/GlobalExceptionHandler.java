@@ -10,6 +10,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -37,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AppException.class)
     ResponseEntity<MyApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
-        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
+        AppErrorInfo apiErrorInfo = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .errorField(exception.getErrorField())
@@ -45,7 +46,7 @@ public class GlobalExceptionHandler {
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(errorCode.getStatusCode().value())
                 .message("Process Failed")
-                .error(appErrorResponse)
+                .error(apiErrorInfo)
                 .build();
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
@@ -64,7 +65,7 @@ public class GlobalExceptionHandler {
         // build dynamic message
         String finalMessage = mapAttributes(errorCode.getMessage(), attributes);
 
-        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
+        AppErrorInfo apiErrorInfo = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(finalMessage)
                 .build();
@@ -72,7 +73,7 @@ public class GlobalExceptionHandler {
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(errorCode.getStatusCode().value())
                 .message("Missing request part")
-                .error(appErrorResponse)
+                .error(apiErrorInfo)
                 .build();
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
@@ -81,16 +82,31 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public ResponseEntity<MyApiResponse> handlingHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException exception) {
         ErrorCode errorCode = ErrorCode.INVALID_FILE_TYPE;
-        AppErrorInfo appErrorResponse = com.crm.project.internal.AppErrorInfo.builder()
+        AppErrorInfo apiErrorInfo = com.crm.project.internal.AppErrorInfo.builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .build();
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value())
                 .message("Process Failed")
-                .error(appErrorResponse)
+                .error(apiErrorInfo)
                 .build();
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(apiResponse);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<MyApiResponse> handlingMaxUploadSizeExceededException(MaxUploadSizeExceededException exception) {
+        ErrorCode errorCode = ErrorCode.INVALID_FILE_SIZE;
+        AppErrorInfo appErrorInfo = AppErrorInfo.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .code(errorCode.getStatusCode().value())
+                .message("Process Failed")
+                .error(appErrorInfo)
+                .build();
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)

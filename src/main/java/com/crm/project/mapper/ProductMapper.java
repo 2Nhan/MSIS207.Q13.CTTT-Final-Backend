@@ -17,6 +17,7 @@ import org.springframework.data.repository.query.Param;
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
     @Mapping(target = "quotations", ignore = true)
+    @Mapping(target = "imageUrl", ignore = true)
     Product toProduct(ProductCreationRequest request);
 
     ProductResponse toProductResponse(Product product);

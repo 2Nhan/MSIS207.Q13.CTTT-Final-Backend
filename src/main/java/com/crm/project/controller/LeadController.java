@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -33,9 +32,8 @@ public class LeadController {
             summary = "Create a new lead",
             description = "Create a new lead record with optional image upload."
     )
-    public ResponseEntity<MyApiResponse> createLead(@RequestPart(value = "data") @Valid LeadCreationRequest request,
-                                                    @RequestPart(value = "image", required = false) MultipartFile file) {
-        LeadResponse leadResponse = leadService.createLead(request, file);
+    public ResponseEntity<MyApiResponse> createLead(@ModelAttribute(value = "data") @Valid LeadCreationRequest request) {
+        LeadResponse leadResponse = leadService.createLead(request);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(leadResponse)
                 .build();
@@ -89,6 +87,15 @@ public class LeadController {
         List<StagesWithLeadsResponse> result = leadService.searchLeads(query);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(result)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MyApiResponse> deleteLead(@PathVariable String id) {
+        leadService.deleteLead(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .message("Lead deleted successfully")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

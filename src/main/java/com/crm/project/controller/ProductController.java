@@ -1,5 +1,6 @@
 package com.crm.project.controller;
 
+import com.crm.project.dto.request.ImageUploadRequest;
 import com.crm.project.dto.request.MatchingRequest;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.request.ProductUpdateRequest;
@@ -40,40 +41,28 @@ public class ProductController {
     @PostMapping
     @Operation(
             summary = "Create a new product",
-            description = "Create a new product with required JSON data and optional image upload.",
+            description = "Create a new product with required data and optional image upload.",
             security = {@SecurityRequirement(name = "bearerAuth")},
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     description = "Multipart form-data with required 'data' JSON and optional 'image' file.",
                     content = @Content(
                             mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(
-                                    type = "object",
-                                    requiredProperties = {"data"},
-                                    description = "Form data containing a JSON 'data' field and an optional 'image' file"
-                            ),
+                            schema = @Schema(implementation = ProductCreationRequest.class),
                             examples = @ExampleObject(
-                                    name = "Example Request",
-                                    summary = "Sample form-data",
+                                    name = "Example Product",
+                                    summary = "Sample form-data fields",
                                     value = """
-                                            data={ 
-                                              "sku": "PRD-001", 
-                                              "name": "Vitamin C 500mg",
-                                              "brand": "Bidiphar",
-                                              "category": "Supplement",
-                                              "quantity": 100,
-                                              "status": "active",
-                                              "price": 59.90,
-                                              "discount": 5.0,
-                                              "discountType": "PERCENT",
-                                              "tag": "immune,health"
-                                            }
-                                            image=(binary file)
+                                            name=Vitamin C 500mg
+                                            brand=Bidiphar
+                                            category=Supplement
+                                            price=59.9
+                                            quantity=100
+                                            status=active
                                             """
                             )
                     )
-            )
-    )
+            ))
     @ApiResponses({
             @ApiResponse(
                     responseCode = "201",
@@ -174,9 +163,10 @@ public class ProductController {
                     )
             )
     })
-    public ResponseEntity<MyApiResponse> createProduct(@RequestPart(value = "data") @Valid ProductCreationRequest request,
-                                                       @RequestPart(value = "image", required = false) MultipartFile image) {
-        ProductResponse productResponse = productService.createProduct(request, image);
+    public ResponseEntity<MyApiResponse> createProduct(
+            @Parameter()
+            @ModelAttribute @Valid ProductCreationRequest request) {
+        ProductResponse productResponse = productService.createProduct(request);
 
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(productResponse)
@@ -188,29 +178,7 @@ public class ProductController {
     @Operation(
             summary = "Import products from CSV",
             description = "Upload a CSV file together with a JSON mapping configuration to import product data.",
-            security = {@SecurityRequirement(name = "bearerAuth")},
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(
-                                    type = "object",
-                                    requiredProperties = {"matching", "file"},
-                                    description = "Multipart form-data including mapping JSON and CSV file.",
-                                    example = """
-                                            {
-                                              "matching": {
-                                                "skuuuu": "sku",
-                                                "nameee": "name",
-                                                "priceee": "price",
-                                                "statusss": "status"
-                                              },
-                                              "file": "(binary CSV file)"
-                                            }
-                                            """
-                            )
-                    )
-            )
+            security = {@SecurityRequirement(name = "bearerAuth")}
     )
     @ApiResponses({
             @ApiResponse(
@@ -230,7 +198,7 @@ public class ProductController {
                                                   "sku": "SP-001",
                                                   "productName": "Vitamin C 500mg",
                                                   "category": "Supplement",
-                                                  "status": "ACTIVE",
+                                                  "status": "Active",
                                                   "purchaseUnitPrice": 59000,
                                                   "discount": 5,
                                                   "discountType": "PERCENT",
@@ -241,7 +209,7 @@ public class ProductController {
                                                   "sku": "SP-002",
                                                   "productName": "Paracetamol 500mg",
                                                   "category": "Thuốc OTC",
-                                                  "status": "ACTIVE",
+                                                  "status": "Active",
                                                   "purchaseUnitPrice": 1500,
                                                   "discount": 0,
                                                   "discountType": "NONE"
@@ -252,7 +220,7 @@ public class ProductController {
                                                   "productId": null,
                                                   "sku": "SP-007",
                                                   "productName": "Ống tiêm 5ml",
-                                                  "status": "ACTIVE",
+                                                  "status": "Active",
                                                   "purchaseUnitPrice": 8000,
                                                   "discount": 5,
                                                   "discountType": "AMOUNT"
@@ -261,7 +229,7 @@ public class ProductController {
                                                   "productId": null,
                                                   "sku": "SP-008",
                                                   "productName": "Bông y tế",
-                                                  "status": "INACTIVE",
+                                                  "status": "INActive",
                                                   "purchaseUnitPrice": 5000,
                                                   "discount": 0,
                                                   "discountType": "NONE"
@@ -316,6 +284,19 @@ public class ProductController {
                                                       }
                                                     }
                                                     """
+                                    ),
+                                    @ExampleObject(
+                                            name = "File size limit exceeded",
+                                            value = """
+                                                    {
+                                                      "code": 400,
+                                                      "message": "Process Failed",
+                                                      "error": {
+                                                          "code": 1101,
+                                                          "message": "File size limit is 1MB"
+                                                      }
+                                                     }
+                                                    """
                                     )
                             }
                     )
@@ -340,7 +321,35 @@ public class ProductController {
                     )
             )
     })
-    public ResponseEntity<MyApiResponse> importProductsFromCsv(@RequestPart(value = "matching") MatchingRequest matching, @RequestPart(value = "file") MultipartFile file) throws IOException {
+    public ResponseEntity<MyApiResponse> importProductsFromCsv(@Parameter(
+                                                                       description = "JSON mapping between CSV headers and Product fields",
+                                                                       required = true,
+                                                                       content = @Content(
+                                                                               mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                                                               schema = @Schema(implementation = MatchingRequest.class),
+                                                                               examples = @ExampleObject(
+                                                                                       name = "Sample matching map",
+                                                                                       value = """
+                                                                                               {
+                                                                                                 "sku_field": "sku",
+                                                                                                 "name_field": "name",
+                                                                                                 "price_field": "price"
+                                                                                               }
+                                                                                               """
+                                                                               )
+                                                                       )
+                                                               )
+                                                               @RequestPart("matching") MatchingRequest matching,
+
+                                                               @Parameter(
+                                                                       description = "CSV file to upload",
+                                                                       required = true,
+                                                                       content = @Content(
+                                                                               mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                                                                               schema = @Schema(type = "string", format = "binary")
+                                                                       )
+                                                               )
+                                                               @RequestPart("file") MultipartFile file) throws IOException {
         ImportResultResponse<ProductResponse> productResponses = productService.importProductsFromCsv(matching, file);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(productResponses.getValidList())
@@ -465,7 +474,7 @@ public class ProductController {
                     @Parameter(
                             name = "status",
                             description = "Filter by product status (optional)",
-                            example = "ACTIVE",
+                            example = "Active",
                             in = ParameterIn.QUERY
                     ),
                     @Parameter(
@@ -509,7 +518,7 @@ public class ProductController {
                                                                   "purchaseUnitPrice": 4200000.00,
                                                                   "discount": 0.00,
                                                                   "discountType": "NONE",
-                                                                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1731100011/sofaB.jpg"
+                                                                  "imageUrl": "https://res.cloudinary.com/demo/image/upload/v1731100011/sofaB.jpg",
                                                                   "tag": null
                                                                 }
                                                               ],
@@ -539,7 +548,7 @@ public class ProductController {
                                                                   "productBrand": "WoodLife",
                                                                   "productCategory": "Phụ Kiện Phòng Ngủ",
                                                                   "quantity": 14,
-                                                                  "status": "ACTIVE",
+                                                                  "status": "Active",
                                                                   "purchaseUnitPrice": 1650000.00,
                                                                   "discount": 5.00,
                                                                   "discountType": "PERCENT",
@@ -555,7 +564,7 @@ public class ProductController {
                                                                   "productBrand": "Mộc Decor",
                                                                   "productCategory": "Kệ Tivi",
                                                                   "quantity": 15,
-                                                                  "status": "ACTIVE",
+                                                                  "status": "Active",
                                                                   "purchaseUnitPrice": 4500000.00,
                                                                   "discount": 0.00,
                                                                   "discountType": "NONE",
@@ -571,7 +580,7 @@ public class ProductController {
                                                                   "productBrand": "SoftHome",
                                                                   "productCategory": "Thảm",
                                                                   "quantity": 20,
-                                                                  "status": "ACTIVE",
+                                                                  "status": "Active",
                                                                   "purchaseUnitPrice": 2350000.00,
                                                                   "discount": 10.00,
                                                                   "discountType": "PERCENT",
@@ -581,8 +590,8 @@ public class ProductController {
                                                               ],
                                                               "pagination": {
                                                                 "hasPre": true,
-                                                                "hasNext": true,
-                                                                "pageNumber": 5,
+                                                                "hasNext": false,
+                                                                "pageNumber": 9,
                                                                 "totalPages": 9
                                                               }
                                                             }
@@ -592,7 +601,7 @@ public class ProductController {
                             )
                     ),
                     @ApiResponse(
-                            responseCode = "400",
+                            responseCode = "404",
                             description = "Invalid request parameters",
                             content = @Content(
                                     mediaType = "application/json",
@@ -600,13 +609,13 @@ public class ProductController {
                                             name = "BadRequestExample",
                                             value = """
                                                     {
-                                                      "code": 400,
-                                                      "message": "Invalid filter or pagination parameters",
+                                                      "code": 404,
+                                                      "message": "Process Failed",
                                                       "error": {
-                                                        "code": 1009,
-                                                        "message": "Process Failed"
+                                                          "code": 1006,
+                                                          "message": "No results"
                                                       }
-                                                    }
+                                                     }
                                                     """
                                     )
                             )
@@ -651,7 +660,7 @@ public class ProductController {
                     @Parameter(
                             name = "pageSize",
                             description = "Number of products per page",
-                            example = "10",
+                            example = "2",
                             required = false
                     )
             }
@@ -743,38 +752,10 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping("/{id}/image")
+    @PutMapping("/{id}/image")
     @Operation(
             summary = "Upload or update product image",
-            description = "Upload or replace the image of a specific product by its ID.",
-            parameters = {
-                    @Parameter(
-                            name = "id",
-                            description = "UUID of the product to update the image for",
-                            example = "019521fb-dee5-4e0a-a108-e6aea5f6c129",
-                            required = true
-                    )
-            },
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    description = "Image file to upload (JPEG, PNG, WEBP supported)",
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(
-                                    type = "object",
-                                    requiredProperties = {"image"},
-                                    description = "Multipart form-data containing an image file"
-                            ),
-                            encoding = {
-                                    @Encoding(name = "image", contentType = "image/jpeg, image/png, image/webp")
-                            },
-                            examples = @ExampleObject(
-                                    name = "UploadExample",
-                                    summary = "Example of uploading product image",
-                                    value = "image=@macbook.jpg"
-                            )
-                    )
-            )
+            description = "Upload or replace the image of a specific product by its ID."
     )
     @ApiResponses(value = {
             @ApiResponse(
@@ -840,8 +821,25 @@ public class ProductController {
                     )
             )
     })
-    public ResponseEntity<MyApiResponse> uploadProductImage(@PathVariable("id") String id, @RequestPart(value = "image", required = false) MultipartFile file) {
-        ImageResponse imageResponse = productService.uploadProductImage(id, file);
+    public ResponseEntity<MyApiResponse> uploadProductImage(
+            @Parameter(
+                    name = "id",
+                    description = "UUID of the product to update the image for",
+                    example = "019521fb-dee5-4e0a-a108-e6aea5f6c129",
+                    required = true
+            )
+            @PathVariable("id") String id,
+            @Parameter(
+                    name = "image",
+                    description = "Image file (JPG|PNG|WEBP)",
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(type = "string", format = "binary")
+                    ),
+                    required = true
+            )
+            @ModelAttribute @Valid ImageUploadRequest image) {
+        ImageResponse imageResponse = productService.uploadProductImage(id, image.getImage());
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(imageResponse)
                 .build();
@@ -869,7 +867,7 @@ public class ProductController {
                                               "brand": "Bidiphar",
                                               "category": "Supplement",
                                               "quantity": 200,
-                                              "status": "ACTIVE",
+                                              "status": "Active",
                                               "price": 89.90,
                                               "discount": 10.0,
                                               "discountType": "PERCENT",
@@ -898,7 +896,7 @@ public class ProductController {
                                                 "sku": "PRD-001",
                                                 "name": "Vitamin C 1000mg",
                                                 "category": "Supplement",
-                                                "status": "ACTIVE",
+                                                "status": "Active",
                                                 "price": 89.90,
                                                 "discount": 10.0,
                                                 "discountType": "PERCENT",
@@ -927,8 +925,8 @@ public class ProductController {
                                                           "code": 2011,
                                                           "errorField": "price",
                                                           "message": "Please fill in price"
-                                                        }
-                                                                                        {
+                                                        },
+                                                        {
                                                           "code": 2009,
                                                           "errorField": "sku",
                                                           "message": "Please fill in sku"
@@ -988,7 +986,7 @@ public class ProductController {
                                     value = """
                                             {
                                               "code": 200,
-                                              "message": "PRODUCT DELETED"
+                                              "message": "Product deleted successfully"
                                             }
                                             """
                             )
@@ -1019,7 +1017,7 @@ public class ProductController {
     public ResponseEntity<MyApiResponse> deleteProduct(@PathVariable("id") String id) {
         productService.deleteProduct(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
-                .message("PRODUCT DELETED")
+                .message("Product deleted successfully")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

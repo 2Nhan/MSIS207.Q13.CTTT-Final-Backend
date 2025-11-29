@@ -43,10 +43,10 @@ public class LeadService {
     }
 
     @Transactional
-    public LeadResponse createLead(LeadCreationRequest request, MultipartFile image) {
+    public LeadResponse createLead(LeadCreationRequest request) {
         validateLeadUniqueness(request.getEmail(), request.getPhoneNumber());
         Lead lead = leadMapper.toLead(request);
-
+        MultipartFile image = request.getImage();
         if (image != null && !image.isEmpty()) {
             FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
             String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());

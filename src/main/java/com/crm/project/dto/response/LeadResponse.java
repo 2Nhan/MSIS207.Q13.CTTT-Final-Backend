@@ -14,21 +14,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@JsonPropertyOrder({
-        "id",
-        "fullName",
-        "dateOfBirth",
-        "gender",
-        "email",
-        "phoneNumber",
-        "rating",
-        "expectedRevenue",
-        "avatarUrl",
-        "stage",
-        "responsibleBy",
-        "createdAt",
-        "updatedAt"
-})
 public class LeadResponse {
 
     private String id;
@@ -37,21 +22,25 @@ public class LeadResponse {
 
     private LocalDate dateOfBirth;
 
-    private String gender;
-
     private String email;
 
     private String phoneNumber;
+
+    private String company;
+
+    private LocalDate closingDate;
 
     private Integer rating;
 
     private BigDecimal expectedRevenue;
 
+    private String note;
+
     private String avatarUrl;
 
     private StageResponse stage;
 
-    @JsonProperty("responsibleBy")
+    @JsonProperty("assignTo")
     private UserNormalInfo user;
 
     private LocalDateTime createdAt;

@@ -37,10 +37,11 @@ public class ProductService {
     private final CsvService csvService;
 
     @Transactional
-    public ProductResponse createProduct(ProductCreationRequest request, MultipartFile image) {
+    public ProductResponse createProduct(ProductCreationRequest request) {
         if (productRepository.existsBySku(request.getSku())) {
             throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED, "sku");
         }
+        MultipartFile image = request.getImage();
         Product product = productMapper.toProduct(request);
         if (image != null && !image.isEmpty()) {
             FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);

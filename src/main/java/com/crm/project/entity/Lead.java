@@ -32,14 +32,23 @@ public class Lead extends BaseEntity {
     @Column(name = "phone_number", unique = false)
     private String phoneNumber;
 
-    @Column(name = "avatar_url")
-    private String avatarUrl;
+    @Column(name = "company")
+    private String company;
+
+    @Column(name = "closing_date")
+    private LocalDate closingDate;
 
     @Column(name = "rating")
     private Integer rating;
 
     @Column(name = "expected_revenue")
     private BigDecimal expectedRevenue;
+
+    @Column(name = "note", columnDefinition = "TEXT")
+    private String note;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
 
     @ManyToOne
     @JoinColumn(name = "stage", nullable = false)

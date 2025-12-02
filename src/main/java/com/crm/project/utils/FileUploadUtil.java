@@ -20,7 +20,6 @@ public final class FileUploadUtil {
     public static final String IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|webp))$)";
     public static final String DATE_FORMAT = "yyyyMMddHHmmss";
 
-    public static final String IMPORT_PATTERN = "([^\\s]+(\\.(?i)(csv|xls|xlsx))$)";
     public static final int MAX_TOTAL_ROWS = 100;
     public static final List TYPE = List.of("text/csv",
             "application/vnd.ms-excel", // .xls

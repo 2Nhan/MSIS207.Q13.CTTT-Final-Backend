@@ -4,6 +4,8 @@ import com.crm.project.internal.QuotationItemInfo;
 import com.crm.project.internal.UserNormalInfo;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -13,6 +15,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class QuotationResponse {
+    private String id;
+
     private String leadId;
 
     private String leadName;
@@ -27,11 +31,11 @@ public class QuotationResponse {
 
     private BigDecimal total;
 
-    private QuotationItemInfo items;
+    private List<QuotationItemInfo> items;
 
     private UserNormalInfo createdBy;
 
-    private LocalDate createdDate;
+    private LocalDateTime createdAt;
 
-    private LocalDate updatedDate;
+    private LocalDateTime updatedAt;
 }

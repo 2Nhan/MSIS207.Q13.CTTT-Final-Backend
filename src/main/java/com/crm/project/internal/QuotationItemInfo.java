@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class QuotationItemInfo {
-    private String id;
+    private String productId;
 
     private String name;
 

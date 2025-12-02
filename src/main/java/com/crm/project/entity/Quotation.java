@@ -45,11 +45,6 @@ public class Quotation extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User createdBy;
 
-    @ManyToMany
-    @JoinTable(
-            name = "quotation_products",
-            joinColumns = @JoinColumn(name = "quotation_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
-    private List<Product> products;
+    @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuotationItem> items;
 }

@@ -28,13 +28,9 @@ import java.util.List;
 public class LeadController {
     public final LeadService leadService;
 
-    @PostMapping
-    @Operation(
-            summary = "Create a new lead",
-            description = "Create a new lead record with optional image upload."
-    )
-    public ResponseEntity<MyApiResponse> createLead(@ModelAttribute(value = "data") @Valid LeadCreationRequest request) {
-        LeadResponse leadResponse = leadService.createLead(request);
+    @PostMapping("/{stageId}/stage")
+    public ResponseEntity<MyApiResponse> createLead(@PathVariable String stageId, @ModelAttribute @Valid LeadCreationRequest request) {
+        LeadResponse leadResponse = leadService.createLead(stageId, request);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(leadResponse)
                 .build();

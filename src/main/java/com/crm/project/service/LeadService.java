@@ -36,15 +36,8 @@ public class LeadService {
     private final StageRepository stageRepository;
     private final StageMapper stageMapper;
 
-    private Stage defaultStage;
-
-    @PostConstruct
-    public void init() {
-        this.defaultStage = stageRepository.findById("immutable_default_stage").orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
-    }
-
     @Transactional
-    public LeadResponse createLead(LeadCreationRequest request) {
+    public LeadResponse createLead(String stageId, LeadCreationRequest request) {
         validateLeadUniqueness(request.getEmail(), request.getPhoneNumber());
         Lead lead = leadMapper.toLead(request);
         MultipartFile image = request.getImage();
@@ -55,7 +48,8 @@ public class LeadService {
 
             lead.setAvatarUrl(cloudinaryResponse.getUrl());
         }
-        lead.setStage(defaultStage);
+        Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
+        lead.setStage(stage);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

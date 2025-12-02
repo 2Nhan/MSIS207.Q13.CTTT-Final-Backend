@@ -209,8 +209,8 @@ public class StageController {
                     )
             )
     })
-    public ResponseEntity<MyApiResponse> renameStage(@PathVariable String id, @RequestBody @Valid StageUpdateRequest request) {
-        StageResponse stageResponse = stageService.renameStage(id, request);
+    public ResponseEntity<MyApiResponse> updateStage(@PathVariable String id, @RequestBody @Valid StageUpdateRequest request) {
+        StageResponse stageResponse = stageService.updateStage(id, request);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(stageResponse)
                 .build();

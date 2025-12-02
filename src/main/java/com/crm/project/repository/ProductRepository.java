@@ -22,6 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
 
     boolean existsBySku(String sku);
 
+
     @Query(value = """
             SELECT *
             FROM products

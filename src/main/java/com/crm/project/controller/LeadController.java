@@ -92,7 +92,7 @@ public class LeadController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PutMapping("/{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<MyApiResponse> updateLead(@PathVariable String id, @RequestBody @Valid LeadUpdateRequest request) {
         LeadResponse leadResponse = leadService.updateLead(id, request);
         MyApiResponse apiResponse = MyApiResponse.builder()

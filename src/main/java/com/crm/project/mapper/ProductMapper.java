@@ -51,6 +51,7 @@ public interface ProductMapper {
     @Query("SELECT p.sku FROM Product p WHERE p.sku IN :skus")
     Set<String> findExistingSkus(@Param("skus") List<String> skus);
 
+    @Mapping(target = "imageUrl", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateProduct(ProductUpdateRequest request, @MappingTarget Product product);
 }

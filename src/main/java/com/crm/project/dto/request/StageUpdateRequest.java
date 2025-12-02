@@ -1,5 +1,6 @@
 package com.crm.project.dto.request;
 
+import com.crm.project.validator.custom_validator.BlankUpdateConstraint;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -10,6 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class StageUpdateRequest {
-    @NotBlank(message = "BLANK_NAME")
+    @BlankUpdateConstraint(message = "BLANK_NAME")
     private String name;
+
+    private String color;
 }

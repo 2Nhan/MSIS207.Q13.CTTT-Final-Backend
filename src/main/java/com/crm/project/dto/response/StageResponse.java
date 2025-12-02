@@ -11,4 +11,6 @@ public class StageResponse {
     private String id;
 
     private String name;
+
+    private String color;
 }

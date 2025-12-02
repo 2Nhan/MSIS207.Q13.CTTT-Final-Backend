@@ -3,6 +3,8 @@ package com.crm.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -22,6 +24,15 @@ public class Quotation extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String content;
+
+    @Column(name = "valid_until")
+    private LocalDate validUntil;
+
+    @Column(name = "status")
+    private String status;
+
+    @Column(name = "total")
+    private BigDecimal total;
 
     @Column(name = "image_url")
     private String imageUrl;

@@ -20,6 +20,11 @@ public class Stage {
 
     private String name;
 
+    @Column(name = "rank_order")
+    private Integer rankOrder;
+
+    private String color;
+
     @OneToMany(mappedBy = "stage")
     private List<Lead> leads;
 }

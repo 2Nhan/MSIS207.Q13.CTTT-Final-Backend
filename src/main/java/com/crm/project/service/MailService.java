@@ -6,6 +6,7 @@ import com.resend.Resend;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,13 @@ public class MailService {
 
     @Value("${resend.sender}")
     private String sender;
+
+    private Resend resend;
+
+    @PostConstruct
+    public void init() {
+        this.resend = new Resend(apiKey);
+    }
 
     public void sendMail(String to) {
         Resend resend = new Resend(apiKey);
@@ -36,5 +44,9 @@ public class MailService {
             throw new AppException(ErrorCode.MAILING_FAILED);
         }
     }
-    
+
+    public void sendQuotationMail(String to) {
+    }
+
+
 }

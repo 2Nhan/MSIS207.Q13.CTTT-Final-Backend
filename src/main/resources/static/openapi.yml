@@ -1,0 +1,723 @@
+openapi: 3.0.1
+info:
+  title: CRM API Documentation
+  version: "1.0.0"
+  description: >
+    API specification for the Basic CRM system (Product module).
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: https://vero-3mfn.onrender.com/crm
+  - url: http://localhost:8088/crm
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ProductCreationRequest:
+      type: object
+      required:
+        - sku
+        - name
+        - category
+        - status
+        - price
+      description: >
+        Request schema for creating a new product.  
+        Accepts multipart/form-data with optional image file.
+      properties:
+        sku:
+          type: string
+          description: "Unique Stock Keeping Unit (SKU) identifier for the product."
+          example: "PRD-001"
+        name:
+          type: string
+          description: "Full name of the product."
+          example: "Vitamin C 500mg"
+        description:
+          type: string
+          description: "Detailed product description used for display or marketing."
+          example: "Vitamin C 500mg helps boost immunity."
+        subtitle:
+          type: string
+          description: "Short tagline or secondary description."
+          example: "Tăng sức đề kháng tự nhiên"
+        brand:
+          type: string
+          description: "Brand or manufacturer name of the product."
+          example: "Bidiphar"
+        category:
+          type: string
+          description: "Category under which this product is classified."
+          example: "Supplement"
+        quantity:
+          type: integer
+          description: "Available stock quantity in the system."
+          example: 100
+        status:
+          type: string
+          description: "Current status of the product (e.g. Active, Inactive, Preorder)."
+          example: "Active"
+        price:
+          type: number
+          format: double
+          description: "Unit selling price of the product in VND."
+          example: 59000
+        discount:
+          type: number
+          format: double
+          description: "Discount value applied to the product (in percent or amount)."
+          example: 5.0
+        discountType:
+          type: string
+          description: "Type of discount applied: PERCENT, AMOUNT, or NONE."
+          example: "PERCENT"
+        tag:
+          type: string
+          description: "Comma-separated list of tags or keywords for searching/filtering."
+          example: "immune,health"
+        image:
+          type: string
+          format: binary
+          description: "Optional image file for the product (JPG, PNG, WEBP supported)."
+
+    ProductUpdateRequest:
+      type: object
+      description: >
+        Request schema for updating an existing product.  
+        Supports partial updates (only send the fields you want to modify).  
+        Accepts multipart/form-data for updating image as well.
+      properties:
+        sku:
+          type: string
+          description: "SKU identifier if it needs to be changed or corrected."
+          example: "PRD-001"
+        name:
+          type: string
+          description: "Updated product name."
+          example: "Vitamin C 1000mg"
+        description:
+          type: string
+          description: "Updated detailed description of the product."
+          example: "Vitamin C 1000mg – high strength immune booster."
+        subtitle:
+          type: string
+          description: "Updated tagline or subtitle."
+          example: "Tăng cường sức khỏe – Giảm mệt mỏi"
+        brand:
+          type: string
+          description: "Brand or manufacturer (can be updated if changed)."
+          example: "Bidiphar"
+        category:
+          type: string
+          description: "Updated category name."
+          example: "Supplement"
+        quantity:
+          type: integer
+          description: "Updated available stock quantity."
+          example: 200
+        status:
+          type: string
+          description: "Updated product status (Active, Inactive, etc.)."
+          example: "Active"
+        price:
+          type: number
+          format: double
+          description: "Updated product price."
+          example: 89000
+        discount:
+          type: number
+          format: double
+          description: "Updated discount value (if any)."
+          example: 10
+        discountType:
+          type: string
+          description: "Updated discount type (PERCENT, AMOUNT, NONE)."
+          example: "PERCENT"
+        tag:
+          type: string
+          description: "Updated comma-separated tags for filtering/searching."
+          example: "health,immune"
+        image:
+          type: string
+          format: binary
+          description: "Optional new product image file (JPG, PNG, WEBP supported)."
+
+    MatchingRequest:
+      type: object
+      description: >
+        Mapping configuration between CSV column headers and corresponding product fields  
+        used when importing product data from CSV.
+      example:
+        sku_field: "sku"
+        name_field: "name"
+        price_field: "price"
+      properties:
+        sku_field:
+          type: string
+          description: "CSV column header mapped to the product SKU field."
+          example: "sku"
+        name_field:
+          type: string
+          description: "CSV column header mapped to the product name field."
+          example: "name"
+        price_field:
+          type: string
+          description: "CSV column header mapped to the product price field."
+          example: "price"
+
+    ProductResponse:
+      type: object
+      description: >
+        Response schema representing a product returned from the system.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "Unique identifier (UUID) of the product."
+          example: "a5b7d3c1-9d2b-4ac0-b03b-9e47c3e8e21a"
+        sku:
+          type: string
+          description: "SKU identifier for the product."
+          example: "PRD-001"
+        name:
+          type: string
+          description: "Name of the product."
+          example: "Vitamin C 500mg"
+        brand:
+          type: string
+          description: "Brand or manufacturer of the product."
+          example: "Bidiphar"
+        category:
+          type: string
+          description: "Product category."
+          example: "Supplement"
+        price:
+          type: number
+          format: double
+          description: "Unit price of the product."
+          example: 59000
+        discount:
+          type: number
+          format: double
+          description: "Discount amount applied."
+          example: 5.0
+        discountType:
+          type: string
+          description: "Type of discount (PERCENT, AMOUNT, NONE)."
+          example: "PERCENT"
+        quantity:
+          type: integer
+          description: "Available quantity in inventory."
+          example: 100
+        status:
+          type: string
+          description: "Product status (e.g., Active, Inactive, Preorder)."
+          example: "Active"
+        tag:
+          type: string
+          description: "Comma-separated list of product tags."
+          example: "immune,health"
+        imageUrl:
+          type: string
+          description: "Public URL of the uploaded product image (hosted on Cloudinary)."
+          example: "https://res.cloudinary.com/demo/image/upload/vitamin-c.jpg"
+
+    PageInfo:
+      type: object
+      description: >
+        Pagination metadata object included in paginated responses.
+      properties:
+        hasPre:
+          type: boolean
+          description: "Indicates if there is a previous page available."
+          example: false
+        hasNext:
+          type: boolean
+          description: "Indicates if there is a next page available."
+          example: true
+        pageNumber:
+          type: integer
+          description: "Current page number (1-based)."
+          example: 1
+        totalPages:
+          type: integer
+          description: "Total number of pages for the current query."
+          example: 9
+
+    MyApiResponse:
+      type: object
+      description: >
+        Standardized response wrapper for all API responses in the CRM system.  
+        Contains status code, message, and optional data/error/pagination objects.
+      properties:
+        code:
+          type: integer
+          description: "HTTP-like status code representing the result (e.g. 200, 400, 404)."
+          example: 200
+        message:
+          type: string
+          description: "Response message describing the operation result (e.g. 'Process succeed')."
+          example: "Process succeed"
+        data:
+          type: object
+          description: "Response payload data, structure depends on the specific endpoint."
+        error:
+          type: object
+          description: "Error object (if any) containing details about validation or server errors."
+        pagination:
+          $ref: '#/components/schemas/PageInfo'
+          description: "Pagination information for list responses (if applicable)."
+
+security:
+  - bearerAuth: [ ]
+
+tags:
+  - name: Products
+    description: "APIs for managing products, importing, and searching."
+
+paths:
+  /api/v1/products:
+    post:
+      tags: [ Products ]
+      summary: "Create a new product"
+      description: "Create a new product with required fields and optional image upload."
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductCreationRequest'
+      responses:
+        '201':
+          description: "Product created successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyApiResponse'
+              examples:
+                SuccessExample:
+                  summary: "Product successfully created"
+                  value:
+                    code: 201
+                    message: "Process succeed"
+                    data:
+                      id: "a5b7d3c1-9d2b-4ac0-b03b-9e47c3e8e21a"
+                      sku: "PRD-001"
+                      name: "Vitamin C 500mg"
+                      brand: "Bidiphar"
+                      category: "Supplement"
+                      quantity: 100
+                      status: "Active"
+                      price: 59000
+                      discount: 5
+                      discountType: "PERCENT"
+                      tag: "immune,health"
+                      imageUrl: "https://res.cloudinary.com/demo/image/upload/vitamin-c.jpg"
+        '400':
+          description: "Validation failed or duplicate SKU"
+          content:
+            application/json:
+              examples:
+                DuplicateSKU:
+                  summary: "SKU already exists"
+                  value:
+                    code: 400
+                    message: "Process Failed"
+                    error:
+                      code: 2007
+                      errorField: "sku"
+                      message: "SKU already exists"
+                MissingRequiredFields:
+                  summary: "Missing required fields"
+                  value:
+                    code: 400
+                    message: "Process Failed"
+                    error:
+                      - code: 2011
+                        errorField: "price"
+                        message: "Please fill in price"
+                      - code: 2009
+                        errorField: "sku"
+                        message: "Please fill in sku"
+        '415':
+          description: "Unsupported file type"
+          content:
+            application/json:
+              examples:
+                UnsupportedFileType:
+                  summary: "Only JPG, PNG, WEBP allowed"
+                  value:
+                    code: 415
+                    message: "Process Failed"
+                    error:
+                      code: 1100
+                      message: "File type is not supported"
+
+    get:
+      tags: [ Products ]
+      summary: "Get all products"
+      description: "Retrieve paginated list of products with optional filters."
+      parameters:
+        - name: pageNo
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: sortBy
+          in: query
+          schema: { type: string, default: "sku" }
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [ asc, desc ]
+            default: asc
+        - name: category
+          in: query
+          schema: { type: string }
+        - name: status
+          in: query
+          schema: { type: string }
+        - name: minPrice
+          in: query
+          schema: { type: number, format: double }
+        - name: maxPrice
+          in: query
+          schema: { type: number, format: double }
+      responses:
+        '200':
+          description: "Products retrieved successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyApiResponse'
+              examples:
+                SuccessExample:
+                  summary: "Sample with filter"
+                  value:
+                    code: 200
+                    message: "Process succeed"
+                    data:
+                      - id: "014ab9fb-c371-4da6-bf3a-3575a95ce4ae"
+                        sku: "SP-111"
+                        name: "Sofa Băng 2 Chỗ Mini"
+                        category: "Sofa"
+                        status: "PREORDER"
+                        price: 4200000
+                        discount: 0
+                        discountType: "NONE"
+                        imageUrl: "https://res.cloudinary.com/demo/image/upload/sofaB.jpg"
+                    pagination:
+                      hasPre: false
+                      hasNext: false
+                      pageNumber: 1
+                      totalPages: 1
+                SuccessExample_NoFilter:
+                  summary: "Sample without filters (default first page)"
+                  value:
+                    code: 200
+                    message: "Process succeed"
+                    data:
+                      - id: "0b9a17b1-41c2-463a-bad8-234567890abc"
+                        sku: "SP-001"
+                        name: "Vitamin C 500mg"
+                        category: "Supplement"
+                        status: "Active"
+                        price: 59000
+                        discount: 5
+                        discountType: "PERCENT"
+                        imageUrl: "https://res.cloudinary.com/demo/image/upload/vitamin-c.jpg"
+                      - id: "0b9a17b1-41c2-463a-bad8-234567890def"
+                        sku: "SP-002"
+                        name: "Paracetamol 500mg"
+                        category: "Medicine"
+                        status: "Active"
+                        price: 2500
+                        discount: 0
+                        discountType: "NONE"
+                        imageUrl: "https://res.cloudinary.com/demo/image/upload/paracetamol.jpg"
+                      - id: "0b9a17b1-41c2-463a-bad8-234567890ghi"
+                        sku: "SP-003"
+                        name: "Calcium 600+D3"
+                        category: "Supplement"
+                        status: "Active"
+                        price: 72000
+                        discount: 10
+                        discountType: "PERCENT"
+                        imageUrl: "https://res.cloudinary.com/demo/image/upload/calcium.jpg"
+                    pagination:
+                      hasPre: false
+                      hasNext: true
+                      pageNumber: 1
+                      totalPages: 5
+
+        '404':
+          description: "No results found"
+          content:
+            application/json:
+              examples:
+                NotFound:
+                  summary: "No products found"
+                  value:
+                    code: 404
+                    message: "Process Failed"
+                    error:
+                      code: 1006
+                      message: "No results"
+
+  /api/v1/products/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema: { type: string, format: uuid }
+    get:
+      tags: [ Products ]
+      summary: "Get product details"
+      responses:
+        '200':
+          description: "Product retrieved successfully"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyApiResponse'
+              examples:
+                SuccessExample:
+                  summary: "Single product detail"
+                  value:
+                    code: 200
+                    message: "Process succeed"
+                    data:
+                      id: "019521fb-dee5-4e0a-a108-e6aea5f6c129"
+                      sku: "SP-1762772322687"
+                      name: "Macbook Pro M3"
+                      brand: "Apple"
+                      category: "MacBook"
+                      status: "Active"
+                      price: 50000000
+                      discount: 5
+                      discountType: "PERCENTAGE"
+                      imageUrl: "https://res.cloudinary.com/example/image/upload/macbook-pro.jpg"
+        '404':
+          description: "Product not found"
+          content:
+            application/json:
+              examples:
+                NotFound:
+                  value:
+                    code: 404
+                    message: "Process Failed"
+                    error:
+                      code: 1007
+                      message: "Product not found"
+
+    patch:
+      tags: [ Products ]
+      summary: "Update product details"
+      description: "Update product information by ID (supports partial fields and optional image)."
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ProductUpdateRequest'
+      responses:
+        '200':
+          description: "Product updated successfully"
+          content:
+            application/json:
+              examples:
+                SuccessExample:
+                  value:
+                    code: 200
+                    message: "Process succeed"
+                    data:
+                      id: "a5b7d3c1-9d2b-4ac0-b03b-9e47c3e8e21a"
+                      sku: "PRD-001"
+                      name: "Vitamin C 1000mg"
+                      category: "Supplement"
+                      status: "Active"
+                      price: 89000
+                      discount: 10
+                      discountType: "PERCENT"
+                      imageUrl: "https://res.cloudinary.com/demo/image/upload/vitamin-c-1000.jpg"
+        '400':
+          description: "Validation failed"
+          content:
+            application/json:
+              examples:
+                MissingFields:
+                  value:
+                    code: 400
+                    message: "Process Failed"
+                    error:
+                      - code: 2011
+                        errorField: "price"
+                        message: "Please fill in price"
+        '404':
+          description: "Product not found"
+          content:
+            application/json:
+              examples:
+                NotFound:
+                  value:
+                    code: 404
+                    message: "Process Failed"
+                    error:
+                      code: 1006
+                      message: "Product not found"
+
+    delete:
+      tags: [ Products ]
+      summary: "Delete a product"
+      responses:
+        '200':
+          description: "Product deleted successfully"
+          content:
+            application/json:
+              examples:
+                Success:
+                  value:
+                    code: 200
+                    message: "Product deleted successfully"
+        '404':
+          description: "Product not found"
+          content:
+            application/json:
+              examples:
+                NotFound:
+                  value:
+                    code: 404
+                    message: "Process Failed"
+                    error:
+                      code: 1006
+                      message: "Product not found"
+
+  /api/v1/products/search:
+    get:
+      tags: [ Products ]
+      summary: "Search products"
+      description: "Search products by keyword (name, SKU, or tag)."
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema: { type: string }
+        - name: pageNo
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: pageSize
+          in: query
+          schema: { type: integer, default: 10 }
+      responses:
+        '200':
+          description: "Search successful"
+          content:
+            application/json:
+              examples:
+                Success:
+                  value:
+                    code: 200
+                    message: "Process succeed"
+                    data:
+                      - id: "019521fb-dee5-4e0a-a108-e6aea5f6c129"
+                        sku: "SP-1762772322687"
+                        name: "Macbook Pro M3"
+                        brand: "Apple"
+                        category: "MacBook"
+                        price: 50000000
+                        discount: 5
+                        discountType: "PERCENT"
+                        imageUrl: "https://res.cloudinary.com/demo/image/upload/macbook.jpg"
+                    pagination:
+                      hasPre: false
+                      hasNext: true
+                      pageNumber: 1
+                      totalPages: 2
+        '404':
+          description: "No results found"
+          content:
+            application/json:
+              examples:
+                NotFound:
+                  value:
+                    code: 404
+                    message: "Process Failed"
+                    error:
+                      code: 1006
+                      message: "No results"
+
+  /api/v1/products/csv:
+    post:
+      tags: [ Products ]
+      summary: "Import products from CSV"
+      description: "Upload a CSV file and mapping configuration to import product data."
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [ matching, file ]
+              properties:
+                matching:
+                  $ref: '#/components/schemas/MatchingRequest'
+                file:
+                  type: string
+                  format: binary
+                  description: "CSV file containing product data"
+      responses:
+        '200':
+          description: "Products imported successfully"
+          content:
+            application/json:
+              examples:
+                Success:
+                  value:
+                    code: 200
+                    message: "Process succeed"
+                    data:
+                      - sku: "SP-001"
+                        name: "Vitamin C 500mg"
+                        price: 59000
+                      - sku: "SP-002"
+                        name: "Paracetamol 500mg"
+                        price: 1500
+                    error:
+                      - sku: "SP-007"
+                        name: "Ống tiêm 5ml"
+                        price: 8000
+                      - sku: "SP-008"
+                        name: "Bông y tế"
+                        price: 5000
+        '400':
+          description: "Invalid mapping or missing file"
+          content:
+            application/json:
+              examples:
+                WrongMatching:
+                  value:
+                    code: 400
+                    message: "Process Failed"
+                    error:
+                      code: 1009
+                      message: "Mapping not suitable"
+        '415':
+          description: "File type not supported"
+          content:
+            application/json:
+              examples:
+                UnsupportedType:
+                  value:
+                    code: 415
+                    message: "Process Failed"
+                    error:
+                      code: 1100
+                      message: "File type is not supported"

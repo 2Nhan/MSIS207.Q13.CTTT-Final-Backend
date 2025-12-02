@@ -234,13 +234,6 @@ public class PdfService {
         return cell;
     }
 
-    private PdfPCell infoCell(String text, Font font) {
-        PdfPCell cell = new PdfPCell(new Phrase(text, font));
-        cell.setBorder(Rectangle.NO_BORDER);
-        cell.setPadding(6f);
-        return cell;
-    }
-
     private PdfPCell summaryLabelCell(String text, Font font) {
         PdfPCell cell = new PdfPCell(new Phrase(text, font));
         cell.setBorder(Rectangle.NO_BORDER);

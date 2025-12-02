@@ -23,6 +23,7 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+    url: /openapi.yml
 jwt:
   key: ${SECRET_KEY}
   access_duration: ${ACCESS_TOKEN_DURATION}

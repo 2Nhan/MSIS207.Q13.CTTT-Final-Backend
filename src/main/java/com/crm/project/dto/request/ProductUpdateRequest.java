@@ -2,6 +2,7 @@ package com.crm.project.dto.request;
 
 import com.crm.project.validator.custom_validator.BlankUpdateConstraint;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 
@@ -31,7 +32,6 @@ public class ProductUpdateRequest {
     @BlankUpdateConstraint(message = "BLANK_STATUS")
     private String status;
 
-    //        @BlankUpdateConstraint(message = "BLANK_PRICE")
     private BigDecimal price;
 
     private BigDecimal discount;
@@ -39,4 +39,6 @@ public class ProductUpdateRequest {
     private String discountType;
 
     private String tag;
+
+    private MultipartFile image;
 }

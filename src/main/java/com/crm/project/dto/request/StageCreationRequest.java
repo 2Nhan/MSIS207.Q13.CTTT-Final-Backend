@@ -11,4 +11,6 @@ import lombok.*;
 public class StageCreationRequest {
     @NotBlank(message = "BLANK_NAME")
     private String name;
+
+    private String color;
 }

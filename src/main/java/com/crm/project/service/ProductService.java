@@ -174,24 +174,18 @@ public class ProductService {
     }
 
     @Transactional
-    public ImageResponse uploadProductImage(String id, MultipartFile file) {
-        Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
-        if (file == null || file.isEmpty()) {
-            throw new AppException(ErrorCode.MISSING_FILE);
-        }
-        FileUploadUtil.checkImage(file, FileUploadUtil.IMAGE_PATTERN);
-        String filename = FileUploadUtil.standardizeFileName(file.getOriginalFilename());
-        CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(file, filename);
-        product.setImageUrl(cloudinaryResponse.getUrl());
-        productRepository.save(product);
-        return ImageResponse.builder().url(cloudinaryResponse.getUrl()).build();
-    }
-
-    @Transactional
     public ProductResponse updateProduct(String id, ProductUpdateRequest request) {
         Product product = productRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
         if (productRepository.existsBySku(request.getSku())) {
             throw new AppException(ErrorCode.PRODUCT_SKU_EXISTED);
+        }
+        MultipartFile image = request.getImage();
+        if (image != null && !image.isEmpty()) {
+            FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
+            String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
+            CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
+
+            product.setImageUrl(cloudinaryResponse.getUrl());
         }
         productMapper.updateProduct(request, product);
         productRepository.save(product);

@@ -15,5 +15,7 @@ public class StagesWithLeadsResponse {
 
     private String name;
 
+    private String color;
+
     private List<LeadNormalInfo> leads;
 }

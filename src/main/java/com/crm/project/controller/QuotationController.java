@@ -8,10 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,5 +23,19 @@ public class QuotationController {
                 .data(response)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+//    @PostMapping("/{id}/mail")
+//    public ResponseEntity<MyApiResponse> sendQuotationMail(@PathVariable String id) {
+//        return
+//    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MyApiResponse> getQuotationById(@PathVariable("id") String id) {
+        QuotationResponse quotationResponse = quotationService.getQuotation(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(quotationResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

@@ -22,6 +22,7 @@ public enum ErrorCode {
     STAGE_IN_USE(1012, "Stage has constraint with some leads", HttpStatus.BAD_REQUEST),
     STAGE_EXISTED(1013, "Stage already exists", HttpStatus.BAD_REQUEST),
     DEFAULT_STAGE_IMMUTABLE(1014, "Default stage is immutable", HttpStatus.BAD_REQUEST),
+    QUOTATION_NOT_FOUND(1015, "Quotation not found", HttpStatus.NOT_FOUND),
 
     INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),

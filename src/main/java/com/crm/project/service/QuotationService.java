@@ -7,6 +7,7 @@ import com.crm.project.entity.*;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.internal.QuotationItemInfo;
+import com.crm.project.mapper.LeadMapper;
 import com.crm.project.mapper.QuotationMapper;
 import com.crm.project.mapper.UserMapper;
 import com.crm.project.repository.*;
@@ -30,6 +31,8 @@ public class QuotationService {
     private final ProductRepository productRepository;
     private final QuotationMapper quotationMapper;
     private final UserMapper userMapper;
+    private final LeadMapper leadMapper;
+    private final MailService mailService;
 
     public QuotationResponse createQuotation(QuotationCreationRequest request) {
 
@@ -76,8 +79,7 @@ public class QuotationService {
 
         return QuotationResponse.builder()
                 .id(quotation.getId())
-                .leadId(lead.getId())
-                .leadName(lead.getFullName())
+                .lead(leadMapper.toLeadQuotationInfo(lead))
                 .title(quotation.getTitle())
                 .content(quotation.getContent())
                 .validUntil(quotation.getValidUntil())
@@ -88,6 +90,16 @@ public class QuotationService {
                 .createdAt(quotation.getCreatedAt())
                 .updatedAt(quotation.getUpdatedAt())
                 .build();
+    }
+
+    public void sendQuotationEmail(String id) {
+        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
+
+    }
+
+    public QuotationResponse getQuotation(String id) {
+        Quotation quotation = quotationRepository.findQuotationDetailById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
+        return quotationMapper.toQuotationResponse(quotation);
     }
 
 

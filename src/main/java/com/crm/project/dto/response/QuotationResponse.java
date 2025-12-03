@@ -1,5 +1,6 @@
 package com.crm.project.dto.response;
 
+import com.crm.project.internal.LeadQuotationInfo;
 import com.crm.project.internal.QuotationItemInfo;
 import com.crm.project.internal.UserNormalInfo;
 import lombok.*;
@@ -17,9 +18,7 @@ import java.time.LocalDate;
 public class QuotationResponse {
     private String id;
 
-    private String leadId;
-
-    private String leadName;
+    private LeadQuotationInfo lead;
 
     private String title;
 

@@ -93,8 +93,15 @@ public class QuotationService {
     }
 
     public void sendQuotationEmail(String id) {
-        Quotation quotation = quotationRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
-
+        Quotation quotation = quotationRepository.findQuotationDetailById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
+        List<QuotationItem> quotationItems = quotation.getItems();
+        List<String> products = new ArrayList<>();
+        for (QuotationItem item : quotationItems) {
+            products.add(item.getProduct().getName());
+        }
+        String to = quotation.getLead().getEmail();
+        String fullName = quotation.getLead().getFullName();
+        mailService.sendQuotationMail(to, fullName, products);
     }
 
     public QuotationResponse getQuotation(String id) {

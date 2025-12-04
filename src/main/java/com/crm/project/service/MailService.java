@@ -47,8 +47,8 @@ public class MailService {
         }
     }
 
-    public void sendQuotationMail(String to, String fullName, List<String> products, Byte[] attachments) {
-        String subject = "Báo giá cho danh mục sản phẩm: " + products.toString() + ",";
+    public void sendQuotationMail(String to, String fullName, List<String> products) {
+        String subject = "Báo giá cho danh mục sản phẩm: " + products.toString();
         String text = "Kính gửi: Anh/Chị " + fullName
                 + "\nLời đầu tiên, chúng tôi xin cảm ơn Quý khách hàng đã quan tâm đến sản phẩm của chúng tôi."
                 + "\nTiếp nhận yêu cầu của Anh/Chị, tôi xin gửi kèm email này bảng báo giá chi tiết cho hạng mục"
@@ -64,8 +64,12 @@ public class MailService {
                 .to(to)
                 .subject(subject)
                 .text(text)
-//                .attachments()
                 .build();
+        try {
+            CreateEmailResponse response = resend.emails().send(email);
+        } catch (ResendException e) {
+            throw new AppException(ErrorCode.MAILING_FAILED);
+        }
     }
 
 

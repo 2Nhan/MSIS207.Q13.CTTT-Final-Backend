@@ -25,10 +25,14 @@ public class QuotationController {
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 
-//    @PostMapping("/{id}/mail")
-//    public ResponseEntity<MyApiResponse> sendQuotationMail(@PathVariable String id) {
-//        return
-//    }
+    @PostMapping("/{id}/mail")
+    public ResponseEntity<MyApiResponse> sendQuotationEmail(@PathVariable String id) {
+        quotationService.sendQuotationEmail(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .message("Quotation email sent successfully")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MyApiResponse> getQuotationById(@PathVariable("id") String id) {

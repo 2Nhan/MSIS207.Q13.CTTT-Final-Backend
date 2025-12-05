@@ -58,6 +58,7 @@ public class SecurityConfiguration {
         config.addAllowedOrigin("https://vero-3mfn.onrender.com");
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:8088");
+        config.addAllowedOrigin("https://vera-sage.vercel.app");
 
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");

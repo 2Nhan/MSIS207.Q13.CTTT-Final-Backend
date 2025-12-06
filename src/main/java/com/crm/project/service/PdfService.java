@@ -1,6 +1,11 @@
 package com.crm.project.service;
 
 import com.crm.project.dto.response.ProductResponse;
+import com.crm.project.dto.response.QuotationResponse;
+import com.crm.project.entity.Quotation;
+import com.crm.project.entity.QuotationItem;
+import com.crm.project.internal.QuotationItemInfo;
+import com.crm.project.utils.CalculatorUtil;
 import com.lowagie.text.pdf.*;
 import org.springframework.stereotype.Service;
 import com.lowagie.text.Chunk;
@@ -15,13 +20,15 @@ import com.lowagie.text.Rectangle;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class PdfService {
 
-    public byte[] generateQuotation(String receiver, String sender, String startDate, String endDate, List<ProductResponse> products) throws Exception {
+    public byte[] generateQuotation(String receiver, String sender, LocalDate startDate, LocalDate endDate, Quotation quotation) throws Exception {
         Document document = new Document(PageSize.A4, 50, 50, 50, 50);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         PdfWriter.getInstance(document, out);
@@ -42,7 +49,7 @@ public class PdfService {
         // === Header: Logo bên trái, company info bên phải ===
         PdfPTable headerTable = new PdfPTable(2);
         headerTable.setWidthPercentage(100);
-        headerTable.setWidths(new float[]{0.5f, 4f}); // Logo nhỏ, info lớn
+        headerTable.setWidths(new float[]{0.5f, 4f});
 
         // Cột 1: Logo
         PdfPCell logoCell = new PdfPCell();
@@ -68,8 +75,8 @@ public class PdfService {
 
         Paragraph companyInfo = new Paragraph();
         companyInfo.add(new Chunk("CÔNG TY TNHH GIẢI PHÁP PHẦN MỀM XYZ\n", companyNameFont));
-        companyInfo.add(new Chunk("Địa chỉ: 90 Hai Bà Trưng, Phường Dĩ An, Quận Thủ Đức, TP Hồ Chí Minh\n", companyInfoFont));
-        companyInfo.add(new Chunk("VPĐD - 205/13/7 Lê Hồng Phong, P.Dĩ An, TP Hồ Chí Minh\n", companyInfoFont));
+        companyInfo.add(new Chunk("Địa chỉ: 90 ABCDE, Phường Dĩ An, Quận Thủ Đức, TP Hồ Chí Minh\n", companyInfoFont));
+        companyInfo.add(new Chunk("VPĐD - 205/13/7 GHJKL, P.Dĩ An, TP Hồ Chí Minh\n", companyInfoFont));
         companyInfo.add(new Chunk("Hotline: 090.999.1199 - Email: ", companyInfoFont));
         companyInfo.add(new Chunk("admin@crmsoft.site", emailFont));
         companyInfo.add(new Chunk(" - Website: ", companyInfoFont));
@@ -120,7 +127,7 @@ public class PdfService {
         cell1.setPadding(5f);
         Paragraph p1 = new Paragraph();
         p1.add(new Chunk("Ngày báo giá\n", boldBlue));
-        p1.add(new Chunk(startDate, normal));
+        p1.add(new Chunk(startDate.toString(), normal));
         cell1.addElement(p1);
         infoTable.addCell(cell1);
 
@@ -130,7 +137,7 @@ public class PdfService {
         cell2.setPadding(5f);
         Paragraph p2 = new Paragraph();
         p2.add(new Chunk("Ngày hết hạn\n", boldBlue));
-        p2.add(new Chunk(endDate, normal));
+        p2.add(new Chunk(endDate.toString(), normal));
         cell2.addElement(p2);
         infoTable.addCell(cell2);
 
@@ -157,26 +164,29 @@ public class PdfService {
         table.addCell(headerCell("Diễn giải", boldFont));
         table.addCell(headerCell("Số lượng", boldFont));
         table.addCell(headerCell("Đơn giá", boldFont));
-        table.addCell(headerCell("Thuế", boldFont));
+        table.addCell(headerCell("Giảm giá", boldFont));
         table.addCell(headerCell("Số tiền", boldFont));
 
-        double subtotal = 0;
-        for (ProductResponse p : products) {
-            double lineTotal = p.getQuantity() * p.getPrice().doubleValue();
-            subtotal += lineTotal;
-
+        List<QuotationItem> items = quotation.getItems();
+        for (QuotationItem p : items) {
             table.addCell(normalCell(p.getName(), normal));
             table.addCell(normalCell(df.format(p.getQuantity()) + " Đơn vị", normal));
-            table.addCell(normalCell(df.format(p.getPrice()) + ",00", normal));
-            table.addCell(normalCell("VAT 10%", smallFont));
-            table.addCell(amountCell(df.format(lineTotal) + ",000 ₫", normal));
+            table.addCell(normalCell(df.format(p.getUnitPrice()) + "₫", normal));
+            String discount = null;
+            if (p.getDiscountType().equalsIgnoreCase("percent")) {
+                discount = p.getDiscount().toBigInteger() + "%";
+            } else {
+                discount = p.getDiscount() + "₫/sp";
+            }
+            table.addCell(normalCell(discount, smallFont));
+            table.addCell(amountCell(df.format(p.getSubtotal()) + "₫", normal));
         }
 
         document.add(table);
 
         // === Tổng cộng (bên phải) ===
-        double tax = subtotal * 0.1;
-        double total = subtotal + tax;
+        BigDecimal tax = quotation.getTotal().multiply(BigDecimal.valueOf(0.1));
+        BigDecimal total = quotation.getTotal().add(tax);
 
         document.add(new Paragraph(" ", normal));
 
@@ -187,14 +197,14 @@ public class PdfService {
         totalTable.setWidths(new float[]{2f, 1.5f});
 
         totalTable.addCell(summaryLabelCell("Số tiền trước thuế", normal));
-        totalTable.addCell(summaryAmountCell(df.format(subtotal) + ",000 ₫", normal));
+        totalTable.addCell(summaryAmountCell(df.format(quotation.getTotal()) + "₫", normal));
 
         totalTable.addCell(summaryLabelCell("Thuế GTGT 10%", normal));
-        totalTable.addCell(summaryAmountCell(df.format(tax) + ",000 ₫", normal));
+        totalTable.addCell(summaryAmountCell(df.format(tax) + "₫", normal));
 
         // Dòng tổng (in đậm, màu xanh)
         totalTable.addCell(summaryLabelCell("Tổng", boldBlue));
-        totalTable.addCell(summaryAmountCell(df.format(total) + ",000 ₫", boldBlue));
+        totalTable.addCell(summaryAmountCell(df.format(total) + "₫", boldBlue));
 
         document.add(totalTable);
 

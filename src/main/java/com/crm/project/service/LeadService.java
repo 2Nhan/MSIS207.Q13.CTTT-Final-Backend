@@ -2,7 +2,6 @@ package com.crm.project.service;
 
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateRequest;
-import com.crm.project.dto.request.LeadUpdateStageRequest;
 import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.LeadResponse;
@@ -17,7 +16,6 @@ import com.crm.project.repository.LeadRepository;
 import com.crm.project.repository.StageRepository;
 import com.crm.project.repository.UserRepository;
 import com.crm.project.utils.FileUploadUtil;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -72,25 +70,36 @@ public class LeadService {
     @Transactional
     public LeadResponse updateLead(String id, LeadUpdateRequest request) {
         Lead lead = leadRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAD_NOT_FOUND));
+        MultipartFile image = request.getImage();
         leadMapper.updateLead(request, lead);
-        if (request.getUserId() != null) {
-            User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
-            lead.setUser(user);
+        if (image != null && !image.isEmpty()) {
+            FileUploadUtil.checkImage(image, FileUploadUtil.IMAGE_PATTERN);
+            String filename = FileUploadUtil.standardizeFileName(image.getOriginalFilename());
+            CloudinaryInfo cloudinaryResponse = cloudinaryService.uploadFile(image, filename);
+            lead.setAvatarUrl(cloudinaryResponse.getUrl());
         }
         leadRepository.save(lead);
         return leadMapper.toLeadResponse(lead);
     }
 
     @Transactional
-    public void updateLeadStage(String id, LeadUpdateStageRequest request) {
-        if (!stageRepository.existsById(request.getStageId())) {
+    public void updateLeadAssignment(String id, String userId) {
+        Lead lead = leadRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.LEAD_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        lead.setUser(user);
+        leadRepository.save(lead);
+    }
+
+    @Transactional
+    public void updateLeadStage(String id, String stageId) {
+        if (!stageRepository.existsById(stageId)) {
             throw new AppException(ErrorCode.STAGE_NOT_FOUND);
         }
 
         if (!leadRepository.existsById(id)) {
             throw new AppException(ErrorCode.LEAD_NOT_FOUND);
         }
-        leadRepository.updateStage(id, request.getStageId());
+        leadRepository.updateStage(id, stageId);
     }
 
     public List<StagesWithLeadsResponse> searchLeads(String query) {

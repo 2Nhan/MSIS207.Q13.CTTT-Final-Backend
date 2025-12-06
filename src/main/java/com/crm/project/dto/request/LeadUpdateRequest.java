@@ -3,7 +3,6 @@ package com.crm.project.dto.request;
 import com.crm.project.validator.custom_validator.BlankUpdateConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,5 +41,5 @@ public class LeadUpdateRequest {
 
     private String note;
 
-    private String userId;
+    private MultipartFile image;
 }

@@ -18,6 +18,7 @@ public interface LeadMapper {
 
     @Mapping(target = "stage", ignore = true)
     @Mapping(target = "quotations", ignore = true)
+    @Mapping(target = "user", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateLead(LeadUpdateRequest request, @MappingTarget Lead lead);
 }

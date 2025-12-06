@@ -2,13 +2,11 @@ package com.crm.project.controller;
 
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateRequest;
-import com.crm.project.dto.request.LeadUpdateStageRequest;
 import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.dto.response.LeadResponse;
 
 import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.service.LeadService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,21 +25,8 @@ import java.util.List;
 @RequestMapping("/api/v1/leads")
 public class LeadController {
     public final LeadService leadService;
-
-    @PostMapping("/{stageId}/stage")
-    public ResponseEntity<MyApiResponse> createLead(@PathVariable String stageId, @ModelAttribute @Valid LeadCreationRequest request) {
-        LeadResponse leadResponse = leadService.createLead(stageId, request);
-        MyApiResponse apiResponse = MyApiResponse.builder()
-                .data(leadResponse)
-                .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
-    }
-
+    
     @GetMapping("/{id}")
-    @Operation(
-            summary = "Get lead details",
-            description = "Retrieve detailed information of a specific lead by ID."
-    )
     public ResponseEntity<MyApiResponse> getLead(@PathVariable String id) {
         LeadResponse leadResponse = leadService.getLead(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
@@ -51,22 +36,14 @@ public class LeadController {
     }
 
     @PatchMapping("/{id}/stage")
-    @Operation(
-            summary = "Update lead stage",
-            description = "Update the sales stage of a specific lead."
-    )
-    public ResponseEntity<MyApiResponse> updateLeadStage(@PathVariable("id") String id, @RequestBody @Valid LeadUpdateStageRequest request) {
-        leadService.updateLeadStage(id, request);
+    public ResponseEntity<MyApiResponse> updateLeadStage(@PathVariable("id") String id, @RequestParam String stageId) {
+        leadService.updateLeadStage(id, stageId);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
     @GetMapping()
-    @Operation(
-            summary = "Get leads of all stages",
-            description = "Retrieve all leads grouped by their sales stages."
-    )
     public ResponseEntity<MyApiResponse> getStagesWithLeads() {
         List<StagesWithLeadsResponse> responses = leadService.getStagesWithLeads();
         MyApiResponse apiResponse = MyApiResponse.builder()
@@ -76,10 +53,6 @@ public class LeadController {
     }
 
     @GetMapping("/search")
-    @Operation(
-            summary = "Search leads",
-            description = "Search leads by keyword (name, email, or phone)."
-    )
     public ResponseEntity<MyApiResponse> searchLeads(@RequestParam("query") String query) {
         List<StagesWithLeadsResponse> result = leadService.searchLeads(query);
         MyApiResponse apiResponse = MyApiResponse.builder()
@@ -89,10 +62,19 @@ public class LeadController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<MyApiResponse> updateLead(@PathVariable String id, @RequestBody @Valid LeadUpdateRequest request) {
+    public ResponseEntity<MyApiResponse> updateLead(@PathVariable String id, @ModelAttribute @Valid LeadUpdateRequest request) {
         LeadResponse leadResponse = leadService.updateLead(id, request);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(leadResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{id}/assign")
+    public ResponseEntity<MyApiResponse> updateLeadAssignment(@PathVariable String id, @RequestParam String userId) {
+        leadService.updateLeadAssignment(id, userId);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .message("Lead assignment updated")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -1,9 +1,12 @@
 package com.crm.project.controller;
 
+import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.StageCreationRequest;
 import com.crm.project.dto.request.StageUpdateRequest;
+import com.crm.project.dto.response.LeadResponse;
 import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.dto.response.StageResponse;
+import com.crm.project.service.LeadService;
 import com.crm.project.service.StageService;
 import io.swagger.v3.oas.annotations.Operation;
 
@@ -29,12 +32,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/stages")
 public class StageController {
     private final StageService stageService;
+    private final LeadService leadService;
 
     @PostMapping
     public ResponseEntity<MyApiResponse> createStage(@RequestBody @Valid StageCreationRequest stageCreationRequest) {
         StageResponse stageResponse = stageService.createStage(stageCreationRequest);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(stageResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PostMapping("/{id}/leads")
+    public ResponseEntity<MyApiResponse> createLead(@PathVariable String id, @ModelAttribute @Valid LeadCreationRequest request) {
+        LeadResponse leadResponse = leadService.createLead(id, request);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(leadResponse)
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }

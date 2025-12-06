@@ -1,6 +1,5 @@
 package com.crm.project.controller;
 
-import com.crm.project.dto.request.ImageUploadRequest;
 import com.crm.project.dto.request.MatchingRequest;
 import com.crm.project.dto.request.ProductCreationRequest;
 import com.crm.project.dto.request.ProductUpdateRequest;

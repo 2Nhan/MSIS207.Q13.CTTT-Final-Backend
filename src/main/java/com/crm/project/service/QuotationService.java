@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class QuotationService {
     private final UserMapper userMapper;
     private final LeadMapper leadMapper;
     private final MailService mailService;
+    private final PdfService pdfService;
 
     public QuotationResponse createQuotation(QuotationCreationRequest request) {
 
@@ -44,13 +46,16 @@ public class QuotationService {
         List<QuotationItemInfo> itemInfos = getQuotationItemInfo(productQuantityMap);
 
         List<QuotationItem> quotationItems = new ArrayList<>();
+        Map<String, Product> productMap = productQuantityMap.keySet().stream()
+                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
         for (QuotationItemInfo info : itemInfos) {
             QuotationItem item = quotationMapper.toQuotationItem(info);
 
-            Product product = productQuantityMap.keySet().stream()
-                    .filter(p -> p.getId().equals(info.getProductId()))
-                    .findFirst()
-                    .orElseThrow(() -> new AppException(ErrorCode.PRODUCT_NOT_FOUND));
+            Product product = productMap.get(info.getProductId());
+            if (product == null) {
+                throw new AppException(ErrorCode.PRODUCT_NOT_FOUND);
+            }
 
             item.setProduct(product);
             quotationItems.add(item);
@@ -92,16 +97,29 @@ public class QuotationService {
                 .build();
     }
 
-    public void sendQuotationEmail(String id) {
+    public void sendQuotationEmail(String id) throws Exception {
         Quotation quotation = quotationRepository.findQuotationDetailById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
+
         List<QuotationItem> quotationItems = quotation.getItems();
         List<String> products = new ArrayList<>();
         for (QuotationItem item : quotationItems) {
             products.add(item.getProduct().getName());
         }
+
         String to = quotation.getLead().getEmail();
-        String fullName = quotation.getLead().getFullName();
-        mailService.sendQuotationMail(to, fullName, products);
+        String receiver = quotation.getLead().getFullName();
+
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        String sender = user.getFirstName() + " " + user.getLastName();
+
+        LocalDate startDate = quotation.getCreatedAt().toLocalDate();
+        LocalDate endDate = quotation.getValidUntil();
+
+        byte[] attachment = pdfService.generateQuotation(receiver, sender, startDate, endDate, quotation);
+
+        mailService.sendQuotationMail(to, sender, receiver, products, attachment);
+
+        quotationRepository.updateStatusToSent(quotation.getId());
     }
 
     public QuotationResponse getQuotation(String id) {

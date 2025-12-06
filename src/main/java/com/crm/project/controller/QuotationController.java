@@ -26,7 +26,7 @@ public class QuotationController {
     }
 
     @PostMapping("/{id}/mail")
-    public ResponseEntity<MyApiResponse> sendQuotationEmail(@PathVariable String id) {
+    public ResponseEntity<MyApiResponse> sendQuotationEmail(@PathVariable String id) throws Exception {
         quotationService.sendQuotationEmail(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .message("Quotation email sent successfully")

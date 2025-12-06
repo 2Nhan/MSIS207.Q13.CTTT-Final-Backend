@@ -56,6 +56,6 @@ public class Product extends BaseEntity {
     @OneToMany(mappedBy = "product")
     private List<OrderItem> orderItems;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(mappedBy = "product")
     private List<QuotationItem> quotationItems;
 }

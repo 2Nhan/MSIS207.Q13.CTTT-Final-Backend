@@ -20,7 +20,7 @@ public interface StageRepository extends JpaRepository<Stage, String> {
     @Query("SELECT DISTINCT s FROM Stage s LEFT JOIN FETCH s.leads ORDER BY s.rankOrder ASC")
     List<Stage> findAllWithLeads();
 
-    @Query("SELECT MAX(s.rankOrder) FROM Stage s")
+    @Query("SELECT MAX(s.rankOrder) FROM Stage s WHERE s.name NOT IN ('Won', 'Lost')")
     Optional<Integer> findMaxRankOrder();
 
     @Query("""

@@ -45,6 +45,6 @@ public class Quotation extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User createdBy;
 
-    @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "quotation", cascade = CascadeType.PERSIST)
     private List<QuotationItem> items;
 }

@@ -47,6 +47,8 @@ public class Lead extends BaseEntity {
     @Column(name = "note", columnDefinition = "TEXT")
     private String note;
 
+    private String source;
+
     @Column(name = "avatar_url")
     private String avatarUrl;
 

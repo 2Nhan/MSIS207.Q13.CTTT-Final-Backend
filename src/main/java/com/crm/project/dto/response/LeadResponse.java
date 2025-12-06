@@ -38,6 +38,8 @@ public class LeadResponse {
 
     private String avatarUrl;
 
+    private String source;
+
     private StageResponse stage;
 
     @JsonProperty("assignTo")

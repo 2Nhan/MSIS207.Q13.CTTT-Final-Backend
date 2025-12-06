@@ -15,10 +15,11 @@ import java.time.LocalDateTime;
 public class LeadNormalInfo {
     private String id;
     private String fullName;
-    private BigDecimal expectedRevenue;
     private Integer rating;
     private String phoneNumber;
     private String email;
+    private String source;
+    private String avatarUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     @JsonProperty("responsibleBy")

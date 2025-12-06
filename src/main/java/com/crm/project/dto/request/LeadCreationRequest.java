@@ -38,5 +38,7 @@ public class LeadCreationRequest {
 
     private String note;
 
+    private String source;
+
     private MultipartFile image;
 }

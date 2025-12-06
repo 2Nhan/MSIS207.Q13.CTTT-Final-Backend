@@ -25,7 +25,7 @@ import java.util.List;
 @RequestMapping("/api/v1/leads")
 public class LeadController {
     public final LeadService leadService;
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<MyApiResponse> getLead(@PathVariable String id) {
         LeadResponse leadResponse = leadService.getLead(id);
@@ -35,7 +35,7 @@ public class LeadController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PatchMapping("/{id}/stage")
+    @PatchMapping("/{id}/stages")
     public ResponseEntity<MyApiResponse> updateLeadStage(@PathVariable("id") String id, @RequestParam String stageId) {
         leadService.updateLeadStage(id, stageId);
         MyApiResponse apiResponse = MyApiResponse.builder()

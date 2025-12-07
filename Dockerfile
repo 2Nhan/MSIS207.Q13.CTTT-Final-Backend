@@ -1,11 +1,3 @@
-# ===== RUNTIME =====
-#FROM eclipse-temurin:21-jre
-#WORKDIR /app
-#COPY project-0.0.1-SNAPSHOT.jar app.jar
-#EXPOSE 8088
-#ENTRYPOINT ["java", "-jar", "app.jar"]
-
-
 # ===== STAGE 1: BUILD =====
 FROM maven:3.9.11-eclipse-temurin-21 AS build
 # ===== RUNTIME =====

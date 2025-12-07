@@ -15,7 +15,6 @@ WORKDIR /app
 # Copy file jar từ stage build sang runtime
 COPY --from=build /app/target/*.jar app.jar
 
-COPY project-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8088
 
 # Chạy app (có hỗ trợ JAVA_OPTS để tinh chỉnh RAM nếu cần)

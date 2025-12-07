@@ -23,6 +23,9 @@ public enum ErrorCode {
     STAGE_EXISTED(1013, "Stage already exists", HttpStatus.BAD_REQUEST),
     DEFAULT_STAGE_IMMUTABLE(1014, "Default stage is immutable", HttpStatus.BAD_REQUEST),
     QUOTATION_NOT_FOUND(1015, "Quotation not found", HttpStatus.NOT_FOUND),
+    CUSTOMER_NOT_FOUND(1016, "Customer not found", HttpStatus.NOT_FOUND),
+    ACTIVITY_NOT_FOUND(1017, "Activity not found", HttpStatus.NOT_FOUND),
+    INVALID_LEAD_ACTIVITY_RELATION(1018, "Invalid lead activity relation", HttpStatus.BAD_REQUEST),
 
     INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),

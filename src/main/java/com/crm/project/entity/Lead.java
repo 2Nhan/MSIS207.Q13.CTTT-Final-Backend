@@ -49,6 +49,8 @@ public class Lead extends BaseEntity {
 
     private String source;
 
+    private String status;
+
     @Column(name = "avatar_url")
     private String avatarUrl;
 
@@ -62,4 +64,7 @@ public class Lead extends BaseEntity {
 
     @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quotation> quotations;
+
+    @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Activity> activities;
 }

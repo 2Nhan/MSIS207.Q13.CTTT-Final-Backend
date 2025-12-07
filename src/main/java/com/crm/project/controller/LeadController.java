@@ -1,11 +1,14 @@
 package com.crm.project.controller;
 
+import com.crm.project.dto.request.ActivityCreationRequest;
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateRequest;
+import com.crm.project.dto.response.ActivityResponse;
 import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.dto.response.LeadResponse;
 
 import com.crm.project.dto.response.StagesWithLeadsResponse;
+import com.crm.project.service.ActivityService;
 import com.crm.project.service.LeadService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,6 +28,7 @@ import java.util.List;
 @RequestMapping("/api/v1/leads")
 public class LeadController {
     public final LeadService leadService;
+    public final ActivityService activityService;
 
     @GetMapping("/{id}")
     public ResponseEntity<MyApiResponse> getLead(@PathVariable String id) {
@@ -86,5 +90,32 @@ public class LeadController {
                 .message("Lead deleted successfully")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PostMapping("/{id}/activities")
+    public ResponseEntity<MyApiResponse> createLeadActivity(@PathVariable String id, @RequestBody @Valid ActivityCreationRequest request) {
+        ActivityResponse response = activityService.createActivity(id, request);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
+    }
+
+    @PatchMapping("/{leadId}/activities/{activityId}/complete")
+    public ResponseEntity<MyApiResponse> markActivityCompleted(@PathVariable("leadId") String leadId, @PathVariable("activityId") String activityId) {
+        ActivityResponse response = activityService.markActivityAsCompleted(leadId, activityId);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping("/{leadId}/activities/{activityId}")
+    public ResponseEntity<MyApiResponse> deleteActivity(@PathVariable("leadId") String leadId, @PathVariable("activityId") String activityId) {
+        activityService.deleteActivity(leadId, activityId);
+        MyApiResponse response = MyApiResponse.builder()
+                .message("Activity deleted successfully")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

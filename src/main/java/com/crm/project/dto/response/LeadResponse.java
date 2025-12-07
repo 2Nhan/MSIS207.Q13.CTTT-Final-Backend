@@ -2,12 +2,12 @@ package com.crm.project.dto.response;
 
 import com.crm.project.internal.UserNormalInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,10 +42,12 @@ public class LeadResponse {
 
     private StageResponse stage;
 
-    @JsonProperty("assignTo")
-    private UserNormalInfo user;
-
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    @JsonProperty("assignTo")
+    private UserNormalInfo user;
+
+    private List<ActivityResponse> activities;
 }

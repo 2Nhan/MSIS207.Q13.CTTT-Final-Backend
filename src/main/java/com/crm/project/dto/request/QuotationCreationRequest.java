@@ -13,18 +13,17 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class QuotationCreationRequest {
-    @NotBlank
+    @NotBlank(message = "BLANK_LEAD_ID")
     private String leadId;
 
-    @NotBlank
+    @NotBlank(message = "BLANK_TITLE")
     private String title;
 
-    @NotBlank
     private String content;
 
     @Builder.Default
     private LocalDate validUntil = LocalDate.now().plusDays(7);
 
-    @NotNull
+    @NotNull(message = "BLANK_ITEMS")
     private List<QuotationItemRequest> items;
 }

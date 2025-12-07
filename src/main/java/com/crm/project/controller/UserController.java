@@ -31,7 +31,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<MyApiResponse> getAllUsers(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
-                                                     @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize,
+                                                     @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
                                                      @RequestParam(required = false, defaultValue = "id") String sortBy,
                                                      @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
 
@@ -47,7 +47,7 @@ public class UserController {
     @GetMapping("/search")
     public ResponseEntity<MyApiResponse> searchUser(@RequestParam("query") String query,
                                                     @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
-                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
         Page<UserResponse> userResponseList = userService.searchUsers(query, PageRequest.of(pageNumber - 1, pageSize));
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(userResponseList.getContent())

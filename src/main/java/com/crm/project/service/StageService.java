@@ -13,12 +13,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class StageService {
     private final StageRepository stageRepository;
     private final StageMapper stageMapper;
     private final LeadRepository leadRepository;
+
+    private List<String> defaultStages = List.of("default_new_stage", "default_lost_stage", "default_won_stage");
 
     @Transactional
     public StageResponse createStage(StageCreationRequest request) {
@@ -43,7 +47,7 @@ public class StageService {
 
     @Transactional
     public StageResponse updateStage(String id, StageUpdateRequest request) {
-        if (id.equals("immutable_default_stage")) {
+        if (defaultStages.contains(id)) {
             throw new AppException(ErrorCode.DEFAULT_STAGE_IMMUTABLE);
         }
         Stage stage = stageRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
@@ -55,7 +59,7 @@ public class StageService {
 
     @Transactional
     public void deleteStage(String id) {
-        if (id.equals("immutable_default_stage")) {
+        if (defaultStages.contains(id)) {
             throw new AppException(ErrorCode.DEFAULT_STAGE_IMMUTABLE);
         }
         if (!stageRepository.existsById(id)) {

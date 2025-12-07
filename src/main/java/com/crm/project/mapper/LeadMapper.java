@@ -2,6 +2,7 @@ package com.crm.project.mapper;
 
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateRequest;
+import com.crm.project.dto.response.CustomerResponse;
 import com.crm.project.dto.response.LeadResponse;
 import com.crm.project.entity.Lead;
 import com.crm.project.internal.LeadQuotationInfo;
@@ -21,4 +22,6 @@ public interface LeadMapper {
     @Mapping(target = "user", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateLead(LeadUpdateRequest request, @MappingTarget Lead lead);
+    
+    CustomerResponse toCustomerResponse(Lead lead);
 }

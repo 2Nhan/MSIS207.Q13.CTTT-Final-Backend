@@ -92,13 +92,16 @@ public class LeadService {
 
     @Transactional
     public void updateLeadStage(String id, String stageId) {
-        if (!stageRepository.existsById(stageId)) {
-            throw new AppException(ErrorCode.STAGE_NOT_FOUND);
-        }
+        Stage stage = stageRepository.findById(stageId).orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
 
         if (!leadRepository.existsById(id)) {
             throw new AppException(ErrorCode.LEAD_NOT_FOUND);
         }
+
+        if (stage.getName().equalsIgnoreCase("Won")) {
+            leadRepository.updateStatus(id);
+        }
+
         leadRepository.updateStage(id, stageId);
     }
 

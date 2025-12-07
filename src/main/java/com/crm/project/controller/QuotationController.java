@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/quotations")
@@ -39,6 +41,15 @@ public class QuotationController {
         QuotationResponse quotationResponse = quotationService.getQuotation(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(quotationResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping
+    public ResponseEntity<MyApiResponse> getAllQuotations() {
+        List<QuotationResponse> responses = quotationService.getAllQuotations();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(responses)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

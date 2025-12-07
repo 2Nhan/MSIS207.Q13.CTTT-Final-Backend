@@ -30,6 +30,8 @@ public class QuotationResponse {
 
     private BigDecimal total;
 
+    private String fileUrl;
+
     private List<QuotationItemInfo> items;
 
     private UserNormalInfo createdBy;

@@ -54,8 +54,5 @@ public class Product extends BaseEntity {
     private String imageUrl;
 
     @OneToMany(mappedBy = "product")
-    private List<OrderItem> orderItems;
-
-    @OneToMany(mappedBy = "product")
     private List<QuotationItem> quotationItems;
 }

@@ -12,7 +12,9 @@ import com.crm.project.mapper.QuotationMapper;
 import com.crm.project.mapper.UserMapper;
 import com.crm.project.repository.*;
 import com.crm.project.utils.CalculatorUtil;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class QuotationService {
@@ -35,7 +38,9 @@ public class QuotationService {
     private final LeadMapper leadMapper;
     private final MailService mailService;
     private final PdfService pdfService;
+    private final CloudinaryService cloudinaryService;
 
+    @Transactional
     public QuotationResponse createQuotation(QuotationCreationRequest request) {
 
         Lead lead = leadRepository.findById(request.getLeadId())
@@ -71,7 +76,7 @@ public class QuotationService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .validUntil(request.getValidUntil())
-                .status("CREATED")
+                .status("DRAFT")
                 .lead(lead)
                 .createdBy(user)
                 .total(total)
@@ -97,6 +102,7 @@ public class QuotationService {
                 .build();
     }
 
+    @Transactional
     public void sendQuotationEmail(String id) throws Exception {
         Quotation quotation = quotationRepository.findQuotationDetailById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
 
@@ -120,6 +126,22 @@ public class QuotationService {
         mailService.sendQuotationMail(to, sender, receiver, products, attachment);
 
         quotationRepository.updateStatusToSent(quotation.getId());
+
+        try {
+            String fileName = "quotation_" + quotation.getId() + ".pdf";
+            String folder = "project/pdfs";
+
+            cloudinaryService.uploadAndUpdateRecord(
+                    attachment,
+                    fileName,
+                    folder,
+                    quotation.getId()
+            );
+
+            log.info("Started async upload of Quotation PDF [{}] to Cloudinary...", fileName);
+        } catch (Exception ex) {
+            log.error("Failed to trigger Cloudinary upload for quotation [{}]: {}", quotation.getId(), ex.getMessage());
+        }
     }
 
     public QuotationResponse getQuotation(String id) {
@@ -127,6 +149,10 @@ public class QuotationService {
         return quotationMapper.toQuotationResponse(quotation);
     }
 
+    public List<QuotationResponse> getAllQuotations() {
+        List<Quotation> quotations = quotationRepository.findAllQuotationsWithDetails();
+        return quotations.stream().map(quotationMapper::toQuotationResponse).collect(Collectors.toList());
+    }
 
     private Map<Product, Integer> getProductFromItemRequest(List<QuotationItemRequest> items) {
         Map<String, Integer> quantities = items.stream()

@@ -26,7 +26,6 @@ public interface ProductMapper {
     @Mapping(target = "price", expression = "java(toBigDecimal(data.get(\"price\")))")
     @Mapping(target = "discount", expression = "java(toBigDecimal(data.get(\"discount\")))")
     @Mapping(target = "id", ignore = true) // nếu bạn không import id từ CSV
-    @Mapping(target = "orderItems", ignore = true)
     @Mapping(target = "quotationItems", ignore = true)
     Product importToProduct(Map<String, String> data);
 

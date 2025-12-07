@@ -34,8 +34,8 @@ public class Quotation extends BaseEntity {
     @Column(name = "total")
     private BigDecimal total;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "file_url")
+    private String fileUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "lead_id", nullable = false)

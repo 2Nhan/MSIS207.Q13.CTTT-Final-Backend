@@ -6,25 +6,25 @@
 #ENTRYPOINT ["java", "-jar", "app.jar"]
 
 
-# ===== BUILD STAGE =====
-FROM eclipse-temurin:21-jdk AS builder
-
+# ===== STAGE 1: BUILD =====
+FROM maven:3.9.11-eclipse-temurin-21 AS build
+# ===== RUNTIME =====
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Copy toàn bộ source vào container
 COPY . .
 
-# Build project bằng Maven (hoặc Gradle nếu bạn dùng Gradle)
-# ⚠️ Nếu bạn dùng Maven Wrapper thì thay mvn -> ./mvnw
-RUN ./mvnw clean package -DskipTests
+RUN mvn -q clean package -DskipTests
 
-# ===== RUNTIME STAGE =====
-FROM eclipse-temurin:21-jre
-
+# ===== STAGE 2: RUNTIME =====
+FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
-# Copy file .jar build xong ở stage trước
-COPY --from=builder /app/target/project-0.0.1-SNAPSHOT.jar app.jar
+# Copy file jar từ stage build sang runtime
+COPY --from=build /app/target/*.jar app.jar
 
+COPY project-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8088
+
+# Chạy app (có hỗ trợ JAVA_OPTS để tinh chỉnh RAM nếu cần)
 ENTRYPOINT ["java", "-jar", "app.jar"]

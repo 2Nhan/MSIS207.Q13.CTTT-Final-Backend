@@ -3,6 +3,7 @@ package com.crm.project.dto.response;
 import com.crm.project.internal.LeadQuotationInfo;
 import com.crm.project.internal.QuotationItemInfo;
 import com.crm.project.internal.UserNormalInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -28,7 +29,11 @@ public class QuotationResponse {
 
     private String status;
 
+    @JsonProperty(value = "untaxedAmount")
     private BigDecimal total;
+
+    @JsonProperty(value = "finalAmount")
+    private BigDecimal finalTotal;
 
     private String fileUrl;
 

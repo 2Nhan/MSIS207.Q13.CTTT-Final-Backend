@@ -34,6 +34,9 @@ public class Quotation extends BaseEntity {
     @Column(name = "total")
     private BigDecimal total;
 
+    @Column(name = "final_total")
+    private BigDecimal finalTotal;
+
     @Column(name = "file_url")
     private String fileUrl;
 

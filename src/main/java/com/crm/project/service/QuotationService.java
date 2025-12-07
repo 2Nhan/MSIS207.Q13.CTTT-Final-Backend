@@ -80,6 +80,7 @@ public class QuotationService {
                 .lead(lead)
                 .createdBy(user)
                 .total(total)
+                .finalTotal(total.multiply(BigDecimal.valueOf(1.1)))
                 .build();
 
         quotationItems.forEach(item -> item.setQuotation(quotation));

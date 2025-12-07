@@ -60,6 +60,6 @@ public class Lead extends BaseEntity {
     @JoinColumn(name = "user", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "lead")
+    @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Quotation> quotations;
 }

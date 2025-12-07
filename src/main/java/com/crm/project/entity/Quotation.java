@@ -41,13 +41,13 @@ public class Quotation extends BaseEntity {
     private String fileUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "lead_id", nullable = false)
+    @JoinColumn(name = "lead_id", nullable = true)
     private Lead lead;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User createdBy;
 
-    @OneToMany(mappedBy = "quotation", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuotationItem> items;
 }

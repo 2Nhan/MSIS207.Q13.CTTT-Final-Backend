@@ -52,6 +52,6 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user")
     private List<Lead> leads;
 
-    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "createdBy")
     private List<Quotation> quotations;
 }

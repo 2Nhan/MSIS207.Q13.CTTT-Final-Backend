@@ -37,6 +37,6 @@ public class QuotationItem {
     private Quotation quotation;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
+    @JoinColumn(name = "product_id", nullable = true)
     private Product product;
 }

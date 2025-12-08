@@ -29,8 +29,6 @@ public class LeadCreationRequest {
 
     private String company;
 
-    private LocalDate closingDate;
-
     @Max(value = 5, message = "INVALID_RATING")
     private Integer rating;
 

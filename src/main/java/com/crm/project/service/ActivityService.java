@@ -13,6 +13,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @Service
 public class ActivityService {
@@ -27,6 +29,9 @@ public class ActivityService {
         Activity activity = activityMapper.toActivity(request);
         activity.setLead(lead);
         activity.setStatus("PENDING");
+        if (request.getValidUntil() == null) {
+            activity.setValidUntil(LocalDate.now().plusDays(7));
+        }
         activityRepository.save(activity);
 
         return activityMapper.toActivityResponse(activity);

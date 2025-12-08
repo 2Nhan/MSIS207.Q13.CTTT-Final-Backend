@@ -35,9 +35,6 @@ public class Lead extends BaseEntity {
     @Column(name = "company")
     private String company;
 
-    @Column(name = "closing_date")
-    private LocalDate closingDate;
-
     @Column(name = "rating")
     private Integer rating;
 
@@ -66,5 +63,6 @@ public class Lead extends BaseEntity {
     private List<Quotation> quotations;
 
     @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("status DESC")
     private List<Activity> activities;
 }

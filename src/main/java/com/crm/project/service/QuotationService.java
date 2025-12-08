@@ -83,6 +83,10 @@ public class QuotationService {
                 .finalTotal(total.multiply(BigDecimal.valueOf(1.1)))
                 .build();
 
+        if (request.getValidUntil() == null) {
+            quotation.setValidUntil(LocalDate.now().plusDays(7));
+        }
+
         quotationItems.forEach(item -> item.setQuotation(quotation));
         quotation.setItems(quotationItems);
 

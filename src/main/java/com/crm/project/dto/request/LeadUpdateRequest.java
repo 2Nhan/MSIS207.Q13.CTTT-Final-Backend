@@ -3,6 +3,7 @@ package com.crm.project.dto.request;
 import com.crm.project.validator.custom_validator.BlankUpdateConstraint;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,6 +33,7 @@ public class LeadUpdateRequest {
 
     private String company;
 
+    @NotNull(message = "NULL_DATE")
     private LocalDate closingDate;
 
     @Max(value = 5, message = "INVALID_RATING")

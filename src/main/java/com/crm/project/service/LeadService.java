@@ -2,6 +2,8 @@ package com.crm.project.service;
 
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateRequest;
+import com.crm.project.dto.request.MatchingRequest;
+import com.crm.project.dto.response.ImportResultResponse;
 import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.LeadResponse;
@@ -10,6 +12,7 @@ import com.crm.project.entity.Stage;
 import com.crm.project.entity.User;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
+import com.crm.project.internal.ImportInfo;
 import com.crm.project.mapper.LeadMapper;
 import com.crm.project.mapper.StageMapper;
 import com.crm.project.repository.LeadRepository;
@@ -22,6 +25,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.io.IOException;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -33,6 +38,7 @@ public class LeadService {
     private final UserRepository userRepository;
     private final StageRepository stageRepository;
     private final StageMapper stageMapper;
+    private final CsvService csvService;
 
     @Transactional
     public LeadResponse createLead(String stageId, LeadCreationRequest request) {
@@ -118,6 +124,23 @@ public class LeadService {
         leadRepository.deleteById(id);
     }
 
+//    @Transactional
+//    public ImportResultResponse<LeadResponse> importLeadsFromCsc(
+//            MatchingRequest matching,
+//            MultipartFile file
+//    ) throws IOException {
+//        ImportInfo importInfo = csvService.parseCsvFile(matching.getMatching(), file);
+//
+//        List<Lead> leads = importInfo.getData()
+//                .stream()
+//                .map(leadMapper::importToLead)
+//                .toList();
+//
+//        List<Lead> invalidList = new ArrayList<>();
+//        List<Lead> tempList = new ArrayList<>();
+//        List<Lead> validList = new ArrayList<>();
+//    }
+
     private void validateLeadUniqueness(String email, String phoneNumber) {
         leadRepository.findByEmailOrPhone(email, phoneNumber).ifPresent(lead -> {
             if (email.equals(lead.getEmail())) {
@@ -126,5 +149,9 @@ public class LeadService {
                 throw new AppException(ErrorCode.PHONE_NUMBER_EXSITED);
             }
         });
+    }
+
+    private boolean isBlank(String s) {
+        return s == null || s.trim().isEmpty();
     }
 }

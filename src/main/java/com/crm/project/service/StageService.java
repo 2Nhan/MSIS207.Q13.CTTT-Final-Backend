@@ -51,8 +51,14 @@ public class StageService {
             throw new AppException(ErrorCode.DEFAULT_STAGE_IMMUTABLE);
         }
         Stage stage = stageRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
-        stage.setName(request.getName());
-        stage.setColor(request.getColor());
+        if (request.getColor() != null) {
+            stage.setColor(request.getColor());
+
+        }
+        if (request.getName() != null) {
+            stage.setName(request.getName());
+
+        }
         stageRepository.save(stage);
         return stageMapper.toStageResponse(stage);
     }

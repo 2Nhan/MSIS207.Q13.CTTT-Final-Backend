@@ -28,8 +28,6 @@ public class LeadResponse {
 
     private String company;
 
-    private LocalDate closingDate;
-
     private Integer rating;
 
     private BigDecimal expectedRevenue;

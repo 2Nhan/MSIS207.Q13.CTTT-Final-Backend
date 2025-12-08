@@ -26,6 +26,8 @@ public enum ErrorCode {
     CUSTOMER_NOT_FOUND(1016, "Customer not found", HttpStatus.NOT_FOUND),
     ACTIVITY_NOT_FOUND(1017, "Activity not found", HttpStatus.NOT_FOUND),
     INVALID_LEAD_ACTIVITY_RELATION(1018, "Invalid lead activity relation", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND(1019, "Order not found", HttpStatus.NOT_FOUND),
+
 
     INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),
     INVALID_FILE_SIZE(1101, "File size limit is 1MB", HttpStatus.BAD_REQUEST),

@@ -108,6 +108,7 @@ public class QuotationService {
                 .createdBy(userMapper.toUserNormalInfo(user))
                 .createdAt(quotation.getCreatedAt())
                 .updatedAt(quotation.getUpdatedAt())
+                .finalTotal(quotation.getFinalTotal())
                 .build();
     }
 
@@ -200,5 +201,13 @@ public class QuotationService {
             result.add(info);
         }
         return result;
+    }
+
+    @Transactional
+    public void deleteQuotation(String id) {
+        if (!quotationRepository.existsById(id)) {
+            throw new AppException(ErrorCode.QUOTATION_NOT_FOUND);
+        }
+        quotationRepository.deleteById(id);
     }
 }

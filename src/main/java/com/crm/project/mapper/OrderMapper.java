@@ -15,7 +15,8 @@ public interface OrderMapper {
     @Mapping(target = "product", source = "product")
     OrderItem fromQuotationItemToOrderItem(QuotationItem quotationItem);
 
-    @Mapping(target = "buyerName", ignore = true)
+    @Mapping(target = "buyerName", source = "order.lead.fullName")
+    @Mapping(target = "items", source = "order.orderItems")
     OrderResponse toOrderResponse(Order order);
 
     @Mapping(target = "productId", source = "product.id")

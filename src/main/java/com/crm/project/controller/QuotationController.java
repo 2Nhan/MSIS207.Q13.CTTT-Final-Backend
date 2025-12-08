@@ -70,4 +70,13 @@ public class QuotationController {
                 .build();
         return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MyApiResponse> deleteQuotation(@PathVariable String id) {
+        quotationService.deleteQuotation(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .message("Quotation deleted successfully")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

@@ -12,7 +12,12 @@ import com.crm.project.mapper.OrderMapper;
 import com.crm.project.repository.OrderRepository;
 import com.crm.project.repository.QuotationRepository;
 import com.crm.project.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +31,7 @@ public class OrderService {
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
 
+    @Transactional
     public OrderResponse createOrderFromQuotation(String quotationId, OrderCreationFromQuotationRequest request) {
         Quotation quotation = quotationRepository.findQuotationDetailById(quotationId).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
 
@@ -53,5 +59,28 @@ public class OrderService {
         orderResponse.setBuyerName(order.getLead().getFullName());
         orderResponse.setItems(orderItems.stream().map(orderMapper::fromOrderItemToOrderItemInfo).toList());
         return orderResponse;
+    }
+
+    public OrderResponse getOrderDetails(String id) {
+        Order order = orderRepository.findOrderWithRelations(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        OrderResponse orderResponse = orderMapper.toOrderResponse(order);
+        return orderResponse;
+    }
+
+    public Page<OrderResponse> getAllOrders(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+        Page<Order> orders = orderRepository.findAllOrdersWithDetails(pageable);
+        return orders.map(orderMapper::toOrderResponse);
+    }
+
+    public void deleteOrder(String id) {
+        if (!orderRepository.existsById(id)) {
+            throw new AppException(ErrorCode.ORDER_NOT_FOUND);
+        }
+        orderRepository.deleteById(id);
     }
 }

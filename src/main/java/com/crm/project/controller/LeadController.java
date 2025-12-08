@@ -3,11 +3,9 @@ package com.crm.project.controller;
 import com.crm.project.dto.request.ActivityCreationRequest;
 import com.crm.project.dto.request.LeadCreationRequest;
 import com.crm.project.dto.request.LeadUpdateRequest;
-import com.crm.project.dto.response.ActivityResponse;
-import com.crm.project.dto.response.MyApiResponse;
-import com.crm.project.dto.response.LeadResponse;
+import com.crm.project.dto.request.MatchingRequest;
+import com.crm.project.dto.response.*;
 
-import com.crm.project.dto.response.StagesWithLeadsResponse;
 import com.crm.project.service.ActivityService;
 import com.crm.project.service.LeadService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -16,7 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(
@@ -117,5 +117,15 @@ public class LeadController {
                 .message("Activity deleted successfully")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping("/csv")
+    public ResponseEntity<MyApiResponse> importLeadCsv(@RequestPart MatchingRequest matching, @RequestParam("file") MultipartFile file) throws IOException {
+        ImportResultResponse<LeadResponse> response = leadService.importLeadsFromCsv(matching, file);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response.getValidList())
+                .error(response.getInvalidList())
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 }

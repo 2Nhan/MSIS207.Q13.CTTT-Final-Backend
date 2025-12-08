@@ -25,9 +25,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Set;
 import java.util.ArrayList;
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -124,22 +126,79 @@ public class LeadService {
         leadRepository.deleteById(id);
     }
 
-//    @Transactional
-//    public ImportResultResponse<LeadResponse> importLeadsFromCsc(
-//            MatchingRequest matching,
-//            MultipartFile file
-//    ) throws IOException {
-//        ImportInfo importInfo = csvService.parseCsvFile(matching.getMatching(), file);
-//
-//        List<Lead> leads = importInfo.getData()
-//                .stream()
-//                .map(leadMapper::importToLead)
-//                .toList();
-//
-//        List<Lead> invalidList = new ArrayList<>();
-//        List<Lead> tempList = new ArrayList<>();
-//        List<Lead> validList = new ArrayList<>();
-//    }
+    @Transactional
+    public ImportResultResponse<LeadResponse> importLeadsFromCsv(
+            MatchingRequest matching,
+            MultipartFile file
+    ) throws IOException {
+        ImportInfo importInfo = csvService.parseCsvFile(matching.getMatching(), file);
+
+        List<Lead> leads = importInfo.getData()
+                .stream()
+                .map(leadMapper::importToLead)
+                .toList();
+
+        List<Lead> invalidList = new ArrayList<>();
+        List<Lead> tempList = new ArrayList<>();
+        List<Lead> validList = new ArrayList<>();
+
+        for (Lead l : leads) {
+            boolean invalid =
+                    isBlank(l.getFullName()) ||
+                            isBlank(l.getEmail()) ||
+                            isBlank(l.getPhoneNumber()) ||
+                            l.getRating() > 5;
+            if (invalid) {
+                invalidList.add(l);
+            } else {
+                tempList.add(l);
+            }
+        }
+
+        if (tempList.isEmpty()) {
+            return ImportResultResponse.<LeadResponse>builder()
+                    .validList(List.of())
+                    .invalidList(invalidList.stream().map(leadMapper::toLeadResponse).toList())
+                    .build();
+        }
+
+        List<String> emails = tempList.stream().map(Lead::getEmail).toList();
+        List<String> phoneNumbers = tempList.stream().map(Lead::getPhoneNumber).toList();
+
+        List<Lead> existingLeads = leadRepository.findExistingLeadsByEmailOrPhone(emails, phoneNumbers);
+
+        Set<String> existingEmails = existingLeads.stream().map(Lead::getEmail)
+                .collect(Collectors.toSet());
+
+        Set<String> existingPhones = existingLeads.stream().map(Lead::getPhoneNumber)
+                .collect(Collectors.toSet());
+
+        Stage stage = stageRepository.findById("default_new_stage").orElseThrow(() -> new AppException(ErrorCode.STAGE_NOT_FOUND));
+        User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        for (Lead l : tempList) {
+            if (existingEmails.contains(l.getEmail())) {
+                invalidList.add(l);
+            } else if (existingPhones.contains(l.getPhoneNumber())) {
+                invalidList.add(l);
+            } else {
+                l.setStage(stage);
+                l.setUser(user);
+                validList.add(l);
+                existingEmails.add(l.getEmail());
+                existingPhones.add(l.getPhoneNumber());
+            }
+        }
+
+//        if(!validList.isEmpty()) {
+//            leadRepository.saveAll(validList);
+//        }
+
+        return ImportResultResponse.<LeadResponse>builder()
+                .validList(validList.stream().map(leadMapper::toLeadResponse).toList())
+                .invalidList(invalidList.stream().map(leadMapper::toLeadResponse).toList())
+                .build();
+    }
 
     private void validateLeadUniqueness(String email, String phoneNumber) {
         leadRepository.findByEmailOrPhone(email, phoneNumber).ifPresent(lead -> {

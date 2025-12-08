@@ -43,7 +43,7 @@ public interface LeadMapper {
         try {
             return Integer.parseInt(value.trim());
         } catch (NumberFormatException e) {
-            return null;
+            return 0;
         }
     }
 
@@ -52,7 +52,7 @@ public interface LeadMapper {
         try {
             return new BigDecimal(value.trim());
         } catch (NumberFormatException e) {
-            return null;
+            return BigDecimal.valueOf(0);
         }
     }
 

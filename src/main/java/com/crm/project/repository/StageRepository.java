@@ -30,6 +30,7 @@ public interface StageRepository extends JpaRepository<Stage, String> {
                    OR LOWER(l.fullName) LIKE LOWER(CONCAT('%', :query, '%'))
                    OR LOWER(l.email) LIKE LOWER(CONCAT('%', :query, '%'))
                    OR LOWER(l.phoneNumber) LIKE LOWER(CONCAT('%', :query, '%')))
+            ORDER BY s.rankOrder ASC
             """)
     List<Stage> searchLeadsGroupedByStage(@Param("query") String search);
 }

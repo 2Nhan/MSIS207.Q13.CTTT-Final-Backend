@@ -51,4 +51,15 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
                 WHERE l.status = 'CONVERTED'
             """)
     Page<Lead> findAllCustomer(Pageable pageable);
+
+    @Query("""
+                SELECT l 
+                FROM Lead l
+                WHERE 
+                    (l.email IS NOT NULL AND l.email IN :emails)
+                    OR (l.phoneNumber IS NOT NULL AND l.phoneNumber IN :phones)
+            """)
+    List<Lead> findExistingLeadsByEmailOrPhone(@Param("emails") List<String> emails,
+                                               @Param("phones") List<String> phones);
+
 }

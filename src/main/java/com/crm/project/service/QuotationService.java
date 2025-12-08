@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -211,5 +212,12 @@ public class QuotationService {
             throw new AppException(ErrorCode.QUOTATION_NOT_FOUND);
         }
         quotationRepository.deleteById(id);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public void markExpiredQuotations() {
+        int count = quotationRepository.markExpiredQuotations();
+        System.out.println("✅ Updated " + count + " quotations to Expired");
     }
 }

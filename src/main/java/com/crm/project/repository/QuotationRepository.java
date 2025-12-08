@@ -39,4 +39,13 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
     @Modifying
     @Query("UPDATE Quotation q SET q.fileUrl = :filePath WHERE q.id = :id")
     void updateFilePath(@Param("id") String id, @Param("filePath") String filePath);
+
+    @Modifying
+    @Query("""
+                UPDATE Quotation q 
+                SET q.status = 'Expired' 
+                WHERE q.validUntil < CURRENT_DATE 
+                  AND q.status <> 'Expired'
+            """)
+    int markExpiredQuotations();
 }

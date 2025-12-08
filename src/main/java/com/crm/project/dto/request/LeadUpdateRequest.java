@@ -33,9 +33,6 @@ public class LeadUpdateRequest {
 
     private String company;
 
-    @NotNull(message = "NULL_DATE")
-    private LocalDate closingDate;
-
     @Max(value = 5, message = "INVALID_RATING")
     private Integer rating;
 

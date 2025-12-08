@@ -6,16 +6,11 @@ import com.crm.project.entity.Quotation;
 import com.crm.project.entity.QuotationItem;
 import com.crm.project.internal.QuotationItemInfo;
 import com.crm.project.utils.CalculatorUtil;
+import com.lowagie.text.*;
 import com.lowagie.text.pdf.*;
+import com.lowagie.text.pdf.draw.LineSeparator;
 import org.springframework.stereotype.Service;
-import com.lowagie.text.Chunk;
-import com.lowagie.text.Document;
-import com.lowagie.text.Element;
-import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
+import org.springframework.core.io.ClassPathResource;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
@@ -34,8 +29,19 @@ public class PdfService {
         PdfWriter.getInstance(document, out);
         document.open();
 
-        // === Font hỗ trợ tiếng Việt ===
-        BaseFont baseFont = BaseFont.createFont("src/main/resources/fonts/arial.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        ClassPathResource fontResource = new ClassPathResource("fonts/arial.ttf");
+        byte[] fontBytes;
+        try (InputStream is = fontResource.getInputStream()) {
+            fontBytes = is.readAllBytes(); // đọc toàn bộ file font từ classpath
+        }
+        BaseFont baseFont = BaseFont.createFont(
+                "arial.ttf",              // chỉ là tên hiển thị, không cần path thật
+                BaseFont.IDENTITY_H,      // hỗ trợ Unicode
+                BaseFont.EMBEDDED,        // nhúng font vào PDF
+                true,                     // cached
+                fontBytes,                // nạp font từ byte[]
+                null
+        );
         Font normal = new Font(baseFont, 10);
         Font boldFont = new Font(baseFont, 11, Font.BOLD);
         Font boldBlue = new Font(baseFont, 11, Font.BOLD, new Color(51, 102, 204));
@@ -57,7 +63,7 @@ public class PdfService {
         logoCell.setVerticalAlignment(Element.ALIGN_TOP);
         try (InputStream logoStream = getClass().getClassLoader().getResourceAsStream("static/images/logo.jpg")) {
             if (logoStream != null) {
-                com.lowagie.text.Image logo = com.lowagie.text.Image.getInstance(logoStream.readAllBytes());
+                Image logo = Image.getInstance(logoStream.readAllBytes());
                 logo.scaleToFit(65, 65);
                 logoCell.addElement(logo);
             }
@@ -90,7 +96,7 @@ public class PdfService {
 
         // Đường kẻ ngang dưới header
 //        document.add(new Paragraph(" ", normal)); // Khoảng cách
-        com.lowagie.text.pdf.draw.LineSeparator line = new com.lowagie.text.pdf.draw.LineSeparator();
+        LineSeparator line = new LineSeparator();
         line.setLineWidth(1.5f);
         line.setLineColor(new Color(0, 0, 0));
         document.add(new Chunk(line));

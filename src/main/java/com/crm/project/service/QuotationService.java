@@ -21,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -154,6 +155,7 @@ public class QuotationService {
         }
     }
 
+    @Transactional
     public QuotationResponse getQuotation(String id) {
         Quotation quotation = quotationRepository.findQuotationDetailById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
         return quotationMapper.toQuotationResponse(quotation);

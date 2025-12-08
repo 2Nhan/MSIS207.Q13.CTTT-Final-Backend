@@ -37,6 +37,8 @@ public enum ErrorCode {
     MISSING_FILE(1105, "Required file does not exist", HttpStatus.BAD_REQUEST),
     MAILING_FAILED(1106, "Mailing failed", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_API_ENDPOINT(1107, "Invalid API endpoint", HttpStatus.INTERNAL_SERVER_ERROR),
+
+    INVALID_REFRESH_TOKEN(1110, "Invalid refresh token", HttpStatus.UNAUTHORIZED),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

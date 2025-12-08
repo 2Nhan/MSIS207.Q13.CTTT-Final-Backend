@@ -4,11 +4,9 @@ import lombok.*;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class AuthenticationResponse {
-    private boolean authenticated;
-
+public class RefreshResponse {
     private String accessToken;
 }

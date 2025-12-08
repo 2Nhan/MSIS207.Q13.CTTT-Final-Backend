@@ -26,7 +26,9 @@ springdoc:
     url: /openapi.yml
 jwt:
   key: ${SECRET_KEY}
-  access_duration: ${ACCESS_TOKEN_DURATION}
+  refresh-key: ${REFRESH_KEY}
+  access-duration: ${ACCESS_TOKEN_DURATION}
+  refresh-duration: ${REFRESH_TOKEN_DURATION}
 cloudinary:
   cloudinary-name: ${CLOUDINARY_NAME}
   cloudinary-api-key: ${CLOUDINARY_API_KEY}

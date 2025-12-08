@@ -3,9 +3,9 @@ package com.crm.project.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
+import java.math.BigDecimal;
+
 
 @Getter
 @Setter
@@ -23,25 +23,26 @@ public class Order extends BaseEntity {
     @Column(name = "order_code", nullable = false, unique = true)
     private String orderCode;
 
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
-    @Column(name = "billing_address", nullable = false)
-    private String billingAddress;
-
-    @Column(name = "shipping_address", nullable = false)
+    @Column(name = "shipping_address", columnDefinition = "TEXT", nullable = false)
     private String shippingAddress;
 
-    @Column(name = "total_amount", precision = 12, scale = 4, nullable = false)
+    @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
-    @Column(name = "order_at")
-    private LocalDateTime orderAt;
+    private String status;
 
-    @Column(name = "delivered_at")
-    private LocalDateTime deliveredAt;
+    @OneToOne
+    @JoinColumn(name = "quotation_id")
+    private Quotation quotation;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private User createdBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lead_id", nullable = true)
+    private Lead lead;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> orderItems;
 }

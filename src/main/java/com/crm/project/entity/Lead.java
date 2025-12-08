@@ -63,6 +63,9 @@ public class Lead extends BaseEntity {
     private List<Quotation> quotations;
 
     @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
+
+    @OneToMany(mappedBy = "lead", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("status DESC")
     private List<Activity> activities;
 }

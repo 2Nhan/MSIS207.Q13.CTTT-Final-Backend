@@ -46,7 +46,7 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted = false;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "createdBy")
     private List<Order> orders;
 
     @OneToMany(mappedBy = "user")

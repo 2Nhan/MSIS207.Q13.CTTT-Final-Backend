@@ -1,22 +1,26 @@
 package com.crm.project.controller;
 
+import com.crm.project.dto.request.OrderCreationFromQuotationRequest;
 import com.crm.project.dto.request.QuotationCreationRequest;
 import com.crm.project.dto.response.MyApiResponse;
+import com.crm.project.dto.response.OrderResponse;
 import com.crm.project.dto.response.QuotationResponse;
+import com.crm.project.internal.PageInfo;
+import com.crm.project.service.OrderService;
 import com.crm.project.service.QuotationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/quotations")
 public class QuotationController {
     private final QuotationService quotationService;
+    private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity<MyApiResponse> createQuotation(@RequestBody @Valid QuotationCreationRequest request) {
@@ -46,11 +50,24 @@ public class QuotationController {
     }
 
     @GetMapping
-    public ResponseEntity<MyApiResponse> getAllQuotations() {
-        List<QuotationResponse> responses = quotationService.getAllQuotations();
+    public ResponseEntity<MyApiResponse> getAllQuotations(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
+                                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                                          @RequestParam(required = false, defaultValue = "id") String sortBy,
+                                                          @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+        Page<QuotationResponse> responses = quotationService.getAllQuotations(pageNumber, pageSize, sortBy, sortOrder);
         MyApiResponse apiResponse = MyApiResponse.builder()
-                .data(responses)
+                .data(responses.getContent())
+                .pagination(new PageInfo<>(responses))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PostMapping("/{id}/orders")
+    public ResponseEntity<MyApiResponse> createOrderFromQuotation(@PathVariable String id, @RequestBody @Valid OrderCreationFromQuotationRequest request) {
+        OrderResponse response = orderService.createOrderFromQuotation(id, request);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
+                .build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(apiResponse);
     }
 }

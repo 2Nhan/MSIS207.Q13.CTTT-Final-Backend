@@ -50,4 +50,7 @@ public class Quotation extends BaseEntity {
 
     @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuotationItem> items;
+
+    @OneToOne(mappedBy = "quotation")
+    private Order order;
 }

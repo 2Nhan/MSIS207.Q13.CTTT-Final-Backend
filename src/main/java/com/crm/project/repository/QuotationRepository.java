@@ -1,6 +1,8 @@
 package com.crm.project.repository;
 
 import com.crm.project.entity.Quotation;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,11 +29,11 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
             LEFT JOIN FETCH q.items i
             LEFT JOIN FETCH i.product
             """)
-    List<Quotation> findAllQuotationsWithDetails();
+    Page<Quotation> findAllQuotationsWithDetails(Pageable pageable);
 
 
     @Modifying
-    @Query("UPDATE Quotation q SET q.status = 'SENT' WHERE q.id = :id")
+    @Query("UPDATE Quotation q SET q.status = 'Sent' WHERE q.id = :id")
     void updateStatusToSent(@Param("id") String id);
 
     @Modifying

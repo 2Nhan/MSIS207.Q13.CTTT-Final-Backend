@@ -27,7 +27,8 @@ public enum ValidationError {
     BLANK_TITLE(2017, "PLease fill in title", HttpStatus.BAD_REQUEST),
     BLANK_ITEMS(2018, "PLease select at least 1 items", HttpStatus.BAD_REQUEST),
     BLANK_ACTIVITY_TYPE(2019, "PLease select activity type", HttpStatus.BAD_REQUEST),
-    NULL_DATE(2020, "PLease fill in date", HttpStatus.BAD_REQUEST),
+    BLANK_ORDER_CODE(2020, "PLease select order code", HttpStatus.BAD_REQUEST),
+    BLANK_SHIPPING_ADDRESS(2021, "PLease select shipping address", HttpStatus.BAD_REQUEST),
 
     INVALID_USERNAME(3001, "Username must have {min}-{max} characters", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(3002, "Password must have at least {min} characters", HttpStatus.BAD_REQUEST),

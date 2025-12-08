@@ -15,6 +15,10 @@ import com.crm.project.utils.CalculatorUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +80,7 @@ public class QuotationService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .validUntil(request.getValidUntil())
-                .status("DRAFT")
+                .status("Draft")
                 .lead(lead)
                 .createdBy(user)
                 .total(total)
@@ -154,9 +158,15 @@ public class QuotationService {
         return quotationMapper.toQuotationResponse(quotation);
     }
 
-    public List<QuotationResponse> getAllQuotations() {
-        List<Quotation> quotations = quotationRepository.findAllQuotationsWithDetails();
-        return quotations.stream().map(quotationMapper::toQuotationResponse).collect(Collectors.toList());
+    public Page<QuotationResponse> getAllQuotations(int pageNumber, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("ASC")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize, sort);
+
+        Page<Quotation> quotations = quotationRepository.findAllQuotationsWithDetails(pageable);
+        return quotations.map(quotationMapper::toQuotationResponse);
     }
 
     private Map<Product, Integer> getProductFromItemRequest(List<QuotationItemRequest> items) {

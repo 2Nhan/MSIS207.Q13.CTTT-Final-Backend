@@ -35,6 +35,7 @@ public interface LeadMapper {
     @Mapping(target = "quotations", ignore = true)
     @Mapping(target = "activities", ignore = true)
     @Mapping(target = "stage", ignore = true)
+    @Mapping(target = "orders", ignore = true)
     Lead importToLead(Map<String, String> data);
 
     // === Converters ===

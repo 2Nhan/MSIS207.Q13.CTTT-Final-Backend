@@ -218,6 +218,5 @@ public class QuotationService {
     @Transactional
     public void markExpiredQuotations() {
         int count = quotationRepository.markExpiredQuotations();
-        System.out.println("✅ Updated " + count + " quotations to Expired");
     }
 }

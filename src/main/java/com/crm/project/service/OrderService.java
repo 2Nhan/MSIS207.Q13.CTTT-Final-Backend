@@ -35,6 +35,10 @@ public class OrderService {
     public OrderResponse createOrderFromQuotation(String quotationId, OrderCreationFromQuotationRequest request) {
         Quotation quotation = quotationRepository.findQuotationDetailById(quotationId).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
 
+        if (orderRepository.existsByOrderCode(request.getOrderCode())) {
+            throw new AppException(ErrorCode.ORDER_CODE_EXISTED);
+        }
+
         User user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
         List<OrderItem> orderItems = quotation.getItems().stream().map(orderMapper::fromQuotationItemToOrderItem).toList();

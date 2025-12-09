@@ -21,4 +21,5 @@ public interface OrderMapper {
 
     @Mapping(target = "productId", source = "product.id")
     OrderItemInfo fromOrderItemToOrderItemInfo(OrderItem orderItem);
+
 }

@@ -30,4 +30,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
                 LEFT JOIN FETCH o.lead
             """)
     Page<Order> findAllOrdersWithDetails(Pageable pageable);
+
+    boolean existsByOrderCode(String orderCode);
 }

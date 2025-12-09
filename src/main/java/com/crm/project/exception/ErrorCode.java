@@ -27,6 +27,7 @@ public enum ErrorCode {
     ACTIVITY_NOT_FOUND(1017, "Activity not found", HttpStatus.NOT_FOUND),
     INVALID_LEAD_ACTIVITY_RELATION(1018, "Invalid lead activity relation", HttpStatus.BAD_REQUEST),
     ORDER_NOT_FOUND(1019, "Order not found", HttpStatus.NOT_FOUND),
+    ORDER_CODE_EXISTED(1020, "Order code already exists", HttpStatus.BAD_REQUEST),
 
 
     INVALID_FILE_TYPE(1100, "File type is not supported", HttpStatus.UNSUPPORTED_MEDIA_TYPE),

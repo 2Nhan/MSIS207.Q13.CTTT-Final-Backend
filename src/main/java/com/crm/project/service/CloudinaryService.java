@@ -58,10 +58,7 @@ public class CloudinaryService {
         }
     }
 
-    /**
-     * Async background task: upload PDF và cập nhật filePath vào DB.
-     */
-    @Async
+
     @Transactional
     public void uploadAndUpdateRecord(byte[] fileBytes, String fileName, String folder, String quotationId) {
         try {

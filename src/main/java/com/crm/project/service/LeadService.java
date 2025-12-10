@@ -190,9 +190,9 @@ public class LeadService {
             }
         }
 
-//        if(!validList.isEmpty()) {
-//            leadRepository.saveAll(validList);
-//        }
+        if (!validList.isEmpty()) {
+            leadRepository.saveAll(validList);
+        }
 
         return ImportResultResponse.<LeadResponse>builder()
                 .validList(validList.stream().map(leadMapper::toLeadResponse).toList())

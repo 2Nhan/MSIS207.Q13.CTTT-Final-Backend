@@ -12,7 +12,7 @@ info:
     - **Quotation System**: Create and send professional quotations to leads
     - **Order Management**: Convert quotations to orders and track fulfillment
     - **Customer Management**: View converted customers and their order history
-    
+
   contact:
     name: API Support
     email: support@example.com
@@ -21,7 +21,7 @@ info:
     url: https://www.apache.org/licenses/LICENSE-2.0.html
 
 servers:
-  - url: https://vero-3mfn.onrender.com/crm
+  - url: http://13.251.45.52:8088/crm
     description: Production server
   - url: http://localhost:8088/crm
     description: Development server
@@ -361,7 +361,7 @@ components:
         status:
           type: string
           description: "Product status"
-          enum: [Active, Inactive, Preorder]
+          enum: [ Active, Inactive, Preorder ]
           example: "Active"
         price:
           type: number
@@ -379,7 +379,7 @@ components:
         discountType:
           type: string
           description: "Type of discount applied"
-          enum: [PERCENT, AMOUNT, NONE]
+          enum: [ PERCENT, AMOUNT, NONE ]
           example: "PERCENT"
           nullable: true
         tag:
@@ -426,7 +426,7 @@ components:
         status:
           type: string
           description: "Updated status"
-          enum: [Active, Inactive, Preorder]
+          enum: [ Active, Inactive, Preorder ]
         price:
           type: number
           format: double
@@ -439,7 +439,7 @@ components:
           minimum: 0
         discountType:
           type: string
-          enum: [PERCENT, AMOUNT, NONE]
+          enum: [ PERCENT, AMOUNT, NONE ]
         tag:
           type: string
           description: "Updated tags"
@@ -493,7 +493,7 @@ components:
           type: string
           description: "Product status"
           example: "Active"
-          enum: [Active, Inactive, Preorder]
+          enum: [ Active, Inactive, Preorder ]
         purchaseUnitPrice:
           type: number
           format: double
@@ -509,7 +509,7 @@ components:
           type: string
           description: "Discount type"
           example: "PERCENT"
-          enum: [PERCENT, AMOUNT, NONE]
+          enum: [ PERCENT, AMOUNT, NONE ]
           nullable: true
         tag:
           type: string
@@ -988,7 +988,7 @@ components:
           type: string
           description: "Quotation status"
           example: "Pending"
-          enum: [Pending, Sent, Accepted, Rejected, Converted]
+          enum: [ Pending, Sent, Accepted, Rejected, Converted ]
         untaxedAmount:
           type: number
           format: double
@@ -1085,7 +1085,7 @@ components:
           type: string
           description: "Order status"
           example: "Processing"
-          enum: [Pending, Processing, Shipped, Delivered, Cancelled]
+          enum: [ Pending, Processing, Shipped, Delivered, Cancelled ]
         totalAmount:
           type: number
           format: double
@@ -1158,7 +1158,7 @@ components:
           example: 15000000
 
 security:
-  - bearerAuth: []
+  - bearerAuth: [ ]
 
 tags:
   - name: Authentication
@@ -1190,7 +1190,7 @@ paths:
       description: |
         Authenticate user with username and password.
         Returns JWT access token and refresh token for subsequent API calls.
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
@@ -1253,7 +1253,7 @@ paths:
                       - code: 2001
                         errorField: "username"
                         message: "Please fill in username"
-                      - code: 2002  
+                      - code: 2002
                         errorField: "password"
                         message: "Please fill in password"
 
@@ -1298,7 +1298,7 @@ paths:
       description: |
         Create a new user account with required information.
         Username, email, and phone number must be unique across all users.
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
@@ -1400,7 +1400,7 @@ paths:
       description: |
         Generate new access and refresh tokens using a valid refresh token.
         Use this when access token expires to maintain user session.
-      security: []
+      security: [ ]
       requestBody:
         required: true
         content:
@@ -1475,7 +1475,7 @@ paths:
           schema:
             type: string
             default: "id"
-            enum: [id, username, email, createdAt]
+            enum: [ id, username, email, createdAt ]
           description: "Field to sort by"
         - name: sortOrder
           in: query
@@ -1483,7 +1483,7 @@ paths:
           schema:
             type: string
             default: "asc"
-            enum: [asc, desc]
+            enum: [ asc, desc ]
           description: "Sort direction"
       responses:
         '200':
@@ -1958,7 +1958,7 @@ paths:
           schema: { type: string, default: "sku" }
         - name: sortOrder
           in: query
-          schema: { type: string, enum: [asc, desc], default: asc }
+          schema: { type: string, enum: [ asc, desc ], default: asc }
         - name: category
           in: query
           schema: { type: string }
@@ -2236,7 +2236,7 @@ paths:
           multipart/form-data:
             schema:
               type: object
-              required: [matching, file]
+              required: [ matching, file ]
               properties:
                 matching:
                   $ref: '#/components/schemas/MatchingRequest'
@@ -2517,7 +2517,7 @@ paths:
                         firstName: "John"
                         lastName: "Doe"
                         email: "john.doe@company.com"
-                      activities: []
+                      activities: [ ]
                       createdAt: "2024-01-16T10:00:00"
                       updatedAt: "2024-01-16T10:00:00"
         '415':
@@ -2952,7 +2952,7 @@ paths:
                           order: 1
                           isDefault: true
                         assignTo: null
-                        activities: []
+                        activities: [ ]
                         createdAt: "2024-01-16T10:00:00"
                         updatedAt: "2024-01-16T10:00:00"
                     error:
@@ -2973,7 +2973,7 @@ paths:
                           order: 1
                           isDefault: true
                         assignTo: null
-                        activities: []
+                        activities: [ ]
                         createdAt: null
                         updatedAt: null
         '415':

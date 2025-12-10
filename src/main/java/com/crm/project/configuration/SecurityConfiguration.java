@@ -61,8 +61,8 @@ public class SecurityConfiguration {
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:8088");
         config.addAllowedOrigin("https://vera-sage.vercel.app");
-        config.addAllowedOrigin("http://3.26.45.29:8088");
-        config.addAllowedOrigin("http://3.26.45.29");
+        config.addAllowedOrigin("http://13.251.45.52:8088");
+        config.addAllowedOrigin("http://13.251.45.52");
 
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");

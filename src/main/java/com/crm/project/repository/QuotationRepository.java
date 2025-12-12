@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,4 +49,7 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
                   AND q.status <> 'Expired'
             """)
     int markExpiredQuotations();
+
+    @Query(value = "SELECT status, COUNT(*) AS total FROM quotations GROUP BY status", nativeQuery = true)
+    List<Map<String, Object>> countByStatus();
 }

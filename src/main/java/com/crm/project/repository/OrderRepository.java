@@ -32,4 +32,6 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     Page<Order> findAllOrdersWithDetails(Pageable pageable);
 
     boolean existsByOrderCode(String orderCode);
+
+    boolean existsByQuotationId(String quotationId);
 }

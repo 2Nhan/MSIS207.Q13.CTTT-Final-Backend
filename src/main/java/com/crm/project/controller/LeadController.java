@@ -120,7 +120,7 @@ public class LeadController {
     }
 
     @PostMapping("/csv")
-    public ResponseEntity<MyApiResponse> importLeadCsv(@RequestPart MatchingRequest matching, @RequestParam("file") MultipartFile file) throws IOException {
+    public ResponseEntity<MyApiResponse> importLeadCsv(@RequestPart MatchingRequest matching, @RequestPart("file") MultipartFile file) throws IOException {
         ImportResultResponse<LeadResponse> response = leadService.importLeadsFromCsv(matching, file);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(response.getValidList())

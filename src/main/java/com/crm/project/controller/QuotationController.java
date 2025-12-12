@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/quotations")
@@ -76,6 +78,15 @@ public class QuotationController {
         quotationService.deleteQuotation(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .message("Quotation deleted successfully")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/status-summary")
+    public ResponseEntity<MyApiResponse> getQuotationStatusSummary() {
+        Map<String, Long> summary = quotationService.getQuotationStatusSummary();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(summary)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

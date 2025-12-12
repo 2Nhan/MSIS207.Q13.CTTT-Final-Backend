@@ -35,6 +35,10 @@ public class OrderService {
     public OrderResponse createOrderFromQuotation(String quotationId, OrderCreationFromQuotationRequest request) {
         Quotation quotation = quotationRepository.findQuotationDetailById(quotationId).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
 
+        if (orderRepository.existsByQuotationId(quotationId)) {
+            throw new AppException(ErrorCode.QUOTATION_ORDER_EXISTED);
+        }
+
         if (orderRepository.existsByOrderCode(request.getOrderCode())) {
             throw new AppException(ErrorCode.ORDER_CODE_EXISTED);
         }

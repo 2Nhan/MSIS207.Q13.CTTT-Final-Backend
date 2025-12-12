@@ -6,7 +6,6 @@ import com.crm.project.dto.request.ProductUpdateRequest;
 import com.crm.project.dto.response.*;
 import com.crm.project.internal.PageInfo;
 import com.crm.project.service.ProductService;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

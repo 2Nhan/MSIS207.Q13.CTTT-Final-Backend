@@ -214,6 +214,15 @@ public class QuotationService {
         quotationRepository.deleteById(id);
     }
 
+    public Map<String, Long> getQuotationStatusSummary() {
+        List<Map<String, Object>> count = quotationRepository.countByStatus();
+        Map<String, Long> result = new HashMap<>();
+        for (Map<String, Object> map : count) {
+            result.put((String) map.get("status"), (long) map.get("total"));
+        }
+        return result;
+    }
+
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void markExpiredQuotations() {

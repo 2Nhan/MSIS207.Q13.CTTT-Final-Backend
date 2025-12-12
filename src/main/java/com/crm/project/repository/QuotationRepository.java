@@ -46,7 +46,7 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
                 UPDATE Quotation q 
                 SET q.status = 'Expired' 
                 WHERE q.validUntil < CURRENT_DATE 
-                  AND q.status <> 'Expired'
+                  AND q.status = 'Draft'
             """)
     int markExpiredQuotations();
 

@@ -5,10 +5,15 @@ import com.crm.project.dto.response.OrderResponse;
 import com.crm.project.internal.PageInfo;
 import com.crm.project.service.OrderService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 
 @RequiredArgsConstructor
 @RestController
@@ -43,6 +48,24 @@ public class OrderController {
         orderService.deleteOrder(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .message("Order deleted successfully")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<MyApiResponse> completeOrder(@PathVariable String id) {
+        OrderResponse response = orderService.completeOrder(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<MyApiResponse> getOrdersSummary() {
+        Map<String, Long> response = orderService.getOrdersSummary();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

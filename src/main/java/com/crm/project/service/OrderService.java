@@ -2,13 +2,11 @@ package com.crm.project.service;
 
 import com.crm.project.dto.request.OrderCreationFromQuotationRequest;
 import com.crm.project.dto.response.OrderResponse;
-import com.crm.project.entity.Order;
-import com.crm.project.entity.OrderItem;
-import com.crm.project.entity.Quotation;
-import com.crm.project.entity.User;
+import com.crm.project.entity.*;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.OrderMapper;
+import com.crm.project.repository.LeadRepository;
 import com.crm.project.repository.OrderRepository;
 import com.crm.project.repository.QuotationRepository;
 import com.crm.project.repository.UserRepository;
@@ -21,6 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.Map;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class OrderService {
     private final QuotationRepository quotationRepository;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
+    private final LeadRepository leadRepository;
 
     @Transactional
     public OrderResponse createOrderFromQuotation(String quotationId, OrderCreationFromQuotationRequest request) {
@@ -85,6 +87,7 @@ public class OrderService {
         return orders.map(orderMapper::toOrderResponse);
     }
 
+    @Transactional
     public void deleteOrder(String id) {
         if (!orderRepository.existsById(id)) {
             throw new AppException(ErrorCode.ORDER_NOT_FOUND);
@@ -92,4 +95,25 @@ public class OrderService {
         orderRepository.deleteById(id);
     }
 
+    @Transactional
+    public OrderResponse completeOrder(String id) {
+        Order order = orderRepository.findOrderWithRelations(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        Lead lead = order.getLead();
+        leadRepository.updateStatus(lead.getId());
+        order.setStatus("Delivered");
+        order.setLead(lead);
+        orderRepository.save(order);
+        return orderMapper.toOrderResponse(order);
+    }
+
+    public Map<String, Long> getOrdersSummary() {
+        List<Map<String, Object>> count = orderRepository.countByStatus();
+        Map<String, Long> result = new HashMap<>();
+        for (Map<String, Object> map : count) {
+            result.put((String) map.get("status"), (long) map.get("total"));
+        }
+        BigDecimal totalAmount = orderRepository.sumTotalAmount();
+        result.put("totalAmount", totalAmount.toBigInteger().longValue());
+        return result;
+    }
 }

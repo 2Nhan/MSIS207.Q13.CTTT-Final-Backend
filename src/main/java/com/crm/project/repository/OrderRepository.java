@@ -2,6 +2,9 @@ package com.crm.project.repository;
 
 import com.crm.project.entity.Order;
 
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -34,4 +37,10 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     boolean existsByOrderCode(String orderCode);
 
     boolean existsByQuotationId(String quotationId);
+
+    @Query(value = "SELECT status, COUNT(*) AS total FROM orders GROUP BY status", nativeQuery = true)
+    List<Map<String, Object>> countByStatus();
+
+    @Query("SELECT SUM(o.totalAmount) FROM Order o")
+    BigDecimal sumTotalAmount();
 }

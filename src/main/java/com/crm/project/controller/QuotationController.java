@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -83,7 +84,7 @@ public class QuotationController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @GetMapping("/status-summary")
+    @GetMapping("/summary")
     public ResponseEntity<MyApiResponse> getQuotationStatusSummary() {
         Map<String, Long> summary = quotationService.getQuotationStatusSummary();
         MyApiResponse apiResponse = MyApiResponse.builder()

@@ -115,7 +115,7 @@ public class QuotationService {
     }
 
     @Transactional
-    public void sendQuotationEmail(String id) throws Exception {
+    public QuotationResponse sendQuotationEmail(String id) throws Exception {
         Quotation quotation = quotationRepository.findQuotationDetailById(id).orElseThrow(() -> new AppException(ErrorCode.QUOTATION_NOT_FOUND));
 
         List<QuotationItem> quotationItems = quotation.getItems();
@@ -139,21 +139,12 @@ public class QuotationService {
 
         quotationRepository.updateStatusToSent(quotation.getId());
 
-        try {
-            String fileName = "quotation_" + quotation.getId() + ".pdf";
-            String folder = "project/pdfs";
+        String fileName = "quotation_" + quotation.getId() + ".pdf";
+        String folder = "project/pdfs";
 
-            cloudinaryService.uploadAndUpdateRecord(
-                    attachment,
-                    fileName,
-                    folder,
-                    quotation.getId()
-            );
+        cloudinaryService.uploadAndUpdateRecord(attachment, fileName, folder, quotation.getId());
 
-            log.info("Started async upload of Quotation PDF [{}] to Cloudinary...", fileName);
-        } catch (Exception ex) {
-            log.error("Failed to trigger Cloudinary upload for quotation [{}]: {}", quotation.getId(), ex.getMessage());
-        }
+        return quotationMapper.toQuotationResponse(quotation);
     }
 
     @Transactional

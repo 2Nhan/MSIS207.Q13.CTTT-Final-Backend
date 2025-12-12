@@ -35,9 +35,10 @@ public class QuotationController {
 
     @PostMapping("/{id}/mail")
     public ResponseEntity<MyApiResponse> sendQuotationEmail(@PathVariable String id) throws Exception {
-        quotationService.sendQuotationEmail(id);
+        QuotationResponse response = quotationService.sendQuotationEmail(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .message("Quotation email sent successfully")
+                .data(response)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

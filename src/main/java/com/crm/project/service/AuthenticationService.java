@@ -59,7 +59,7 @@ public class AuthenticationService {
         return LoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .fullName(user.getLastName() + " " + user.getFirstName())
+                .fullName(user.getFirstName() + " " + user.getLastName())
                 .avatarUrl(user.getAvatarUrl())
                 .build();
     }

@@ -69,4 +69,13 @@ public class OrderController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<MyApiResponse> cancelOrder(@PathVariable String id) {
+        OrderResponse response = orderService.cancelOrder(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

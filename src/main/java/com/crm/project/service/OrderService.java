@@ -116,4 +116,12 @@ public class OrderService {
         result.put("totalAmount", totalAmount.toBigInteger().longValue());
         return result;
     }
+
+    @Transactional
+    public OrderResponse cancelOrder(String id) {
+        Order order = orderRepository.findOrderWithRelations(id).orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+        order.setStatus("Cancelled");
+        orderRepository.save(order);
+        return orderMapper.toOrderResponse(order);
+    }
 }

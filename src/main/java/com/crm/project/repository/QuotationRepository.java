@@ -49,7 +49,5 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
                   AND q.status = 'Draft'
             """)
     int markExpiredQuotations();
-
-    @Query(value = "SELECT status, COUNT(*) AS total FROM quotations GROUP BY status", nativeQuery = true)
-    List<Map<String, Object>> countByStatus();
+    
 }

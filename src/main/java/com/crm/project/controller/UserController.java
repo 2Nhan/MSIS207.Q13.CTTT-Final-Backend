@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/avatar")
+    @PatchMapping("/avatar")
     public ResponseEntity<MyApiResponse> uploadAvatar(@RequestParam("image") MultipartFile file) {
         ImageResponse imageResponse = userService.uploadAvatar(file);
         MyApiResponse apiResponse = MyApiResponse.builder().data(imageResponse).build();
@@ -74,7 +74,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @PutMapping
+    @PatchMapping
     public ResponseEntity<MyApiResponse> updateSelfInfo(@RequestBody @Valid UserUpdateRequest request) {
         UserResponse userResponse = userService.updateSelfInfo(request);
         MyApiResponse apiResponse = MyApiResponse.builder().data(userResponse).build();

@@ -125,6 +125,6 @@ public class JwtService {
         if (user.getRole() == null) {
             return "";
         }
-        return "ROLE_" + user.getRole().getCode();
+        return user.getRole().getCode();
     }
 }

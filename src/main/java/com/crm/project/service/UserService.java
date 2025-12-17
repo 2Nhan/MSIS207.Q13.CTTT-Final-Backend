@@ -1,5 +1,6 @@
 package com.crm.project.service;
 
+import com.crm.project.constant.PredefinedRole;
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.internal.CloudinaryInfo;
@@ -9,6 +10,7 @@ import com.crm.project.entity.User;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.UserMapper;
+import com.crm.project.repository.RoleRepository;
 import com.crm.project.repository.UserRepository;
 import com.crm.project.utils.FileUploadUtil;
 import jakarta.transaction.Transactional;
@@ -22,7 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
-
+import com.crm.project.entity.Role;
 
 @RequiredArgsConstructor
 @Service
@@ -31,6 +33,7 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
+    private final RoleRepository roleRepository;
 
     @Transactional
     public ImageResponse uploadAvatar(MultipartFile file) {
@@ -53,6 +56,8 @@ public class UserService {
         validateUserUniqueness(request.getEmail(), request.getPhoneNumber());
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        Role role = roleRepository.findByCode(PredefinedRole.USER_ROLE).orElse(null);
+        user.setRole(role);
         userRepository.save(user);
         return userMapper.toUserResponse(user);
     }

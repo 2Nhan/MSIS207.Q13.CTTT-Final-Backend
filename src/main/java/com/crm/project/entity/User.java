@@ -54,4 +54,7 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "createdBy")
     private List<Quotation> quotations;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Role role;
 }

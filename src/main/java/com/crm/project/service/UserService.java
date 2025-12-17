@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -56,7 +57,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<UserResponse> getAllUsers(int pageNumber, int pageSize, String sortBy, String sortOrder) {
         Sort sort = sortOrder.equalsIgnoreCase("ASC")
                 ? Sort.by(sortBy).ascending()
@@ -70,6 +71,7 @@ public class UserService {
         return usersList.map(userMapper::toUserResponse);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public Page<UserResponse> searchUsers(String query, Pageable pageable) {
         Page<User> usersList = userRepository.findBySearch(query, pageable);
         if (usersList.isEmpty()) {
@@ -84,6 +86,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUserById(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         return userMapper.toUserResponse(user);
@@ -102,6 +105,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @Transactional
     public void deleteUser(String id) {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));

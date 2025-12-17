@@ -41,7 +41,7 @@ public class AuthenticationService {
     private int REFRESH_DURATION;
 
     public LoginResponse login(LoginRequest loginRequest) {
-        User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findByUsernameWithRole(loginRequest.getUsername()).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword()) || user.isDeleted()) {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
         }
@@ -61,6 +61,7 @@ public class AuthenticationService {
                 .refreshToken(refreshToken)
                 .fullName(user.getFirstName() + " " + user.getLastName())
                 .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole().getCode())
                 .build();
     }
 

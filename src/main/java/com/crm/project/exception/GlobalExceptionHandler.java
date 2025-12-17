@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -44,6 +45,21 @@ public class GlobalExceptionHandler {
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
                 .errorField(exception.getErrorField())
+                .build();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .code(errorCode.getStatusCode().value())
+                .message("Process Failed")
+                .error(apiErrorInfo)
+                .build();
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler(value = AccessDeniedException.class)
+    ResponseEntity<MyApiResponse> handlingAccessDeniedException(AccessDeniedException exception) {
+        ErrorCode errorCode = ErrorCode.ACCESS_DENIED;
+        AppErrorInfo apiErrorInfo = AppErrorInfo.builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
                 .build();
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .code(errorCode.getStatusCode().value())

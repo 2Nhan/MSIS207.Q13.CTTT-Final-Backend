@@ -6,6 +6,7 @@ import com.crm.project.dto.response.QuotationResponse;
 import com.crm.project.entity.*;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
+import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.internal.QuotationItemInfo;
 import com.crm.project.mapper.LeadMapper;
 import com.crm.project.mapper.QuotationMapper;
@@ -22,7 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -137,12 +138,15 @@ public class QuotationService {
 
         mailService.sendQuotationMail(to, sender, receiver, products, attachment);
 
-        quotationRepository.updateStatusToSent(quotation.getId());
-
         String fileName = "quotation_" + quotation.getId() + ".pdf";
         String folder = "project/pdfs";
 
-        cloudinaryService.uploadAndUpdateRecord(attachment, fileName, folder, quotation.getId());
+        CloudinaryInfo info = cloudinaryService.uploadGeneratedFile(attachment, fileName, folder, quotation.getId());
+
+        quotation.setStatus("Sent");
+        quotation.setFileUrl(info.getUrl());
+
+        quotationRepository.save(quotation);
 
         return quotationMapper.toQuotationResponse(quotation);
     }

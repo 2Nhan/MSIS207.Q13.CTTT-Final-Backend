@@ -32,15 +32,6 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
             """)
     Page<Quotation> findAllQuotationsWithDetails(Pageable pageable);
 
-
-    @Modifying
-    @Query("UPDATE Quotation q SET q.status = 'Sent' WHERE q.id = :id")
-    void updateStatusToSent(@Param("id") String id);
-
-    @Modifying
-    @Query("UPDATE Quotation q SET q.fileUrl = :filePath WHERE q.id = :id")
-    void updateFilePath(@Param("id") String id, @Param("filePath") String filePath);
-
     @Modifying
     @Query("""
                 UPDATE Quotation q 

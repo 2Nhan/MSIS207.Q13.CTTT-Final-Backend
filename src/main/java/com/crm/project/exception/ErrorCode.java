@@ -41,6 +41,7 @@ public enum ErrorCode {
     INVALID_API_ENDPOINT(1107, "Invalid API endpoint", HttpStatus.INTERNAL_SERVER_ERROR),
 
     INVALID_REFRESH_TOKEN(1110, "Invalid refresh token", HttpStatus.UNAUTHORIZED),
+    ACCESS_DENIED(1111, "Access denied", HttpStatus.UNAUTHORIZED),
     ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {

@@ -35,15 +35,24 @@ public class CloudinaryService {
         }
     }
 
-    private CloudinaryInfo uploadGeneratedFile(byte[] fileBytes, String fileName, String folder) {
+    @Transactional
+    public CloudinaryInfo uploadGeneratedFile(
+            byte[] fileBytes,
+            String fileName,
+            String folder,
+            String quotationId
+    ) {
         try {
             String fileBaseName = FilenameUtils.getBaseName(fileName);
 
-            // "resource_type: auto" => cho phép Cloudinary nhận PDF, image, video, raw
-            Map<?, ?> result = cloudinary.uploader().upload(fileBytes, Map.of(
-                    "public_id", folder + "/" + fileBaseName,
-                    "resource_type", "auto"
-            ));
+            // Upload lên Cloudinary
+            Map<?, ?> result = cloudinary.uploader().upload(
+                    fileBytes,
+                    Map.of(
+                            "public_id", folder + "/" + fileBaseName,
+                            "resource_type", "auto"
+                    )
+            );
 
             String url = result.get("secure_url").toString();
             String publicId = result.get("public_id").toString();
@@ -52,20 +61,15 @@ public class CloudinaryService {
                     .publicId(publicId)
                     .url(url)
                     .build();
+
         } catch (IOException e) {
+            log.error(
+                    "Failed to upload or update record [{}]: {}",
+                    quotationId,
+                    e.getMessage()
+            );
             throw new RuntimeException("Failed to upload generated file", e);
         }
     }
 
-
-    @Transactional
-    public void uploadAndUpdateRecord(byte[] fileBytes, String fileName, String folder, String quotationId) {
-        try {
-            CloudinaryInfo info = uploadGeneratedFile(fileBytes, fileName, folder);
-            quotationRepository.updateFilePath(quotationId, info.getUrl());
-            log.info("Updated filePath for quotation [{}] -> {}", quotationId, info.getUrl());
-        } catch (Exception e) {
-            log.error("Failed to upload or update record [{}]: {}", quotationId, e.getMessage());
-        }
-    }
 }

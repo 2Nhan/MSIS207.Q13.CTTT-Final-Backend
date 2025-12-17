@@ -45,7 +45,7 @@ public class JwtService {
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(ACCESS_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
-//                .claim("scope", buildScope(user))
+                .claim("scope", buildScope(user))
                 .build();
 
         Payload payload = new Payload(claimsSet.toJSONObject());
@@ -121,4 +121,10 @@ public class JwtService {
         }
     }
 
+    private String buildScope(User user) {
+        if (user.getRole() == null) {
+            return "";
+        }
+        return "ROLE_" + user.getRole().getCode();
+    }
 }

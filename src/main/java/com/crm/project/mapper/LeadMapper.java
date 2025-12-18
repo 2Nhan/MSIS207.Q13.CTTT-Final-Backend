@@ -28,6 +28,7 @@ public interface LeadMapper {
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateLead(LeadUpdateRequest request, @MappingTarget Lead lead);
 
+    @Mapping(target = "orderStatisticInfo", ignore = true)
     CustomerResponse toCustomerResponse(Lead lead);
 
     @Mapping(target = "id", ignore = true)

@@ -1,5 +1,6 @@
 package com.crm.project.dto.response;
 
+import com.crm.project.internal.OrderStatisticInfo;
 import com.crm.project.internal.UserNormalInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
@@ -36,4 +37,6 @@ public class CustomerResponse {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private OrderStatisticInfo orderStatisticInfo;
 }

@@ -32,6 +32,16 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
             """)
     Page<Quotation> findAllQuotationsWithDetails(Pageable pageable);
 
+    @Query("""
+            SELECT DISTINCT q FROM Quotation q
+            LEFT JOIN FETCH q.lead l
+            LEFT JOIN FETCH q.items i
+            LEFT JOIN FETCH i.product
+            WHERE LOWER(l.fullName) LIKE LOWER(CONCAT('%', :query, '%'))
+                        OR LOWER(q.title) LIKE LOWER(CONCAT('%', :query, '%'))
+            """)
+    Page<Quotation> findQuotationsBySearch(String query, Pageable pageable);
+
     @Modifying
     @Query("""
                 UPDATE Quotation q 

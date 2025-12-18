@@ -33,8 +33,8 @@ public class OrderController {
     @GetMapping
     public ResponseEntity<MyApiResponse> getOrders(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                                   @RequestParam(required = false, defaultValue = "id") String sortBy,
-                                                   @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+                                                   @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                   @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
         Page<OrderResponse> responses = orderService.getAllOrders(pageNumber, pageSize, sortBy, sortOrder);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(responses.getContent())
@@ -75,6 +75,18 @@ public class OrderController {
         OrderResponse response = orderService.cancelOrder(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(response)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<MyApiResponse> searchOrders(@RequestParam String query,
+                                                      @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
+                                                      @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        Page<OrderResponse> responses = orderService.searchOrders(query, pageNumber, pageSize);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(responses.getContent())
+                .pagination(new PageInfo<>(responses))
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

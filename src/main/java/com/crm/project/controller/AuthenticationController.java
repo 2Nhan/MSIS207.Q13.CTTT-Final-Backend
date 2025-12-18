@@ -7,16 +7,13 @@ import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.dto.response.LoginResponse;
 import com.crm.project.dto.response.RefreshResponse;
 import com.crm.project.dto.response.UserResponse;
+import com.crm.project.redis.redishash.LogoutToken;
 import com.crm.project.service.AuthenticationService;
 import com.crm.project.service.UserService;
 import com.crm.project.validator.group_sequences.ValidationSequences;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.List;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -70,12 +67,12 @@ public class AuthenticationController {
         return ResponseEntity.ok(apiResponse);
     }
 
-//    @GetMapping
-//    public ResponseEntity<ApiResponse> get() {
-//        List<LogoutToken> logoutTokens = authenticationService.getAllBlacklistTokens();
-//        ApiResponse apiResponse = ApiResponse.builder()
-//                .data(logoutTokens)
-//                .build();
-//        return ResponseEntity.ok(apiResponse);
-//    }
+    @GetMapping
+    public ResponseEntity<MyApiResponse> get() {
+        List<LogoutToken> logoutTokens = authenticationService.getAllBlacklistTokens();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(logoutTokens)
+                .build();
+        return ResponseEntity.ok(apiResponse);
+    }
 }

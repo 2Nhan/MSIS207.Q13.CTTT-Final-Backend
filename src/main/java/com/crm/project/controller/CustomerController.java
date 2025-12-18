@@ -28,10 +28,31 @@ public class CustomerController {
     @GetMapping
     public ResponseEntity<MyApiResponse> getAllCustomers(@RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
                                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
-                                                         @RequestParam(required = false, defaultValue = "id") String sortBy,
-                                                         @RequestParam(required = false, defaultValue = "asc") String sortOrder) {
+                                                         @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+                                                         @RequestParam(required = false, defaultValue = "desc") String sortOrder) {
         Page<CustomerResponse> customersList = customerService.getAllCustomers(pageNumber, pageSize, sortBy, sortOrder);
 
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(customersList.getContent())
+                .pagination(new PageInfo<>(customersList))
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<MyApiResponse> deleteCustomer(@PathVariable String id) {
+        customerService.deleteCustomer(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .message("Customer deleted")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<MyApiResponse> searchCustomers(@RequestParam("query") String query,
+                                                         @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
+                                                         @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        Page<CustomerResponse> customersList = customerService.searchCustomers(query, pageNumber, pageSize);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(customersList.getContent())
                 .pagination(new PageInfo<>(customersList))

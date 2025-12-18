@@ -3,6 +3,7 @@ package com.crm.project.controller;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.dto.response.ImageResponse;
+import com.crm.project.dto.response.UserAssignResponse;
 import com.crm.project.internal.PageInfo;
 import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -86,6 +88,15 @@ public class UserController {
         userService.deleteUser(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .message("DELETED USER")
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/assigners")
+    public ResponseEntity<MyApiResponse> getAssigners() {
+        List<UserAssignResponse> list = userService.getUserAssignList();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(list)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

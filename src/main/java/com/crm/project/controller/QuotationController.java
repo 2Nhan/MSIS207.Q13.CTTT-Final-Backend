@@ -92,4 +92,16 @@ public class QuotationController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<MyApiResponse> searchQuotations(@RequestParam String query,
+                                                          @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
+                                                          @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
+        Page<QuotationResponse> response = quotationService.searchQuotations(query, pageNumber, pageSize);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response.getContent())
+                .pagination(new PageInfo<>(response))
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

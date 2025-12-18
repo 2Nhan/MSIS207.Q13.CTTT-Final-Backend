@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.crm.project.internal.OrderStatisticInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,6 +37,17 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             """)
     Page<Order> findAllOrdersWithDetails(Pageable pageable);
 
+    @Query("""
+                SELECT DISTINCT o 
+                FROM Order o
+                LEFT JOIN FETCH o.orderItems
+                LEFT JOIN FETCH o.createdBy
+                LEFT JOIN FETCH o.lead l
+                WHERE LOWER(l.fullName) LIKE LOWER(CONCAT('%', :query, '%'))
+                        OR LOWER(o.orderCode) LIKE LOWER(CONCAT('%', :query, '%'))
+            """)
+    Page<Order> findOrdersBySearch(String query, Pageable pageable);
+
     boolean existsByOrderCode(String orderCode);
 
     boolean existsByQuotationId(String quotationId);
@@ -49,4 +61,16 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Modifying
     @Query("UPDATE Order o SET o.status = 'Cancelled' WHERE o.id = :id")
     void updateStatusToCancelled(@Param("id") String id);
+
+    @Query("""
+            SELECT new com.crm.project.internal.OrderStatisticInfo(
+                COUNT(o),
+                SUM(o.totalAmount),
+                AVG(o.totalAmount),
+                MAX(o.createdAt)
+            )
+            FROM Order o
+            WHERE o.lead.id = :customerId
+            """)
+    OrderStatisticInfo getOrderStatisticsByCustomer(String customerId);
 }

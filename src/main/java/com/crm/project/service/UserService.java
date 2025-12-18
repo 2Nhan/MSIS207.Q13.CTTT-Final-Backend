@@ -3,6 +3,7 @@ package com.crm.project.service;
 import com.crm.project.constant.PredefinedRole;
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
+import com.crm.project.dto.response.UserAssignResponse;
 import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.dto.response.ImageResponse;
 import com.crm.project.dto.response.UserResponse;
@@ -25,6 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 import com.crm.project.entity.Role;
+
+import java.util.List;
+import java.util.ArrayList;
 
 @RequiredArgsConstructor
 @Service
@@ -116,6 +120,20 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
         user.setDeleted(true);
         userRepository.save(user);
+    }
+
+    public List<UserAssignResponse> getUserAssignList() {
+        List<User> users = userRepository.findAll();
+        List<UserAssignResponse> userAssignResponseList = new ArrayList<>();
+        for (User user : users) {
+            String id = user.getId();
+            String fullName = user.getFirstName() + " " + user.getLastName();
+            UserAssignResponse userAssignResponse = new UserAssignResponse();
+            userAssignResponse.setId(id);
+            userAssignResponse.setFullName(fullName);
+            userAssignResponseList.add(userAssignResponse);
+        }
+        return userAssignResponseList;
     }
 
     private void validateUserUniqueness(String email, String phoneNumber) {

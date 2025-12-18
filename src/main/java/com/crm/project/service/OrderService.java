@@ -65,6 +65,9 @@ public class OrderService {
 
         orderRepository.save(order);
 
+        quotation.setStatus("Ordered");
+        quotationRepository.save(quotation);
+
         OrderResponse orderResponse = orderMapper.toOrderResponse(order);
         orderResponse.setBuyerName(order.getLead().getFullName());
         orderResponse.setItems(orderItems.stream().map(orderMapper::fromOrderItemToOrderItemInfo).toList());
@@ -123,5 +126,14 @@ public class OrderService {
         order.setStatus("Cancelled");
         orderRepository.save(order);
         return orderMapper.toOrderResponse(order);
+    }
+
+    public Page<OrderResponse> searchOrders(String query, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Order> orders = orderRepository.findOrdersBySearch(query, pageable);
+        if (orders.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+        return orders.map(orderMapper::toOrderResponse);
     }
 }

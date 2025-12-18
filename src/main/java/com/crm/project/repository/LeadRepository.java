@@ -53,6 +53,14 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
     Page<Lead> findAllCustomer(Pageable pageable);
 
     @Query("""
+                SELECT l FROM Lead l
+                JOIN l.user u
+                WHERE l.status = 'CONVERTED'
+                            AND LOWER(l.fullName) LIKE LOWER(CONCAT('%', :query, '%'))
+            """)
+    Page<Lead> findCustomersBySearch(String query, Pageable pageable);
+
+    @Query("""
                 SELECT l 
                 FROM Lead l
                 WHERE 

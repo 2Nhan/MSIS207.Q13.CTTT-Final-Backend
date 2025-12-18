@@ -209,6 +209,15 @@ public class QuotationService {
         quotationRepository.deleteById(id);
     }
 
+    public Page<QuotationResponse> searchQuotations(String query, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber - 1, pageSize);
+        Page<Quotation> quotations = quotationRepository.findQuotationsBySearch(query, pageable);
+        if (quotations.isEmpty()) {
+            throw new AppException(ErrorCode.NO_RESULTS);
+        }
+        return quotations.map(quotationMapper::toQuotationResponse);
+    }
+
     public Map<String, Long> getQuotationStatusSummary() {
         List<Map<String, Object>> count = quotationRepository.countByStatus();
         Map<String, Long> result = new HashMap<>();

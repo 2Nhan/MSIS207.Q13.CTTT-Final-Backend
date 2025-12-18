@@ -29,6 +29,8 @@ public class CustomerResponse {
 
     private Integer rating;
 
+    private String note;
+
     private String avatarUrl;
 
     @JsonProperty("assignTo")

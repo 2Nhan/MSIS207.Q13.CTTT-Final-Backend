@@ -131,6 +131,8 @@ public class UserService {
             UserAssignResponse userAssignResponse = new UserAssignResponse();
             userAssignResponse.setId(id);
             userAssignResponse.setFullName(fullName);
+            userAssignResponse.setEmail(user.getEmail());
+            userAssignResponse.setAvatarUrl(user.getAvatarUrl());
             userAssignResponseList.add(userAssignResponse);
         }
         return userAssignResponseList;

@@ -10,4 +10,6 @@ import lombok.*;
 public class UserAssignResponse {
     private String id;
     private String fullName;
+    private String email;
+    private String avatarUrl;
 }

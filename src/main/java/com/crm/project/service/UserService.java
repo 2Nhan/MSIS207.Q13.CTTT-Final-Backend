@@ -9,6 +9,7 @@ import com.crm.project.internal.CloudinaryInfo;
 import com.crm.project.entity.User;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
+import com.crm.project.internal.UserStatistics;
 import com.crm.project.mapper.UserMapper;
 import com.crm.project.repository.ActivityRepository;
 import com.crm.project.repository.LeadRepository;
@@ -203,6 +204,18 @@ public class UserService {
                 .roleName(user.getRole().getCode())
                 .statistics(statistics)
                 .activities(activitySummaries)  // Chỉ có activities
+                .build();
+    }
+
+    public UserSummaryResponse getUsersSummary() {
+        Long totalUsers = userRepository.countAllUsers();
+        Long newThisMonth = userRepository.countNewUsersThisMonth();
+        Long activeUsers = userRepository.countActiveUsers(); // Same as totalUsers
+
+        return UserSummaryResponse.builder()
+                .totalUsers(totalUsers)
+                .newThisMonth(newThisMonth)
+                .activeUsers(activeUsers)
                 .build();
     }
 

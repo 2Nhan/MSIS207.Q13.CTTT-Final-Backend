@@ -106,4 +106,13 @@ public class UserController {
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
+
+    @GetMapping("/summary")
+    public ResponseEntity<MyApiResponse> getUserSummary() {
+        UserSummaryResponse summary = userService.getUsersSummary();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(summary)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
 }

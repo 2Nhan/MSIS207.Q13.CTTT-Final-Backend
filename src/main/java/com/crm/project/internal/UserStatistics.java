@@ -1,4 +1,4 @@
-package com.crm.project.dto.response;
+package com.crm.project.internal;
 
 import lombok.*;
 

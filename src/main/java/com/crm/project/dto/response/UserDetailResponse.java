@@ -1,5 +1,6 @@
 package com.crm.project.dto.response;
 
+import com.crm.project.internal.UserStatistics;
 import lombok.*;
 
 import java.util.List;

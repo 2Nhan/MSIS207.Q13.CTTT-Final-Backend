@@ -22,6 +22,8 @@ public class UserResponse {
 
     private String phoneNumber;
 
+    private boolean deleted;
+
     private String address;
 
     private String avatarUrl;

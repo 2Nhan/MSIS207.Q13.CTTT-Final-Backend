@@ -48,4 +48,20 @@ public interface UserRepository extends JpaRepository<User, String> {
             nativeQuery = true)
     Page<User> findBySearch(@Param("query") String search, Pageable pageable);
 
+    // Count active users (deleted = false)
+    @Query("SELECT COUNT(u) FROM User u WHERE u.deleted = false")
+    Long countActiveUsers();
+
+
+    @Query("SELECT COUNT(u) FROM User u")
+    Long countAllUsers();
+
+    // Count users created in current month
+    @Query("""
+            SELECT COUNT(u) FROM User u 
+            WHERE u.deleted = false 
+            AND FUNCTION('YEAR', u.createdAt) = FUNCTION('YEAR', CURRENT_DATE)
+            AND FUNCTION('MONTH', u.createdAt) = FUNCTION('MONTH', CURRENT_DATE)
+            """)
+    Long countNewUsersThisMonth();
 }

@@ -70,4 +70,13 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
     List<Lead> findExistingLeadsByEmailOrPhone(@Param("emails") List<String> emails,
                                                @Param("phones") List<String> phones);
 
+
+    @Query("SELECT COUNT(l) FROM Lead l WHERE l.user.id = :userId")
+    Long countByUserId(@Param("userId") String userId);
+
+
+    @Query("SELECT COUNT(l) FROM Lead l WHERE l.user.id = :userId " +
+            "AND (l.status IS NULL OR l.status != 'CONVERTED')")
+    Long countOpenLeadsByUserId(@Param("userId") String userId);
+
 }

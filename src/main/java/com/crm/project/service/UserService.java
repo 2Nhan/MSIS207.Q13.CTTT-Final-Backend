@@ -3,19 +3,23 @@ package com.crm.project.service;
 import com.crm.project.constant.PredefinedRole;
 import com.crm.project.dto.request.UserCreationRequest;
 import com.crm.project.dto.request.UserUpdateRequest;
-import com.crm.project.dto.response.UserAssignResponse;
+import com.crm.project.dto.response.*;
+import com.crm.project.entity.Activity;
 import com.crm.project.internal.CloudinaryInfo;
-import com.crm.project.dto.response.ImageResponse;
-import com.crm.project.dto.response.UserResponse;
 import com.crm.project.entity.User;
 import com.crm.project.exception.AppException;
 import com.crm.project.exception.ErrorCode;
 import com.crm.project.mapper.UserMapper;
+import com.crm.project.repository.ActivityRepository;
+import com.crm.project.repository.LeadRepository;
 import com.crm.project.repository.RoleRepository;
 import com.crm.project.repository.UserRepository;
 import com.crm.project.utils.FileUploadUtil;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Comparator;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -27,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.data.domain.Pageable;
 import com.crm.project.entity.Role;
 
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -38,6 +43,8 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final CloudinaryService cloudinaryService;
     private final RoleRepository roleRepository;
+    private final LeadRepository leadRepository;
+    private final ActivityRepository activityRepository;
 
     @Transactional
     public ImageResponse uploadAvatar(MultipartFile file) {
@@ -137,6 +144,68 @@ public class UserService {
         }
         return userAssignResponseList;
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public UserDetailResponse getUserDetails(String userId) {
+        // 1. Get user basic info
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+
+        // 2. Calculate statistics (chỉ count, không fetch leads)
+        Long totalLeads = leadRepository.countByUserId(userId);
+        Long openLeads = leadRepository.countOpenLeadsByUserId(userId);
+        Long convertedLeads = totalLeads - openLeads;
+
+        Long totalActivities = activityRepository.countByLeadUserId(userId);
+        Long pendingActivities = activityRepository.countByLeadUserIdAndCompleted(userId, false);
+        Long completedActivities = activityRepository.countByLeadUserIdAndCompleted(userId, true);
+
+        UserStatistics statistics = UserStatistics.builder()
+                .totalLeads(totalLeads)
+                .openLeads(openLeads)
+                .convertedLeads(convertedLeads)
+                .totalActivities(totalActivities)
+                .pendingActivities(pendingActivities)
+                .completedActivities(completedActivities)
+                .build();
+
+        // 3. Get activities (only pending ones)
+        List<Activity> activities = activityRepository.findByLeadUserId(userId);
+
+        // 4. Map activities (chỉ lấy pending, sort by deadline)
+        List<ActivitySummaryResponse> activitySummaries = activities.stream()
+//                .filter(a -> !a.isCompleted())  // Chỉ lấy chưa hoàn thành
+                .sorted(Comparator.comparing(Activity::getValidUntil))
+                .map(activity -> ActivitySummaryResponse.builder()
+                        .id(activity.getId())
+                        .type(activity.getType())
+                        .content(activity.getContent())
+                        .validUntil(activity.getValidUntil())
+                        .status(activity.getStatus())
+                        .completed(activity.isCompleted())
+                        .createdAt(activity.getCreatedAt())
+                        .leadId(activity.getLead().getId())
+                        .leadName(activity.getLead().getFullName())
+                        .leadCompany(activity.getLead().getCompany())
+                        .build())
+                .collect(Collectors.toList());
+
+        // 5. Build response (KHÔNG CÓ managedLeads)
+        return UserDetailResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .avatarUrl(user.getAvatarUrl())
+                .roleName(user.getRole().getCode())
+                .statistics(statistics)
+                .activities(activitySummaries)  // Chỉ có activities
+                .build();
+    }
+
 
     private void validateUserUniqueness(String email, String phoneNumber) {
         userRepository.findByEmailOrPhoneNumber(email, phoneNumber).ifPresent(user -> {

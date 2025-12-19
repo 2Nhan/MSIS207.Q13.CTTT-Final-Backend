@@ -1,11 +1,8 @@
 package com.crm.project.controller;
 
 import com.crm.project.dto.request.UserUpdateRequest;
-import com.crm.project.dto.response.MyApiResponse;
-import com.crm.project.dto.response.ImageResponse;
-import com.crm.project.dto.response.UserAssignResponse;
+import com.crm.project.dto.response.*;
 import com.crm.project.internal.PageInfo;
-import com.crm.project.dto.response.UserResponse;
 import com.crm.project.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -97,6 +94,15 @@ public class UserController {
         List<UserAssignResponse> list = userService.getUserAssignList();
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(list)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<MyApiResponse> getUserDetails(@PathVariable("id") String id) {
+        UserDetailResponse userDetail = userService.getUserDetails(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(userDetail)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

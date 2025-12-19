@@ -73,4 +73,29 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             WHERE o.lead.id = :customerId
             """)
     OrderStatisticInfo getOrderStatisticsByCustomer(String customerId);
+
+    // Chart queries for Order Revenue
+    @Query("""
+            SELECT 
+                FUNCTION('DAYNAME', o.createdAt) as dayName,
+                COALESCE(SUM(o.totalAmount), 0) as totalRevenue
+            FROM Order o
+            WHERE o.createdAt >= :startDate AND o.createdAt < :endDate
+            GROUP BY FUNCTION('DAYOFWEEK', o.createdAt), FUNCTION('DAYNAME', o.createdAt)
+            ORDER BY FUNCTION('DAYOFWEEK', o.createdAt)
+            """)
+    List<Object[]> getRevenueByDayOfWeek(
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate
+    );
+
+    @Query("""
+            SELECT COALESCE(SUM(o.totalAmount), 0)
+            FROM Order o
+            WHERE o.createdAt >= :startDate AND o.createdAt < :endDate
+            """)
+    BigDecimal getTotalRevenueByPeriod(
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate
+    );
 }

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,4 +80,30 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
             "AND (l.status IS NULL OR l.status != 'CONVERTED')")
     Long countOpenLeadsByUserId(@Param("userId") String userId);
 
+    // Chart queries for Lead Conversion
+    @Query("""
+            SELECT 
+                FUNCTION('DAYNAME', l.updatedAt) as dayName,
+                CAST(COUNT(l) AS java.math.BigDecimal) as totalConverted
+            FROM Lead l
+            WHERE l.status = 'CONVERTED'
+            AND l.updatedAt >= :startDate AND l.updatedAt < :endDate
+            GROUP BY FUNCTION('DAYOFWEEK', l.updatedAt), FUNCTION('DAYNAME', l.updatedAt)
+            ORDER BY FUNCTION('DAYOFWEEK', l.updatedAt)
+            """)
+    List<Object[]> getConvertedLeadsByDayOfWeek(
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate
+    );
+
+    @Query("""
+            SELECT COALESCE(CAST(COUNT(l) AS java.math.BigDecimal), 0)
+            FROM Lead l
+            WHERE l.status = 'CONVERTED'
+            AND l.updatedAt >= :startDate AND l.updatedAt < :endDate
+            """)
+    BigDecimal getTotalConvertedLeadsByPeriod(
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate
+    );
 }

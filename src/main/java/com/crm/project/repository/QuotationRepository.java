@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.List;
 import java.util.Optional;
@@ -54,4 +55,28 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
 
     @Query(value = "SELECT status, COUNT(*) AS total FROM quotations GROUP BY status", nativeQuery = true)
     List<Map<String, Object>> countByStatus();
+
+    @Query("""
+            SELECT 
+                FUNCTION('DAYNAME', q.createdAt) as dayName,
+                COALESCE(SUM(q.finalTotal), 0) as totalRevenue
+            FROM Quotation q
+            WHERE q.createdAt >= :startDate AND q.createdAt < :endDate
+            GROUP BY FUNCTION('DAYOFWEEK', q.createdAt), FUNCTION('DAYNAME', q.createdAt)
+            ORDER BY FUNCTION('DAYOFWEEK', q.createdAt)
+            """)
+    List<Object[]> getRevenueByDayOfWeek(
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate
+    );
+
+    @Query("""
+            SELECT COALESCE(SUM(q.finalTotal), 0)
+            FROM Quotation q
+            WHERE q.createdAt >= :startDate AND q.createdAt < :endDate
+            """)
+    BigDecimal getTotalRevenueByPeriod(
+            @Param("startDate") java.time.LocalDateTime startDate,
+            @Param("endDate") java.time.LocalDateTime endDate
+    );
 }

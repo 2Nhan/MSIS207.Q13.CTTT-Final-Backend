@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Where;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -42,6 +43,9 @@ public class User extends BaseEntity {
 
     @Column(name = "avatar_url")
     private String avatarUrl;
+
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
 
     @Column(nullable = false)
     private boolean deleted = false;

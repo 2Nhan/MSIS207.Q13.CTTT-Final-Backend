@@ -2,6 +2,7 @@ package com.crm.project.dto.response;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -25,6 +26,8 @@ public class UserResponse {
     private boolean deleted;
 
     private String address;
+
+    private LocalDate dateOfBirth;
 
     private String avatarUrl;
 

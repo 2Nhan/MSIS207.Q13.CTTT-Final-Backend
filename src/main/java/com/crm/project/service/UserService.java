@@ -202,6 +202,7 @@ public class UserService {
                 .phoneNumber(user.getPhoneNumber())
                 .avatarUrl(user.getAvatarUrl())
                 .roleName(user.getRole().getCode())
+                .deleted(user.isDeleted())
                 .statistics(statistics)
                 .activities(activitySummaries)  // Chỉ có activities
                 .build();
@@ -217,6 +218,14 @@ public class UserService {
                 .newThisMonth(newThisMonth)
                 .activeUsers(activeUsers)
                 .build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Transactional
+    public void enableUser(String id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
+        user.setDeleted(false);
+        userRepository.save(user);
     }
 
 

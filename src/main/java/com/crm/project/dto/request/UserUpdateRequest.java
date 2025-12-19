@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,8 +32,9 @@ public class UserUpdateRequest {
     @Pattern(regexp = "^[0-9]{10}$", message = "INVALID_PHONE_NUMBER")
     private String phoneNumber;
 
-    @Email(message = "INVALID_EMAIL")
     private String address;
+
+    private LocalDate dateOfBirth;
 }
 
 

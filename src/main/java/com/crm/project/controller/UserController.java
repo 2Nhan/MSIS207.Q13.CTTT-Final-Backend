@@ -1,5 +1,6 @@
 package com.crm.project.controller;
 
+import com.cloudinary.api.ApiResponse;
 import com.crm.project.dto.request.UserUpdateRequest;
 import com.crm.project.dto.response.*;
 import com.crm.project.internal.PageInfo;
@@ -80,11 +81,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/{id}/disable")
     public ResponseEntity<MyApiResponse> deleteUser(@PathVariable("id") String id) {
         userService.deleteUser(id);
         MyApiResponse apiResponse = MyApiResponse.builder()
-                .message("DELETED USER")
+                .message("DISABLED USER")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }
@@ -112,6 +113,15 @@ public class UserController {
         UserSummaryResponse summary = userService.getUsersSummary();
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(summary)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @PatchMapping("/{id}/enable")
+    public ResponseEntity<MyApiResponse> enableUser(@PathVariable("id") String id) {
+        userService.enableUser(id);
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .message("ENABLED USER")
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

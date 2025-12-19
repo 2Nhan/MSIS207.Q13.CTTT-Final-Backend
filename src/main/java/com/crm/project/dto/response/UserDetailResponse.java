@@ -19,6 +19,7 @@ public class UserDetailResponse {
     private String phoneNumber;
     private String avatarUrl;
     private String roleName;
+    private Boolean deleted;
     private UserStatistics statistics;
 
     private List<ActivitySummaryResponse> activities;

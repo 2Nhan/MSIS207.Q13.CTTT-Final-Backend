@@ -165,8 +165,13 @@ public class ProductService {
         return products.map(productMapper::toProductResponse);
     }
 
-    public Page<ProductResponse> searchProducts(String query, Pageable pageable) {
-        Page<Product> products = productRepository.findBySearch(query, pageable);
+    public Page<ProductResponse> searchProducts(String query, Pageable pageable, String category, String status, BigDecimal minPrice, BigDecimal maxPrice) {
+        // Build Specification
+        Specification<Product> spec = buildSearchSpecification(query, category, status, minPrice, maxPrice);
+
+        // Dùng findAll từ JpaSpecificationExecutor - KHÔNG dùng findBySearch
+        Page<Product> products = productRepository.findAll(spec, pageable);
+
         if (products.isEmpty()) {
             throw new AppException(ErrorCode.NO_RESULTS);
         }
@@ -200,5 +205,53 @@ public class ProductService {
 
     private boolean isBlank(String s) {
         return s == null || s.trim().isEmpty();
+    }
+
+    private Specification<Product> buildSearchSpecification(
+            String query,
+            String category,
+            String status,
+            BigDecimal minPrice,
+            BigDecimal maxPrice
+    ) {
+        Specification<Product> spec = Specification.where(null);
+
+        // Search by query (name, tag, sku)
+        if (query != null && !query.isEmpty()) {
+            spec = spec.and((root, criteriaQuery, cb) -> {
+                String likeQuery = "%" + query.toLowerCase() + "%";
+                return cb.or(
+                        cb.like(cb.lower(root.get("name")), likeQuery),
+                        cb.like(cb.lower(root.get("tag")), likeQuery),
+                        cb.like(cb.lower(root.get("sku")), likeQuery)
+                );
+            });
+        }
+
+        // Filter by category
+        if (category != null && !category.isEmpty()) {
+            spec = spec.and((root, criteriaQuery, cb) ->
+                    cb.equal(cb.lower(root.get("category")), category.toLowerCase()));
+        }
+
+        // Filter by status
+        if (status != null && !status.isEmpty()) {
+            spec = spec.and((root, criteriaQuery, cb) ->
+                    cb.equal(cb.lower(root.get("status")), status.toLowerCase()));
+        }
+
+        // Filter by minimum price
+        if (minPrice != null) {
+            spec = spec.and((root, criteriaQuery, cb) ->
+                    cb.greaterThanOrEqualTo(root.get("price"), minPrice));
+        }
+
+        // Filter by maximum price
+        if (maxPrice != null) {
+            spec = spec.and((root, criteriaQuery, cb) ->
+                    cb.lessThanOrEqualTo(root.get("price"), maxPrice));
+        }
+
+        return spec;
     }
 }

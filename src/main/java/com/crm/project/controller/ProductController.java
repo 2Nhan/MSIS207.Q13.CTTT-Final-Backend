@@ -75,10 +75,14 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<MyApiResponse> searchProducts(@RequestParam(name = "query") String query,
+    public ResponseEntity<MyApiResponse> searchProducts(@RequestParam(name = "query", required = false) String query,
                                                         @RequestParam(name = "pageNo", required = false, defaultValue = "1") int pageNumber,
-                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize) {
-        Page<ProductResponse> productResponseList = productService.searchProducts(query, PageRequest.of(pageNumber - 1, pageSize));
+                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "10") int pageSize,
+                                                        @RequestParam(required = false) String category,
+                                                        @RequestParam(required = false) String status,
+                                                        @RequestParam(required = false) BigDecimal minPrice,
+                                                        @RequestParam(required = false) BigDecimal maxPrice) {
+        Page<ProductResponse> productResponseList = productService.searchProducts(query, PageRequest.of(pageNumber - 1, pageSize), category, status, minPrice, maxPrice);
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(productResponseList.getContent())
                 .pagination(new PageInfo<>(productResponseList))

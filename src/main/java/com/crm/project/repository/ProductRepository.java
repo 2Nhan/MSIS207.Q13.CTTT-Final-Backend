@@ -4,6 +4,7 @@ import com.crm.project.entity.Product;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -23,15 +24,15 @@ public interface ProductRepository extends JpaRepository<Product, String>, JpaSp
     boolean existsBySku(String sku);
 
 
-    @Query(value = """
-            SELECT *
-            FROM products
-            WHERE (
-                  LOWER(name) LIKE LOWER(CONCAT('%', :query, '%'))
-               OR LOWER(tag) LIKE LOWER(CONCAT('%', :query, '%'))
-               OR LOWER(sku) LIKE LOWER(CONCAT('%', :query, '%'))
-            )
-            """,
-            nativeQuery = true)
-    Page<Product> findBySearch(@Param("query") String search, Pageable pageable);
+//    @Query(value = """
+//            SELECT *
+//            FROM products
+//            WHERE (
+//                  LOWER(name) LIKE LOWER(CONCAT('%', :query, '%'))
+//               OR LOWER(tag) LIKE LOWER(CONCAT('%', :query, '%'))
+//               OR LOWER(sku) LIKE LOWER(CONCAT('%', :query, '%'))
+//            )
+//            """,
+//            nativeQuery = true)
+//    Page<Product> findBySearch(@Param("query") String search, Pageable pageable);
 }

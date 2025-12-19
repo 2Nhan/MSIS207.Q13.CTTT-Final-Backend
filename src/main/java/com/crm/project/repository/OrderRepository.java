@@ -98,4 +98,10 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             @Param("startDate") java.time.LocalDateTime startDate,
             @Param("endDate") java.time.LocalDateTime endDate
     );
+
+    // Count total orders
+    @Query("SELECT COUNT(o) FROM Order o")
+    Long countTotalOrders();
+
+    
 }

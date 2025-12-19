@@ -106,4 +106,8 @@ public interface LeadRepository extends JpaRepository<Lead, String> {
             @Param("startDate") java.time.LocalDateTime startDate,
             @Param("endDate") java.time.LocalDateTime endDate
     );
+
+    // Count total leads
+    @Query("SELECT COUNT(l) FROM Lead l WHERE l.status = 'CONVERTED'")
+    Long countTotalLeadsConversion();
 }

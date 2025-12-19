@@ -53,4 +53,8 @@ public interface ActivityRepository extends JpaRepository<Activity, String> {
             @Param("startDate") java.time.LocalDateTime startDate,
             @Param("endDate") java.time.LocalDateTime endDate
     );
+
+    // Count total activities (tất cả)
+    @Query("SELECT COUNT(a) FROM Activity a WHERE a.status = 'DONE'")
+    Long countTotalCompletedActivities();
 }

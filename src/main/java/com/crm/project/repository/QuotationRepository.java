@@ -79,4 +79,8 @@ public interface QuotationRepository extends JpaRepository<Quotation, String> {
             @Param("startDate") java.time.LocalDateTime startDate,
             @Param("endDate") java.time.LocalDateTime endDate
     );
+
+    // Count total quotations
+    @Query("SELECT COUNT(q) FROM Quotation q")
+    Long countTotalQuotations();
 }

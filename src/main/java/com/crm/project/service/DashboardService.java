@@ -1,5 +1,6 @@
 package com.crm.project.service;
 
+import com.crm.project.dto.response.DashboardSummaryResponse;
 import com.crm.project.repository.ActivityRepository;
 import com.crm.project.repository.LeadRepository;
 import com.crm.project.repository.OrderRepository;
@@ -30,6 +31,20 @@ public class DashboardService {
     private final QuotationRepository quotationRepository;
     private final OrderRepository orderRepository;
     private final ActivityRepository activityRepository;
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public DashboardSummaryResponse getDashboardSummary() {
+        BigDecimal totalRevenue = orderRepository.sumTotalAmount();
+        Long totalOrders = orderRepository.countTotalOrders();
+        Long totalTasks = activityRepository.countTotalCompletedActivities();
+        Long totalLeads = leadRepository.countTotalLeadsConversion();
+        return DashboardSummaryResponse.builder()
+                .totalRevenue(totalRevenue)
+                .totalOrders(totalOrders)
+                .totalTasks(totalTasks)
+                .totalLeads(totalLeads)
+                .build();
+    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional

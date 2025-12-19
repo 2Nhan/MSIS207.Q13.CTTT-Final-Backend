@@ -1,6 +1,7 @@
 package com.crm.project.controller;
 
 import com.crm.project.dto.response.ChartResponse;
+import com.crm.project.dto.response.DashboardSummaryResponse;
 import com.crm.project.dto.response.MyApiResponse;
 import com.crm.project.service.DashboardService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,15 @@ public class DashboardController {
         ChartResponse chartResponse = dashboardService.getLeadConversionChart();
         MyApiResponse apiResponse = MyApiResponse.builder()
                 .data(chartResponse)
+                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<MyApiResponse> getSummary() {
+        DashboardSummaryResponse response = dashboardService.getDashboardSummary();
+        MyApiResponse apiResponse = MyApiResponse.builder()
+                .data(response)
                 .build();
         return ResponseEntity.status(HttpStatus.OK).body(apiResponse);
     }

@@ -30,7 +30,6 @@ public interface UserRepository extends JpaRepository<User, String> {
             """)
     Optional<User> findByUsernameWithRole(String username);
 
-
     @Query(value = """
             SELECT *
             FROM users u

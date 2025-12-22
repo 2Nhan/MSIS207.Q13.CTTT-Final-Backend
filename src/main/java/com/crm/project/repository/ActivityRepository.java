@@ -2,6 +2,7 @@ package com.crm.project.repository;
 
 import com.crm.project.entity.Activity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -57,4 +58,13 @@ public interface ActivityRepository extends JpaRepository<Activity, String> {
     // Count total activities (tất cả)
     @Query("SELECT COUNT(a) FROM Activity a WHERE a.status = 'DONE'")
     Long countTotalCompletedActivities();
+
+    @Modifying
+    @Query("""
+                UPDATE Quotation q 
+                SET q.status = 'EXPIRED' 
+                WHERE q.validUntil < CURRENT_DATE 
+                  AND q.status = 'PENDING'
+            """)
+    int markExpiredActivities();
 }

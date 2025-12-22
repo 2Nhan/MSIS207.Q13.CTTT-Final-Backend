@@ -11,6 +11,8 @@ import com.crm.project.repository.ActivityRepository;
 import com.crm.project.repository.LeadRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.scheduling.annotation.Schedules;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -64,5 +66,11 @@ public class ActivityService {
         }
 
         activityRepository.delete(activity);
+    }
+
+    @Scheduled(cron = "0 0 0 * * *")
+    @Transactional
+    public void markExpiredActivities() {
+        int count = activityRepository.markExpiredActivities();
     }
 }

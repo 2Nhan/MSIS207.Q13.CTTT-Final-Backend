@@ -46,6 +46,7 @@ public class QuotationService {
     private final MailService mailService;
     private final PdfService pdfService;
     private final CloudinaryService cloudinaryService;
+    private final OrderRepository orderRepository;
 
     @Transactional
     public QuotationResponse createQuotation(QuotationCreationRequest request) {
@@ -205,6 +206,9 @@ public class QuotationService {
     public void deleteQuotation(String id) {
         if (!quotationRepository.existsById(id)) {
             throw new AppException(ErrorCode.QUOTATION_NOT_FOUND);
+        }
+        if (orderRepository.existsByQuotationId(id)) {
+            throw new AppException(ErrorCode.QUOTATION_ORDER_EXISTED);
         }
         quotationRepository.deleteById(id);
     }

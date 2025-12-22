@@ -2,6 +2,8 @@ package com.crm.project.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 
 import java.math.BigDecimal;
@@ -38,5 +40,6 @@ public class QuotationItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Product product;
 }
